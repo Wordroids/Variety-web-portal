@@ -1,9 +1,21 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-6" x-data="usersPage()">
 
+        <!-- Success Message -->
         @if (session('success'))
             <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
                 {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Error Message -->
+        @if ($errors->any())
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                <ul class="list-disc pl-5 text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -18,16 +30,10 @@
 
         <!-- Search -->
         <form method="GET" class="mb-4">
-            <input name="q" value="{{ $q }}" placeholder="Search users by name, email, or role…"
+            <input name="q" value="{{ old('q', $q) }}" placeholder="Search users by name, email, or role…"
                    class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
         </form>
 
-        <!-- Tabs (optional simplified) -->
-        <div class="mb-3 flex gap-2">
-            <span class="px-3 py-1.5 rounded-lg bg-gray-100 text-sm">All Users</span>
-        </div>
-
-        <!-- Table -->
         <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -72,16 +78,12 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-end gap-2">
-                                        <button @click="openEdit(@js($u), @js($u->roles->pluck('name')), @js($u->assignedEvents->pluck('id')))"
-                                                class="rounded-lg border border-gray-300 px-3 py-1.5 text-xs hover:bg-gray-50">
+                                        <button @click="openEdit(@js($u), @js($u->roles->pluck('name')), @js($u->assignedEvents->pluck('id')))">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
-                                        <form method="POST" action="{{ route('users.destroy', $u) }}"
-                                              onsubmit="return confirm('Delete this user?')">
+                                        <form method="POST" action="{{ route('users.destroy', $u) }}" onsubmit="return confirm('Delete this user?')">
                                             @csrf @method('DELETE')
-                                            <button class="rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-red-600 hover:bg-gray-50">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
+                                            <button class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
@@ -110,55 +112,51 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Username</label>
-                            <input name="username" x-model="form.username" required
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="username" value="{{ old('username') }}" x-model="form.username" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('username')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input name="email" type="email" x-model="form.email" required
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="email" type="email" value="{{ old('email') }}" x-model="form.email" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700">First Name</label>
-                            <input name="first_name" x-model="form.first_name"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="first_name" value="{{ old('first_name') }}" x-model="form.first_name" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('first_name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Last Name</label>
-                            <input name="last_name" x-model="form.last_name"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="last_name" value="{{ old('last_name') }}" x-model="form.last_name" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('last_name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Phone</label>
-                            <input name="phone" x-model="form.phone"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="phone" value="{{ old('phone') }}" x-model="form.phone" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('phone')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Status</label>
-                            <select name="status" x-model="form.status"
-                                    class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                            <select name="status" x-model="form.status" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                                <option value="active" @selected(old('status') === 'active')>Active</option>
+                                <option value="inactive" @selected(old('status') === 'inactive')>Inactive</option>
                             </select>
+                            @error('status')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Password</label>
-                            <input :required="mode==='create'" name="password" type="password"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input :required="mode==='create'" name="password" type="password" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('password')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                            <input :required="mode==='create'" name="password_confirmation" type="password"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input :required="mode==='create'" name="password_confirmation" type="password" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('password_confirmation')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Vehicle Code</label>
-                            <input name="vehicle_code" x-model="form.vehicle_code"
-                                   class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            <input name="vehicle_code" value="{{ old('vehicle_code') }}" x-model="form.vehicle_code" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('vehicle_code')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                     </div>
 
@@ -168,7 +166,7 @@
                             <div class="space-y-2">
                                 @foreach($roles as $role)
                                     <label class="flex items-center gap-2 text-sm">
-                                        <input type="checkbox" name="roles[]" :checked="form.roles.includes('{{ $role }}')" value="{{ $role }}">
+                                        <input type="checkbox" name="roles[]" value="{{ $role }}" {{ in_array($role, old('roles', [])) ? 'checked' : '' }}>
                                         <span>{{ $role }}</span>
                                     </label>
                                 @endforeach
@@ -180,7 +178,7 @@
                             <div class="max-h-56 overflow-y-auto space-y-2">
                                 @foreach($events as $e)
                                     <label class="flex items-center gap-2 text-sm">
-                                        <input type="checkbox" name="assigned_events[]" :checked="form.assigned_events.includes({{ $e->id }})" value="{{ $e->id }}">
+                                        <input type="checkbox" name="assigned_events[]" value="{{ $e->id }}" {{ in_array($e->id, old('assigned_events', [])) ? 'checked' : '' }}>
                                         <span>{{ $e->title }}</span>
                                     </label>
                                 @endforeach
@@ -197,9 +195,7 @@
                 </form>
             </div>
         </div>
-
     </div>
-
     <script>
         function usersPage() {
             return {
