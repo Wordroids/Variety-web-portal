@@ -13,6 +13,7 @@ class UserService
         return DB::transaction(function () use ($data) {
             $user = User::create([
                 'username'     => $data['username'],
+                'name'         => $data['username'] ?? null,
                 'first_name'   => $data['first_name'] ?? null,
                 'last_name'    => $data['last_name'] ?? null,
                 'email'        => $data['email'],
