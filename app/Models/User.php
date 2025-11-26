@@ -35,6 +35,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'event_admin')
+            ->withTimestamps();
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? '')) ?: $this->username;
