@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventParticipantController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+    Route::resource('passwords', PasswordController::class)->only('index', 'update');
 
     Route::post('attachments', function (Request $request) {
         $request->validate([

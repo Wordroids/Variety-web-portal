@@ -3,7 +3,7 @@
     <!-- Toggle (mobile only) -->
     <button @click="open = !open"
         class="md:hidden fixed top-4 left-4 z-50 rounded-lg bg-red-600 p-2 text-white focus:outline-none focus:ring-2 focus:ring-red-400">
-        <i class="fa-solid fa-bars"></i>
+        <i class="w-5 fa-solid fa-bars"></i>
     </button>
 
     <!-- Overlay -->
@@ -43,7 +43,7 @@
                             <a href="{{ route('dashboard') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('dashboard') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                                <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                                <i class="w-5 fa-solid fa-chart-line w-5 text-center"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
@@ -51,7 +51,7 @@
                             <a href="{{ route('events.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('events.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                                <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                                <i class="w-5 fa-solid fa-calendar-days w-5 text-center"></i>
                                 <span>Events</span>
                             </a>
                         </li>
@@ -74,7 +74,7 @@
                                     <a href="{{ route('users.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
                       hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
-                                        <i class="fa-solid fa-users-gear text-gray-700"></i>
+                                        <i class="w-5 fa-solid fa-users-gear text-gray-700"></i>
                                         <span>User Management</span>
                                     </a>
                                 </li>
@@ -84,7 +84,7 @@
                                     <a href="{{ route('roles.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
                       hover:bg-gray-100 {{ request()->routeIs('roles.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
-                                        <i class="fa-solid fa-shield-halved text-gray-700"></i>
+                                        <i class="w-5 fa-solid fa-shield-halved text-gray-700"></i>
                                         <span>Roles</span>
                                     </a>
                                 </li>
@@ -94,8 +94,17 @@
                                     <a href="{{ route('permissions.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
                       hover:bg-gray-100 {{ request()->routeIs('permissions.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
-                                        <i class="fa-solid fa-key text-gray-700"></i>
+                                        <i class="w-5 fa-solid fa-key text-gray-700"></i>
                                         <span>Permissions</span>
+                                    </a>
+                                </li>
+
+                                <!-- Passwords -->
+                                <li>
+                                    <a href="{{ route('passwords.index') }}"
+                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-gray-100 {{ request()->routeIs('passwords.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
+                                        <i class="w-5 fa-solid fa-asterisk text-gray-700"></i>
+                                        <span>Passwords</span>
                                     </a>
                                 </li>
                             </ul>
@@ -106,7 +115,7 @@
                             <a href="#"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('settings.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                                <i class="fa-solid fa-gear w-5 text-center"></i>
+                                <i class="w-5 fa-solid fa-gear text-center"></i>
                                 <span>Settings</span>
                             </a>
                         </li>
