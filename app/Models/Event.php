@@ -30,4 +30,19 @@ class Event extends Model
     {
         return $this->hasMany(EventParticipant::class);
     }
+
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'event_admin')
+            ->withTimestamps();
+    }
+
+    public function isAdmin(User $user)
+    {
+        if($user->hasRole('Super Admin')){
+            return true;
+        };
+
+        return $this->admins()->where('user_id', $user->id)->exists();
+    }
 }

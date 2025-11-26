@@ -47,6 +47,7 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        @can('view events')
                         <li>
                             <a href="{{ route('events.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
@@ -55,9 +56,11 @@
                                 <span>Events</span>
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
 
+                @role("Super Admin")
                 <!-- Management -->
                 <div>
                     <h3 class="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">Management</h3>
@@ -121,6 +124,7 @@
                         </li>
                     </ul>
                 </div>
+                @endrole
             </nav>
         </div>
 
