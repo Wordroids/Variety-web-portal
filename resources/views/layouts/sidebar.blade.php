@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<div x-data="{ open: false }" class="relative">
+<div x-data="{ open: false }" class=" fixed">
     <!-- Toggle (mobile only) -->
     <button @click="open = !open"
         class="md:hidden fixed top-4 left-4 z-50 rounded-lg bg-red-600 p-2 text-white focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -129,14 +129,27 @@
         </div>
 
         <!-- Bottom Section -->
-        <div class="flex items-center space-x-3 border-t border-gray-200 pt-4 mt-4">
-            <div class="h-10 w-10 flex items-center justify-center rounded-full bg-red-600 text-white font-semibold">
-                SJ
+        <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 flex items-center justify-center rounded-full bg-red-600 text-white font-semibold">
+                    SJ
+                </div>
+                <div>
+                    <p class="font-medium text-gray-900 capitalize">{{ Auth::user()->name }}</p>
+                    <p class="text-sm text-gray-500">Administrator</p>
+                </div>
             </div>
-            <div>
-                <p class="font-medium text-gray-900 capitalize">{{ Auth::user()->name }}</p>
-                <p class="text-sm text-gray-500">Administrator</p>
-            </div>
+
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <button
+                    class="w-full mt-4 flex items-center gap-3 px-3 py-2 rounded-lg 
+                   text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                    <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
+
     </aside>
 </div>
