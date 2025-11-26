@@ -61,6 +61,39 @@ class EventPolicy
     }
 
     /**
+     * Determine whether the user can import participants to the event
+     * from excel file.
+     */
+    public function importParticipant(User $user, Event $event): bool
+    {
+        return $event->isAdmin($user) && $user->can('manage participants');
+    }
+
+    /**
+     * Determine whether the user can add participants to the event.
+     */
+    public function createParticipant(User $user, Event $event): bool
+    {
+        return $event->isAdmin($user) && $user->can('manage participants');
+    }
+
+    /**
+     * Determine whether the user can update participants in the event.
+     */
+    public function updateParticipant(User $user, Event $event): bool
+    {
+        return $event->isAdmin($user) && $user->can('manage participants');
+    }
+
+    /**
+     * Determine whether the user can remove participants from the event.
+     */
+    public function deleteParticipant(User $user, Event $event): bool
+    {
+        return $event->isAdmin($user) && $user->can('manage participants');
+    }
+
+    /**
      * Determine whether the user can restore the model.
      */
     public function restore(User $user, Event $event): bool

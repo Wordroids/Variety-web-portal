@@ -53,7 +53,7 @@
                     @click.prevent="toggleParticipants()"
                     class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-users"></i>
-                    <span x-text="showParticipants ? 'Hide Participants' : 'Manage Participants'"></span>
+                    <span x-text="showParticipants ? 'Hide Participants' : 'View Participants'"></span>
                 </a>
 
                 <a href="{{ route('events.edit', $event) }}"
@@ -135,6 +135,7 @@
                         Event Participants ({{ $event->participants->count() }})
                     </h2>
 
+                    @can('manage participants')
                     <div class="flex gap-3">
                         <form method="POST" action="{{ route('participants.import', $event) }}" enctype="multipart/form-data" class="flex items-center gap-2">
                             @csrf
@@ -152,6 +153,7 @@
                             <i class="fa-solid fa-user-plus"></i> Add Participant
                         </button>
                     </div>
+                    @endcan
                 </div>
 
                 <div class="overflow-x-auto">
@@ -185,6 +187,8 @@
                                             {{ $p->status }}
                                         </span>
                                     </td>
+                                    
+                                    @can('manage participants')
                                     <td class="px-4 py-2 text-right flex justify-end gap-2">
                                         <button type="button"
                                             @click="openEditModal({ 
@@ -208,6 +212,11 @@
                                             </button>
                                         </form>
                                     </td>
+                                    @else
+                                    <td class="px-4 py-2 text-right flex justify-end gap-2">
+                                        -
+                                    </td>
+                                    @endcan
                                 </tr>
                             @empty
                                 <tr>
