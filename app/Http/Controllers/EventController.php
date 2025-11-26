@@ -9,6 +9,7 @@ use App\Models\EventDay;
 use App\Models\EventDayLocation;
 use App\Models\EventDayResource;
 use App\Services\EventDeletionService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,19 +21,33 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::latest()
-            ->get();
+        $user = Auth::user();
+
+        if($user->hasRole('Super Admin')){            
+            $events = Event::latest()
+                ->get();
+        } else {
+            $events = $user->events()->latest()->get();
+        }
 
         return view('pages.events.index', compact('events'));
     }
 
     public function create()
     {
+        if(Auth::user()->cannot('create', Event::class)){
+            abort(403);
+        }
+
         return view('pages.events.create');
     }
 
     public function store(StoreEventRequest $request)
     {
+        if(Auth::user()->cannot('create', Event::class)){
+            abort(403);
+        }
+
         $data = $request->validated();
 
         DB::transaction(function () use ($data, $request) {
@@ -47,6 +62,9 @@ class EventController extends Controller
                 'end_date'           => $data['end_date'],
                 'sponsor_image_path' => $sponsor_image_path
             ]);
+
+            // Add user as an admin of the event
+            $event->admins()->syncWithoutDetaching($request->user()->id);
 
             // Days
             foreach (($data['days'] ?? []) as $i => $dayData) {
@@ -106,6 +124,10 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
+        if(Auth::user()->cannot('view', $event)){
+            abort(403);
+        }
+
         // Load all relationships in correct order
         $event->load([
             'days.locations',
@@ -152,6 +174,10 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
+        if(Auth::user()->cannot('update', $event)){
+            abort(403);
+        }
+
         $event->load([
             'days.locations',
             'days.resources',
@@ -352,6 +378,10 @@ class EventController extends Controller
      */
     public function destroy(Event $event, EventDeletionService $deleter)
     {
+        if(Auth::user()->cannot('delete', $event)){
+            abort(403);
+        }
+
         try {
             DB::transaction(fn() => $deleter->delete($event));
     

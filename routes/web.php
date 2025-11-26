@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\PasswordController;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     //Events
     Route::resource('events', EventController::class);
+    Route::resource('events.admins', EventAdminController::class)->only('index', 'store', 'destroy');
 
     // Event Participants 
     Route::prefix('events/{event}')->group(function () {

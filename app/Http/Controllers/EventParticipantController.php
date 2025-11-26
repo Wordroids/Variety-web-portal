@@ -10,6 +10,7 @@ use App\Models\EventParticipant;
 use App\Services\EventParticipantService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -20,14 +21,20 @@ final class EventParticipantController extends Controller
 {
     public function store(StoreEventParticipantRequest $request, Event $event, EventParticipantService $service): RedirectResponse
     {
+        if(Auth::user()->cannot('createParticipants', Event::class)){
+            abort(403);
+        }
 
         $service->create($event, $request->validated());
-
         return back()->with('success', 'Participant added successfully.');
     }
 
     public function destroy(Event $event, EventParticipant $participant): RedirectResponse
     {
+        if(Auth::user()->cannot('deleteParticipants', Event::class)){
+            abort(403);
+        }
+
         abort_unless($participant->event_id === $event->id, 403);
 
         $participant->delete();
@@ -78,6 +85,10 @@ final class EventParticipantController extends Controller
 
     public function update(Request $request, Event $event, EventParticipant $participant)
     {
+        if(Auth::user()->cannot('updateParticipants', Event::class)){
+            abort(403);
+        }
+
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -96,6 +107,9 @@ final class EventParticipantController extends Controller
      */
     public function import(Request $request, Event $event): RedirectResponse
     {
+        if(Auth::user()->cannot('importParticipants', Event::class)){
+            abort(403);
+        }
 
         $request->validate([
             'file' => 'required|mimes:xlsx,xls', // max 5 MB
