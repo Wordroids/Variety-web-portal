@@ -56,6 +56,14 @@
                     <span x-text="showParticipants ? 'Hide Participants' : 'View Participants'"></span>
                 </a>
 
+                @can('SUPERADMIN')
+                <a href="{{ route('events.admins.index', $event) }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>Admins</span>
+                </a>
+                @endcan
+
                 <a href="{{ route('events.edit', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-pen"></i> Edit Event
