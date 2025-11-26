@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_sponsors', function (Blueprint $table) {
+        Schema::create('passwords', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('logo_url')->nullable();
-            $table->unsignedSmallInteger('sort_order')->default(0);
+            $table->foreignId("role_id")->unique()->constrained()->cascadeOnDelete();
+            $table->string("password");
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_sponsors');
+        Schema::dropIfExists('passwords');
     }
 };
