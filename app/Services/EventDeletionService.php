@@ -9,7 +9,7 @@ class EventDeletionService
 {
     public function delete(Event $event): void
     {
-        $event->load(['days.locations', 'days.details', 'days.resources', 'sponsors']);
+        $event->load(['days.locations', 'days.resources']);
 
         foreach ($event->days as $day) {
             // Remove images
@@ -18,12 +18,10 @@ class EventDeletionService
             }
 
             $day->locations()->delete();
-            $day->details()->delete();
             $day->resources()->delete();
         }
 
         $event->days()->delete();
-        $event->sponsors()->delete();
         $event->delete();
     }
 }
