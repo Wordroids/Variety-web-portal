@@ -3,27 +3,27 @@
 
         <!-- Success Message -->
         @if (session('success'))
-            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
-                {{ session('success') }}
-            </div>
+        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+            {{ session('success') }}
+        </div>
         @endif
 
         <!-- Error Message -->
         @if ($errors->any())
-            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
-                <ul class="list-disc pl-5 text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+            <ul class="list-disc pl-5 text-sm">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
 
             <button @click="openCreate()"
-                    class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                 <i class="fa-solid fa-user-plus"></i> Add User
             </button>
         </div>
@@ -31,7 +31,7 @@
         <!-- Search -->
         <form method="GET" class="mb-4">
             <input name="q" value="{{ old('q', $q) }}" placeholder="Search users by name, email, or role…"
-                   class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
         </form>
 
         <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
@@ -50,46 +50,48 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($users as $u)
-                            <tr>
-                                <td class="px-4 py-3">
-                                    <div class="font-semibold text-gray-900">{{ $u->full_name }}</div>
-                                    <div class="text-xs text-gray-500">{{ $u->email }}</div>
-                                </td>
-                                <td class="px-4 py-3">{{ $u->username }}</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex flex-wrap gap-1">
-                                        @foreach($u->roles as $r)
-                                            <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs">{{ $r->name }}</span>
-                                        @endforeach
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div>{{ $u->phone ?? '—' }}</div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="max-w-[260px] truncate">
-                                        {{ $u->assignedEvents->pluck('title')->join(', ') ?: '—' }}
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-0.5 rounded-full text-xs {{ $u->status === 'active' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700' }}">
-                                        {{ $u->status }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex justify-end gap-2">
-                                        <button @click="openEdit(@js($u), @js($u->roles->pluck('name')), @js($u->assignedEvents->pluck('id')))">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <form method="POST" action="{{ route('users.destroy', $u) }}" onsubmit="return confirm('Delete this user?')">
-                                            @csrf @method('DELETE')
-                                            <button class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td class="px-4 py-3">
+                                <div class="font-semibold text-gray-900">{{ $u->full_name }}</div>
+                                <div class="text-xs text-gray-500">{{ $u->email }}</div>
+                            </td>
+                            <td class="px-4 py-3">{{ $u->username }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach($u->roles as $r)
+                                    <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs">{{ $r->name }}</span>
+                                    @endforeach
+                                </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div>{{ $u->phone ?? '—' }}</div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="max-w-[260px] truncate">
+                                    {{ $u->assignedEvents->pluck('title')->join(', ') ?: '—' }}
+                                </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-0.5 rounded-full text-xs {{ $u->status === 'active' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700' }}">
+                                    {{ $u->status }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex justify-end gap-2">
+                                    <button @click="openEdit(@js($u), @js($u->roles->pluck('name')), @js($u->assignedEvents->pluck('id')))">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <form method="POST" action="{{ route('users.destroy', $u) }}" onsubmit="return confirm('Delete this user?')">
+                                        @csrf @method('DELETE')
+                                        <button class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                         @empty
-                            <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No users found.</td></tr>
+                        <tr>
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">No users found.</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -138,8 +140,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Status</label>
                             <select name="status" x-model="form.status" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                <option value="active" @selected(old('status') === 'active')>Active</option>
-                                <option value="inactive" @selected(old('status') === 'inactive')>Inactive</option>
+                                <option value="active" @selected(old('status')==='active' )>Active</option>
+                                <option value="inactive" @selected(old('status')==='inactive' )>Inactive</option>
                             </select>
                             @error('status')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -165,25 +167,36 @@
                             <div class="font-semibold text-gray-900 mb-2">Roles</div>
                             <div class="space-y-2">
                                 @foreach($roles as $role)
-                                    <label class="flex items-center gap-2 text-sm">
-                                        <input type="checkbox" name="roles[]" value="{{ $role }}" {{ in_array($role, old('roles', [])) ? 'checked' : '' }}>
-                                        <span>{{ $role }}</span>
-                                    </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input
+                                        type="checkbox"
+                                        name="roles[]"
+                                        :value="'{{ $role }}'"
+                                        x-model="form.roles">
+                                    <span>{{ $role }}</span>
+                                </label>
                                 @endforeach
+
                             </div>
                         </div>
 
                         <div class="rounded-xl border border-gray-200 p-4">
                             <div class="font-semibold text-gray-900 mb-2">Assigned Events</div>
+
                             <div class="max-h-56 overflow-y-auto space-y-2">
                                 @foreach($events as $e)
-                                    <label class="flex items-center gap-2 text-sm">
-                                        <input type="checkbox" name="assigned_events[]" value="{{ $e->id }}" {{ in_array($e->id, old('assigned_events', [])) ? 'checked' : '' }}>
-                                        <span>{{ $e->title }}</span>
-                                    </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input
+                                        type="checkbox"
+                                        name="assigned_events[]"
+                                        :value="{{ $e->id }}"
+                                        x-model="form.assigned_events">
+                                    <span>{{ $e->title }}</span>
+                                </label>
                                 @endforeach
                             </div>
                         </div>
+
                     </div>
 
                     <div class="mt-6 flex justify-end gap-2">
@@ -203,14 +216,30 @@
                 mode: 'create',
                 updateAction: '',
                 form: {
-                    username: '', email: '', first_name: '', last_name: '',
-                    phone: '', status: 'active', vehicle_code: '',
-                    roles: [], assigned_events: []
+                    username: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    phone: '',
+                    status: 'active',
+                    vehicle_code: '',
+                    roles: [],
+                    assigned_events: []
                 },
                 openCreate() {
                     this.mode = 'create';
                     this.updateAction = '';
-                    this.form = { username:'', email:'', first_name:'', last_name:'', phone:'', status:'active', vehicle_code:'', roles:[], assigned_events:[] };
+                    this.form = {
+                        username: '',
+                        email: '',
+                        first_name: '',
+                        last_name: '',
+                        phone: '',
+                        status: 'active',
+                        vehicle_code: '',
+                        roles: [],
+                        assigned_events: []
+                    };
                     this.open = true;
                 },
                 openEdit(user, roles, eventIds) {
@@ -229,7 +258,9 @@
                     };
                     this.open = true;
                 },
-                close(){ this.open = false; }
+                close() {
+                    this.open = false;
+                }
             }
         }
     </script>

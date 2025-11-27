@@ -66,6 +66,9 @@ class EventController extends Controller
             // Add user as an admin of the event
             $event->admins()->syncWithoutDetaching($request->user()->id);
 
+            $user = Auth::user();
+            $user->assignedEvents()->sync($event->id ?? []);
+
             // Days
             foreach (($data['days'] ?? []) as $i => $dayData) {
                 $imagePath = null;

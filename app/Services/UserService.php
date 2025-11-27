@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,12 @@ class UserService
             }
 
             $user->assignedEvents()->sync($data['assigned_events'] ?? []);
+            foreach ($data['assigned_events'] ?? [] as $eventId) {
+                $event = \App\Models\Event::find($eventId);
+                if ($event) {
+                    $event->admins()->syncWithoutDetaching($user->id);
+                }
+            }
 
             return $user;
         });
@@ -57,7 +64,25 @@ class UserService
             }
 
             if (array_key_exists('assigned_events', $data)) {
-                $user->assignedEvents()->sync($data['assigned_events'] ?? []);
+
+                $eventIds = $data['assigned_events'] ?? [];
+
+                // Sync user → events
+                $user->assignedEvents()->sync($eventIds);
+
+                // Sync each event → admins (inverse relationship)
+                foreach ($eventIds as $eventId) {
+                    Event::find($eventId)?->admins()->syncWithoutDetaching([$user->id]);
+                }
+            } else {
+
+                // No assigned_events key → remove all
+                $user->assignedEvents()->detach();
+
+                // Remove from event_admin pivot fully
+                foreach ($user->assignedEvents as $event) {
+                    $event->admins()->detach($user->id);
+                }
             }
 
             return $user;

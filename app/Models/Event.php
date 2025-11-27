@@ -33,7 +33,7 @@ class Event extends Model
 
     public function admins()
     {
-        return $this->belongsToMany(User::class, 'event_admin')
+        return $this->belongsToMany(User::class, 'event_admin', 'event_id', 'user_id')
             ->withTimestamps();
     }
 
