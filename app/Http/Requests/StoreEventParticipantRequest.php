@@ -10,7 +10,7 @@ final class StoreEventParticipantRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create event participants') ?? true; // adjust as needed
+        return $this->user()?->can('manage participants') ?? true; // adjust as needed
     }
 
     public function rules(): array
