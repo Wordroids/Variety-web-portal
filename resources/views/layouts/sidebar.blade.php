@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<div x-data="{ open: false }" class=" fixed">
+<div x-data="{ open: false }" class="relative">
     <!-- Toggle (mobile only) -->
     <button @click="open = !open"
         class="md:hidden fixed top-4 left-4 z-50 rounded-lg bg-red-600 p-2 text-white focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -43,7 +43,7 @@
                             <a href="{{ route('dashboard') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('dashboard') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                                <i class="w-5 fa-solid fa-chart-line w-5 text-center"></i>
+                                <i class="fa-solid fa-chart-line w-5 text-center"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
@@ -52,11 +52,19 @@
                             <a href="{{ route('events.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('events.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                                <i class="w-5 fa-solid fa-calendar-days w-5 text-center"></i>
+                                <i class="fa-solid fa-calendar-days w-5 text-center"></i>
                                 <span>Events</span>
                             </a>
                         </li>
                         @endcan
+                        <li>
+                            <a href="{{ route('notifications.index') }}"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2
+                                   {{ request()->routeIs('notifications.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                                <i class="fa-solid fa-bell w-5 text-center"></i>
+                                <span>Notifications</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

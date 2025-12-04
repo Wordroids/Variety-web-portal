@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('passwords', PasswordController::class)->only('index', 'update');
+    Route::resource('notifications', NotificationController::class);
 
     Route::post('attachments', function (Request $request) {
         $request->validate([
