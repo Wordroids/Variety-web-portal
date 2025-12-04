@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6" x-data="notificationIndex()">
+    <div class="max-w-7xl mx-auto p-6" x-data="notificationData()">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -13,7 +13,7 @@
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Import
                 </a>
 
-                <a href="{{ route('notifications.create') }}"
+                <a href="#" @click="alert('show popup here')"
                    class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-plus"></i>
                     Add Notification
@@ -37,7 +37,7 @@
                         <tr class="text-left text-gray-600">
                             <th class="px-4 py-2 font-medium">Message</th>
                             <th class="px-4 py-2 font-medium">Target Type</th>
-                            <th class="px-4 py-2 font-medium">Target</th>
+                            <th class="px-4 py-2 font-medium">Target(s)</th>
                             <th class="px-4 py-2 font-medium">Status</th>
                             <th class="px-4 py-2 font-medium">Date</th>
                             <th class="px-4 py-2 font-medium text-right">Actions</th>
@@ -67,11 +67,11 @@
                             {{-- Target --}}
                             <td class="px-4 py-3 text-ellipsis">
                                 @if($n->target_type == 'event')
-                                    {{$n->event->title}}
+                                    {{ $n->events->pluck('title')->join(', ') ?? '-' }}
                                 @elseif($n->target_type == 'role')
-                                    {{$n->role->name}}
+                                    {{ $n->roles->pluck('name')->join(', ') ?? '-' }}
                                 @elseif($n->target_type == 'user')
-                                    {{$n->user->name}}
+                                    {{ $n->users->pluck('name')->join(', ') ?? '-' }}
                                 @else
                                     Not Set
                                 @endif
@@ -95,10 +95,6 @@
                             <td class="px-4 py-3 {{ $n->status == 'scheduled' ? 'text-yellow-600' : ''}}">{{ $n->created_at }}</td>
 
                             <td class="px-4 py-3 text-right flex justify-end gap-2">
-                                <button
-                                    class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                </button>
                                 <button
                                     class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                     <i class="fa-solid fa-pen"></i>
@@ -128,7 +124,7 @@
     </div>
 
     <script>
-        function notificationIndex() {
+        function notificationData() {
             return {
                 search: '',
                 tab: 'active',

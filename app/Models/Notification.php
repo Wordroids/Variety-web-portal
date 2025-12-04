@@ -10,24 +10,21 @@ class Notification extends Model
         'title',
         'message',
         'target_type',
-        'event_id',
-        'role_id',
-        'user_id',
         'status',
     ];
 
-    public function event()
+    public function events()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsToMany(Event::class, 'notification_event');
     }
 
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class, 'notification_role');
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'notification_user');
     }
 }

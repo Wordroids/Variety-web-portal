@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('notification_role', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('message')->nullable();
-            $table->enum('target_type', ['event', 'role', 'user']);
-            $table->enum('status', ['draft', 'scheduled', 'sent'])->default('draft');
+            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('notification_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+            $table->unique(['role_id', 'notification_id']);
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('notification_role');
     }
 };
