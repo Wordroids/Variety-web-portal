@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Notification;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -12,8 +15,11 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::paginate();
-        return view('pages.notifications.index', compact('notifications'));
+        $notifications = Notification::with('events', 'roles', 'users')->paginate();
+        $events = Event::all();
+        $roles = Role::all();
+        $users = User::all();
+        return view('pages.notifications.index', compact('notifications', 'events', 'roles', 'users'));
     }
 
     /**

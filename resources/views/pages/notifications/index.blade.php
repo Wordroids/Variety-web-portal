@@ -6,18 +6,15 @@
                 <h1 class="text-2xl font-bold text-gray-900">Notifications</h1>
                 <p class="text-gray-500 text-sm">Send notifications to mobile app users</p>
             </div>
-
-            <div class="space-x-2">                
+            <div class="space-x-2">
                 <a href="#"
-                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                   class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Import
                 </a>
-
-                <a href="#" @click="alert('show popup here')"
-                   class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                    <i class="fa-solid fa-plus"></i>
-                    Add Notification
-                </a>
+                <button @click="showCreateNotification()"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                    <i class="fa-solid fa-plus"></i> Add Notification
+                </button>
             </div>
         </div>
 
@@ -30,6 +27,7 @@
             </div>
         </div>
 
+        <!-- Table -->
         <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -44,96 +42,127 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($notifications as $n)
-                        <tr>
-                            {{-- Title --}}
-                            <td class="px-4 py-3 text-ellipsis">
-                                {{ $n->title }}
-                            </td>
+                        <!-- Alpine template -->
+                        <template x-for="n in notifications" :key="n.id">
+                            <tr>
+                                <!-- Title / Message -->
+                                <td class="px-4 py-3 truncate max-w-xs" :title="n.title">
+                                    <span x-text="n.title"></span>
+                                </td>
 
-                            {{-- Target Type --}}
-                            <td class="px-4 py-3">
-                                @if($n->target_type == 'event')
-                                    <div class="p-1 rounded-full bg-blue-200 text-blue-800 font-semibold text-xs w-12 text-center">Event</div>
-                                @elseif($n->target_type == 'role')
-                                    <div class="p-1 rounded-full bg-purple-200 text-purple-800 font-semibold text-xs w-12 text-center">Role</div>
-                                @elseif($n->target_type == 'user')
-                                    <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-12 text-center">User</div>
-                                @else
-                                    <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-12 text-center">Unknown</div>
-                                @endif
-                            </td>
+                                <!-- Target Type Badge -->
+                                <td class="px-4 py-3">
+                                    <template x-if="n.target_type === 'event'">
+                                        <div class="p-1 rounded-full bg-blue-200 text-blue-800 font-semibold text-xs w-12 text-center">Event</div>
+                                    </template>
+                                    <template x-if="n.target_type === 'role'">
+                                        <div class="p-1 rounded-full bg-purple-200 text-purple-800 font-semibold text-xs w-12 text-center">Role</div>
+                                    </template>
+                                    <template x-if="n.target_type === 'user'">
+                                        <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-12 text-center">User</div>
+                                    </template>
+                                    <template x-if="!['event','role','user'].includes(n.target_type)">
+                                        <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-12 text-center">Unknown</div>
+                                    </template>
+                                </td>
 
-                            {{-- Target --}}
-                            <td class="px-4 py-3 text-ellipsis">
-                                @if($n->target_type == 'event')
-                                    {{ $n->events->pluck('title')->join(', ') ?? '-' }}
-                                @elseif($n->target_type == 'role')
-                                    {{ $n->roles->pluck('name')->join(', ') ?? '-' }}
-                                @elseif($n->target_type == 'user')
-                                    {{ $n->users->pluck('name')->join(', ') ?? '-' }}
-                                @else
-                                    Not Set
-                                @endif
-                            </td>
+                                <!-- Targets -->
+                                <td class="px-4 py-3 truncate max-w-xs"
+                                    x-text="targetNames(n)"
+                                    :title="targetNames(n)"></td>
 
-                            {{-- Status --}}
-                            <td class="px-4 py-3">
-                                @if($n->status == 'draft')
-                                    <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-20 text-center">Draft</div>
-                                @elseif($n->status == 'scheduled')
-                                    <div class="p-1 rounded-full bg-yellow-200 text-yellow-800 font-semibold text-xs w-20 text-center">Scheduled</div>
-                                @elseif($n->status == 'sent')
-                                    <div class="p-1 rounded-full bg-red-600 text-white font-semibold text-xs w-20 text-center">Sent</div>
-                                @else
-                                    <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-20 text-center">Unknown</div>
-                                @endif
-                            </td>
+                                <!-- Status Badge -->
+                                <td class="px-4 py-3">
+                                    <template x-if="n.status === 'draft'">
+                                        <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-20 text-center">Draft</div>
+                                    </template>
+                                    <template x-if="n.status === 'scheduled'">
+                                        <div class="p-1 rounded-full bg-yellow-200 text-yellow-800 font-semibold text-xs w-20 text-center">Scheduled</div>
+                                    </template>
+                                    <template x-if="n.status === 'sent'">
+                                        <div class="p-1 rounded-full bg-red-600 text-white font-semibold text-xs w-20 text-center">Sent</div>
+                                    </template>
+                                    <template x-if="!['draft','scheduled','sent'].includes(n.status)">
+                                        <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-20 text-center">Unknown</div>
+                                    </template>
+                                </td>
 
+                                <!-- Date -->
+                                <td class="px-4 py-3"
+                                    :class="{ 'text-yellow-600': n.status === 'scheduled' }"
+                                    x-text="formatDate(n.created_at)"></td>
 
-                            {{-- Date --}}
-                            <td class="px-4 py-3 {{ $n->status == 'scheduled' ? 'text-yellow-600' : ''}}">{{ $n->created_at }}</td>
+                                <!-- Actions -->
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <button class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <form :action="`${baseUrl}/notifications/${n.id}`" method="POST"
+                                              onsubmit="return confirm('Delete this notification?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="border border-gray-300 px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-gray-50">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
 
-                            <td class="px-4 py-3 text-right flex justify-end gap-2">
-                                <button
-                                    class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <form method="POST" action="{{ route('notifications.destroy', $n) }}" onsubmit="return confirm('Delete this notification?')">
-                                    @csrf @method('DELETE')
-                                    <button class="border border-gray-300 px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-gray-50">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">No notifications found.</td>
-                        </tr>
-                        @endforelse
+                        <!-- Empty state -->
+                        <template x-if="notifications.length === 0">
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                    No notifications found.
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
 
+            <!-- Pagination would normally be server-rendered, keep it if you still use Laravel pagination -->
             <div class="px-4 py-3 border-t">
                 {{ $notifications->links() }}
             </div>
         </div>
-
     </div>
 
     <script>
         function notificationData() {
-            return {
-                search: '',
-                tab: 'active',
-                statuses: ['All','Active','Draft','Completed','Cancelled'],
+            const rawNotifications = @json($notifications->items()); // only the current page items
 
-                matches(title, desc, status) {
-                    const term = this.search.toLowerCase();
-                    const textMatch = title.includes(term) || desc.includes(term);
-                    return textMatch;
+            return {
+                notifications: rawNotifications,
+                search: '',
+                baseUrl: '{{ url('/') }}',   // for delete form action
+
+                targetNames(n) {
+                    if (n.target_type === 'event' && n.events && n.events.length)
+                        return n.events.map(e => e.title).join(', ');
+                    if (n.target_type === 'role' && n.roles && n.roles.length)
+                        return n.roles.map(r => r.name).join(', ');
+                    if (n.target_type === 'user' && n.users && n.users.length)
+                        return n.users.map(u => u.name).join(', ');
+                    return '–';
+                },
+
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
+
+                showCreateNotification() {
+                    alert('Open create notification modal');
                 }
             }
         }
