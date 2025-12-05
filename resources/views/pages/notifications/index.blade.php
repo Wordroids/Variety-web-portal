@@ -1,5 +1,14 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-6" x-data="notificationData()">
+
+        <!-- Success Message -->
+        @if (session('success'))
+        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+            {{ session('success') }}
+        </div>
+        @endif
+
+
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
