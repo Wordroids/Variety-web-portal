@@ -134,7 +134,7 @@
             <div @click.outside="hideForm()" class="bg-white rounded-2xl w-full max-w-lg p-2">
                 <div class="flex justify-between items-start p-4">
                     <h2 class="text-lg font-semibold text-gray-900">Create Notification</h2>
-                    <button @click="hideForm"><i class="fa fa-close"></i></button>
+                    <button @click="hideForm()"><i class="fa fa-close"></i></button>
                 </div>
 
                 <div class="max-h-[550px] overflow-y-auto p-4">
