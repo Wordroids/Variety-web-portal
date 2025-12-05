@@ -11,6 +11,8 @@ class Notification extends Model
         'message',
         'target_type',
         'status',
+        'scheduled_at',
+        'sent_at',
     ];
 
     public function events()

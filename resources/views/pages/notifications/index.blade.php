@@ -130,7 +130,7 @@
         </div>
 
         <!-- Create Notification Modal -->
-        <div x-show="isFormShown" x-cloak class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+        <div x-show="isFormShown"  x-cloak class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
             <div @click.outside="hideForm()" class="bg-white rounded-2xl w-full max-w-lg p-2">
                 <div class="flex justify-between items-start p-4">
                     <h2 class="text-lg font-semibold text-gray-900">Create Notification</h2>
@@ -138,7 +138,7 @@
                 </div>
 
                 <div class="max-h-[550px] overflow-y-auto p-4">
-                    <form :action="'{{ route('notifications.store') }}'" method="POST">
+                    <form :action="'{{ route('notifications.store') }}'" method="POST" id="createNotificationForm">
                         @csrf
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Title</label>
@@ -179,6 +179,7 @@
                                     </label>
                                     @endforeach
                                 </div>
+                                @error('target_events')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -193,13 +194,14 @@
                                         <input
                                             class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
                                             type="checkbox"
-                                            name="target_events[]"
+                                            name="target_roles[]"
                                             :value="{{ $r->id }}"
                                             x-model="form.target_events">
                                         <span>{{ $r->name }}</span>
                                     </label>
                                     @endforeach
                                 </div>
+                                @error('target_roles')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -213,13 +215,14 @@
                                         <input
                                             class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
                                             type="checkbox"
-                                            name="target_events[]"
+                                            name="target_users[]"
                                             :value="{{ $u->id }}"
                                             x-model="form.target_events">
                                         <span>{{ $u->first_name }} {{ $u->last_name }} ({{ $u->name }})</span>
                                     </label>
                                     @endforeach
                                 </div>
+                                @error('target_users')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -238,12 +241,12 @@
                             <div class="mb-4 flex gap-4">
                                 <div class="w-2/3">                            
                                     <label class="block text-sm font-medium text-gray-700">Schedule Date</label>
-                                    <input type="date" placeholder="Select schedule date" x-model="form.schedule_date" name="schedule_date" value="{{ old('schedule_date') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                                    <input type="date" placeholder="Select schedule date" x-model="form.schedule_date" name="schedule_date" value="{{ old('schedule_date') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                                     @error('schedule_date')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                 </div>
                                 <div class="w-1/3">                            
                                     <label class="block text-sm font-medium text-gray-700">Time</label>
-                                    <input type="time" placeholder="Select schedule time" x-model="form.schedule_time" name="schedule_time" value="{{ old('schedule_time') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                                    <input type="time" placeholder="Select schedule time" x-model="form.schedule_time" name="schedule_time" value="{{ old('schedule_time') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                                     @error('schedule_time')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                 </div>
                             </div>
@@ -252,7 +255,7 @@
                 </div>
                 <div class="flex justify-end gap-2 p-4">
                     <button type="button" @click="hideForm()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50">Cancel</button>
-                    <button @click="console.log(form)" type="button" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                    <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                         <span>Create Notification</span>
                     </button>
                 </div>
@@ -270,17 +273,17 @@
                 baseUrl: '{{ url('/') }}',
 
                 form: {
-                    title: '',
-                    message: '',
-                    target_type: '',
-                    target_events: [],
-                    target_roles: [],
-                    target_users: [],
-                    status: 'draft',
-                    schedule_date: null,
-                    schedule_time: null,
+                    title: @js(old('title', '')),
+                    message: @js(old('message', '')),
+                    target_type: @js(old('target_type', '')),
+                    target_events: @js(old('target_events', [])),
+                    target_roles: @js(old('target_roles', [])),
+                    target_users: @js(old('target_users', [])),
+                    status: @js(old('status', '')),
+                    schedule_date: @js(old('schedule_date', null)),
+                    schedule_time: @js(old('schedule_time', null)),
                 },
-                isFormShown: false,
+                isFormShown: @js($errors->any()),
 
                 showForm() {
                     this.isFormShown = true;
