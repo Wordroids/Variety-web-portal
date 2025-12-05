@@ -11,7 +11,7 @@
                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Import
                 </a>
-                <button @click="showCreateNotification()"
+                <button @click="showForm()"
                         class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-plus"></i> Add Notification
                 </button>
@@ -42,7 +42,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <!-- Alpine template -->
                         <template x-for="n in notifications" :key="n.id">
                             <tr>
                                 <!-- Title / Message -->
@@ -129,6 +128,136 @@
                 {{ $notifications->links() }}
             </div>
         </div>
+
+        <!-- Create Notification Modal -->
+        <div x-show="isFormShown" x-cloak class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+            <div @click.outside="hideForm()" class="bg-white rounded-2xl w-full max-w-lg p-2">
+                <div class="flex justify-between items-start p-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Create Notification</h2>
+                    <button @click="hideForm"><i class="fa fa-close"></i></button>
+                </div>
+
+                <div class="max-h-[550px] overflow-y-auto p-4">
+                    <form :action="'{{ route('notifications.store') }}'" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Title</label>
+                            <input placeholder="Enter notification title" x-model="form.title" name="title" value="{{ old('title') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                            @error('title')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Message</label>
+                            <textarea placeholder="Enter notification message" x-model="form.message" name="message" value="{{ old('message') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                            </textarea>
+                            @error('message')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Target Type</label>
+                            <select placeholder="Select" x-model="form.target_type" name="target_type" value="{{ old('target_type') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                                <option value="" disabled>Select</option>
+                                <option value="event">Events</option>
+                                <option value="role">Roles</option>
+                                <option value="user">Users</option>
+                            </select>
+                            @error('target_type')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        {{-- Events --}}
+                        <template x-if="form.target_type == 'event'">
+                            <div class="mb-4">                            
+                                <label class="block text-sm font-medium text-gray-700">Select Events</label>
+                                <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
+                                    @foreach($events as $e)
+                                    <label class="flex items-center gap-2">
+                                        <input
+                                            class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
+                                            type="checkbox"
+                                            name="target_events[]"
+                                            :value="{{ $e->id }}"
+                                            x-model="form.target_events">
+                                        <span>{{ $e->title }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </template>
+
+
+                        {{-- Roles --}}
+                        <template x-if="form.target_type == 'role'">
+                            <div class="mb-4">                            
+                                <label class="block text-sm font-medium text-gray-700">Select Roles</label>
+                                <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
+                                    @foreach($roles as $r)
+                                    <label class="flex items-center gap-2">
+                                        <input
+                                            class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
+                                            type="checkbox"
+                                            name="target_events[]"
+                                            :value="{{ $r->id }}"
+                                            x-model="form.target_events">
+                                        <span>{{ $r->name }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- Users --}}
+                        <template x-if="form.target_type == 'user'">
+                            <div class="mb-4">                            
+                                <label class="block text-sm font-medium text-gray-700">Select Users</label>
+                                <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
+                                    @foreach($users as $u)
+                                    <label class="flex items-center gap-2">
+                                        <input
+                                            class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
+                                            type="checkbox"
+                                            name="target_events[]"
+                                            :value="{{ $u->id }}"
+                                            x-model="form.target_events">
+                                        <span>{{ $u->first_name }} {{ $u->last_name }} ({{ $u->name }})</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Status</label>
+                            <select placeholder="Select" x-model="form.status" name="status" value="{{ old('status') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                                <option value="" disabled>Select</option>
+                                <option value="draft">Save as draft</option>
+                                <option value="scheduled">Schedule for later</option>
+                                <option value="sent">Send now</option>
+                            </select>
+                            @error('status')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <template x-if="form.status == 'scheduled'">
+                            <div class="mb-4 flex gap-4">
+                                <div class="w-2/3">                            
+                                    <label class="block text-sm font-medium text-gray-700">Schedule Date</label>
+                                    <input type="date" placeholder="Select schedule date" x-model="form.schedule_date" name="schedule_date" value="{{ old('schedule_date') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                                    @error('schedule_date')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="w-1/3">                            
+                                    <label class="block text-sm font-medium text-gray-700">Time</label>
+                                    <input type="time" placeholder="Select schedule time" x-model="form.schedule_time" name="schedule_time" value="{{ old('schedule_time') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
+                                    @error('schedule_time')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                        </template>
+                    </form>
+                </div>
+                <div class="flex justify-end gap-2 p-4">
+                    <button type="button" @click="hideForm()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50">Cancel</button>
+                    <button @click="console.log(form)" type="button" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                        <span>Create Notification</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -138,7 +267,28 @@
             return {
                 notifications: rawNotifications,
                 search: '',
-                baseUrl: '{{ url('/') }}',   // for delete form action
+                baseUrl: '{{ url('/') }}',
+
+                form: {
+                    title: '',
+                    message: '',
+                    target_type: '',
+                    target_events: [],
+                    target_roles: [],
+                    target_users: [],
+                    status: 'draft',
+                    schedule_date: null,
+                    schedule_time: null,
+                },
+                isFormShown: false,
+
+                showForm() {
+                    this.isFormShown = true;
+                },
+
+                hideForm() {
+                    this.isFormShown = false;
+                },
 
                 targetNames(n) {
                     if (n.target_type === 'event' && n.events && n.events.length)
@@ -160,10 +310,6 @@
                         minute: '2-digit'
                     });
                 },
-
-                showCreateNotification() {
-                    alert('Open create notification modal');
-                }
             }
         }
     </script>
