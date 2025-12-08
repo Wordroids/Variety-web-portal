@@ -16,10 +16,10 @@
                 <p class="text-gray-500 text-sm">Send notifications to mobile app users</p>
             </div>
             <div class="space-x-2">
-                <a href="#"
+                <button @click="showImport()"
                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Import
-                </a>
+                </button>
                 <button @click="showForm()"
                         class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-plus"></i> Add Notification
@@ -30,7 +30,7 @@
         <!-- Search -->
         <div class="mb-4 flex items-center gap-3">
             <div class="flex-1 relative">
-                <input type="text" placeholder="Search notifications..." x-model="search"
+                <input type="text" placeholder="Search notifications..."
                        class="w-full rounded-lg border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-red-500 focus:ring-red-500" />
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
             </div>
@@ -271,6 +271,50 @@
                 </div>
             </div>
         </div>
+
+        <!-- Import Notifications Modal -->
+        <div x-show="isImportShown"  x-cloak class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+            <div @click.outside="hideImport()" class="bg-white rounded-2xl w-full max-w-3xl p-2">
+                <div class="flex justify-between items-start px-4 pt-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Import Notifications</h2>
+                    <button @click="hideImport()"><i class="fa fa-close"></i></button>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex justify-between p-4 mb-4 rounded-xl bg-gray-50">
+                        <div>
+                            <h2 class="font-bold">Download Template</h2>
+                            <p class="text-sm text-gray-600">Get the Excel template with correct column format</p>
+                        </div>
+
+                        <a href="#"
+                           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-1 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300">
+                            <i class="fa-solid fa-download"></i> Template
+                        </a>
+                    </div>
+
+                    <label for="file">                        
+                        <div class="p-6 flex flex-col justify-center items-center gap-2 border-2 border-dashed rounded-xl">
+                            <i class="fa-solid fa-arrow-up-from-bracket text-gray-600 text-4xl"></i>
+                            <p class="text-gray-600 text-sm">Upload Excel or CSV File</p>
+                            <p
+                                class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300"
+                            >Choose File</p>
+                        </div>
+                    </label>
+
+                    <input type="file" name="file" id="file" class="hidden">
+
+                </div>
+
+                <div class="flex justify-end gap-2 p-4">
+                    <button type="button" @click="hideImport()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50">Cancel</button>
+                    <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                        <span>Import</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -278,10 +322,31 @@
             const rawNotifications = @json($notifications->items()); // only the current page items
 
             return {
+                // Notifications
                 notifications: rawNotifications,
-                search: '',
-                baseUrl: '{{ url('/') }}',
 
+                targetNames(n) {
+                    if (n.target_type === 'event' && n.events && n.events.length)
+                        return n.events.map(e => e.title).join(', ');
+                    if (n.target_type === 'role' && n.roles && n.roles.length)
+                        return n.roles.map(r => r.name).join(', ');
+                    if (n.target_type === 'user' && n.users && n.users.length)
+                        return n.users.map(u => u.name).join(', ');
+                    return '–';
+                },
+
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
+
+                // Create & Edit Form
                 form: {
                     id: @js(old('id'), null),
                     {{-- title: @js(old('title', '')), --}}
@@ -331,25 +396,15 @@
                     this.isFormShown = false;
                 },
 
-                targetNames(n) {
-                    if (n.target_type === 'event' && n.events && n.events.length)
-                        return n.events.map(e => e.title).join(', ');
-                    if (n.target_type === 'role' && n.roles && n.roles.length)
-                        return n.roles.map(r => r.name).join(', ');
-                    if (n.target_type === 'user' && n.users && n.users.length)
-                        return n.users.map(u => u.name).join(', ');
-                    return '–';
+                // Import CSV / Excel Form
+                isImportShown: false,
+
+                showImport () {
+                    this.isImportShown = true
                 },
 
-                formatDate(dateString) {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                hideImport () {
+                    this.isImportShown = false
                 },
             }
         }
