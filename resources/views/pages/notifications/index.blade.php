@@ -54,8 +54,8 @@
                         <template x-for="n in notifications" :key="n.id">
                             <tr>
                                 <!-- Title / Message -->
-                                <td class="px-4 py-3 truncate max-w-xs" :title="n.title">
-                                    <span x-text="n.title"></span>
+                                <td class="px-4 py-3 truncate max-w-xs">
+                                    <span x-text="n.message"></span>
                                 </td>
 
                                 <!-- Target Type Badge -->
@@ -150,11 +150,11 @@
                     <form :action="form.id ? `{{ url('notifications') }}/${form.id}` : '{{ route('notifications.store') }}'" method="POST" id="createNotificationForm">
                         @csrf
                         <template x-if="form.id"> @method('put')</template>
-                        <div class="mb-4">
+                        {{-- <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Title</label>
                             <input placeholder="Enter notification title" x-model="form.title" name="title" value="{{ old('title') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                             @error('title')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-                        </div>
+                        </div> --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Message</label>
                             <textarea placeholder="Enter notification message" x-model="form.message" name="message" value="{{ old('message') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
@@ -284,7 +284,7 @@
 
                 form: {
                     id: @js(old('id'), null),
-                    title: @js(old('title', '')),
+                    {{-- title: @js(old('title', '')), --}}
                     message: @js(old('message', '')),
                     target_type: @js(old('target_type', '')),
                     target_events: @js(old('target_events', [])),
@@ -303,7 +303,7 @@
                         console.log(notification?.scheduled_at);
 
                         this.form.id = notification.id;
-                        this.form.title = notification.title;
+                        {{-- this.form.title = notification.title; --}}
                         this.form.message = notification.message;
                         this.form.target_type = notification.target_type;
                         this.form.target_events = notification.events?.map(item => item.id) ?? [];
@@ -314,7 +314,7 @@
                         this.form.schedule_time = time?.split(':').slice(0,2).join(':') ?? null;
                     } else if(this.form.id) {
                         this.form.id = null;
-                        this.form.title = '';
+                        {{-- this.form.title = ''; --}}
                         this.form.message = '';
                         this.form.target_type = '';
                         this.form.target_events = [];

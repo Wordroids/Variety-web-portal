@@ -39,7 +39,7 @@ class NotificationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'message' => 'string',
             'target_type' => 'required|string|in:event,role,user',
             'target_events' => 'array|required_if:target_type,event',
@@ -59,7 +59,7 @@ class NotificationController extends Controller
                 : null;
 
             $notification = Notification::create([
-                'title' => $validated['title'],
+                'title' => $validated['title'] ?? 'Untitled',
                 'message' => $validated['message'],
                 'target_type' => $validated['target_type'],
                 'status' => $validated['status'],
@@ -112,7 +112,7 @@ class NotificationController extends Controller
     public function update(Request $request, Notification $notification)
     {
         $validated = $request->validate([
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'message' => 'string',
             'target_type' => 'required|string|in:event,role,user',
             'target_events' => 'array|required_if:target_type,event',
@@ -132,7 +132,7 @@ class NotificationController extends Controller
                 : null;
 
             $notification->update([
-                'title' => $validated['title'],
+                'title' => $validated['title'] ?? 'Untitled',
                 'message' => $validated['message'],
                 'target_type' => $validated['target_type'],
                 'status' => $validated['status'],
