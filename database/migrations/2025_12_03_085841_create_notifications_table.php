@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('message')->nullable();
             $table->enum('target_type', ['event', 'role', 'user']);
             $table->enum('status', ['draft', 'scheduled', 'sent'])->default('draft');
-            $table->date('scheduled_at')->nullable();
-            $table->date('sent_at')->nullable();
+            $table->dateTime('scheduled_at')->nullable();
+            $table->dateTime('sent_at')->nullable();
             $table->timestamps();
         });
     }

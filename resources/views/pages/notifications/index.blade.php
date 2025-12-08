@@ -103,7 +103,7 @@
                                 <!-- Actions -->
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <button class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
+                                        <button type="button" @click="showForm(n)" class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
                                         <form :action="`${baseUrl}/notifications/${n.id}`" method="POST"
@@ -142,13 +142,14 @@
         <div x-show="isFormShown"  x-cloak class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
             <div @click.outside="hideForm()" class="bg-white rounded-2xl w-full max-w-lg p-2">
                 <div class="flex justify-between items-start p-4">
-                    <h2 class="text-lg font-semibold text-gray-900">Create Notification</h2>
+                    <h2 class="text-lg font-semibold text-gray-900" x-text="form.id ? 'Edit Notification' : 'Create Notification'"></h2>
                     <button @click="hideForm()"><i class="fa fa-close"></i></button>
                 </div>
 
                 <div class="max-h-[550px] overflow-y-auto p-4">
-                    <form :action="'{{ route('notifications.store') }}'" method="POST" id="createNotificationForm">
+                    <form :action="form.id ? `{{ url('notifications') }}/${form.id}` : '{{ route('notifications.store') }}'" method="POST" id="createNotificationForm">
                         @csrf
+                        <template x-if="form.id"> @method('put')</template>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Title</label>
                             <input placeholder="Enter notification title" x-model="form.title" name="title" value="{{ old('title') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
@@ -205,7 +206,7 @@
                                             type="checkbox"
                                             name="target_roles[]"
                                             :value="{{ $r->id }}"
-                                            x-model="form.target_events">
+                                            x-model="form.target_roles">
                                         <span>{{ $r->name }}</span>
                                     </label>
                                     @endforeach
@@ -226,7 +227,7 @@
                                             type="checkbox"
                                             name="target_users[]"
                                             :value="{{ $u->id }}"
-                                            x-model="form.target_events">
+                                            x-model="form.target_users">
                                         <span>{{ $u->first_name }} {{ $u->last_name }} ({{ $u->name }})</span>
                                     </label>
                                     @endforeach
@@ -265,7 +266,7 @@
                 <div class="flex justify-end gap-2 p-4">
                     <button type="button" @click="hideForm()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50">Cancel</button>
                     <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                        <span>Create Notification</span>
+                        <span x-text="form.id ? 'Update Notification' : 'Create Notification'"></span>
                     </button>
                 </div>
             </div>
@@ -282,6 +283,7 @@
                 baseUrl: '{{ url('/') }}',
 
                 form: {
+                    id: @js(old('id'), null),
                     title: @js(old('title', '')),
                     message: @js(old('message', '')),
                     target_type: @js(old('target_type', '')),
@@ -292,9 +294,36 @@
                     schedule_date: @js(old('schedule_date', null)),
                     schedule_time: @js(old('schedule_time', null)),
                 },
+
                 isFormShown: @js($errors->any()),
 
-                showForm() {
+                showForm(notification) {
+                    if(notification){
+                        const [date, time] = notification.scheduled_at?.split(' ') ?? [];
+                        console.log(notification?.scheduled_at);
+
+                        this.form.id = notification.id;
+                        this.form.title = notification.title;
+                        this.form.message = notification.message;
+                        this.form.target_type = notification.target_type;
+                        this.form.target_events = notification.events?.map(item => item.id) ?? [];
+                        this.form.target_roles = notification.roles?.map(item => item.id) ?? [];
+                        this.form.target_users = notification.users?.map(item => item.id) ?? [];
+                        this.form.status = notification.status;
+                        this.form.schedule_date = date;
+                        this.form.schedule_time = time?.split(':').slice(0,2).join(':') ?? null;
+                    } else if(this.form.id) {
+                        this.form.id = null;
+                        this.form.title = '';
+                        this.form.message = '';
+                        this.form.target_type = '';
+                        this.form.target_events = [];
+                        this.form.target_roles = [];
+                        this.form.target_users = [];
+                        this.form.status = '';
+                        this.form.schedule_date = null;
+                        this.form.schedule_time = null;
+                    }
                     this.isFormShown = true;
                 },
 
