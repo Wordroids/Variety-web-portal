@@ -280,7 +280,7 @@
                     <button @click="hideImport()"><i class="fa fa-close"></i></button>
                 </div>
 
-                <div class="p-4">
+                <form class="p-4" id="importNotitificationsForm">
                     <div class="flex justify-between p-4 mb-4 rounded-xl bg-gray-50">
                         <div>
                             <h2 class="font-bold">Download Template</h2>
@@ -293,23 +293,31 @@
                         </a>
                     </div>
 
-                    <label for="file">                        
+                    <label for="file">
                         <div class="p-6 flex flex-col justify-center items-center gap-2 border-2 border-dashed rounded-xl">
-                            <i class="fa-solid fa-arrow-up-from-bracket text-gray-600 text-4xl"></i>
-                            <p class="text-gray-600 text-sm">Upload Excel or CSV File</p>
-                            <p
-                                class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300"
-                            >Choose File</p>
+                                <i :class="`fa-solid ${ file ? 'fa-check' : 'fa-arrow-up-from-bracket' } text-gray-600 text-4xl`"></i>
+                                <p class="text-gray-600 text-sm" x-text="file?.name || 'Upload Excel or CSV File'"></p>
+                                <p
+                                    class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300"
+                                    x-text="file ? 'Change File' : 'Choose File'"
+                                ></p>
+                                <p x-show="file" class="cursor-pointer text-sm text-red-600" @click="$refs.fileInput.value = ''; file = null">Remove File</p>
                         </div>
                     </label>
 
-                    <input type="file" name="file" id="file" class="hidden">
-
-                </div>
+                    <input 
+                        id="file"
+                        x-ref="fileInput"
+                        type="file" 
+                        class="hidden"
+                        accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        @change="file = $event.target.files[0] || null"
+                    />
+                </form>
 
                 <div class="flex justify-end gap-2 p-4">
                     <button type="button" @click="hideImport()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50">Cancel</button>
-                    <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                    <button :disabled="!file" form="importNotitificationsForm" type="submit" class="rounded-lg disabled:bg-red-200 bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                         <span>Import</span>
                     </button>
                 </div>
@@ -398,6 +406,7 @@
 
                 // Import CSV / Excel Form
                 isImportShown: false,
+                file: null,
 
                 showImport () {
                     this.isImportShown = true
