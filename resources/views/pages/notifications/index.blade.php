@@ -294,7 +294,7 @@
                     </div>
 
                     <label for="file">
-                        <div class="p-6 flex flex-col justify-center items-center gap-2 border-2 border-dashed rounded-xl">
+                        <div class="p-6 flex flex-col justify-center items-center gap-2 border-2 border-dashed rounded-xl h-64">
                                 <i :class="`fa-solid ${ file ? 'fa-check' : 'fa-arrow-up-from-bracket' } text-gray-600 text-4xl`"></i>
                                 <p class="text-gray-600 text-sm" x-text="file?.name || 'Upload Excel or CSV File'"></p>
                                 <p
