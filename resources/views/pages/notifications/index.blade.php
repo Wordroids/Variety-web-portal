@@ -294,7 +294,7 @@
                             <p class="text-sm text-gray-600">Get the Excel template with correct column format</p>
                         </div>
 
-                        <a href="#"
+                        <a href="/resources/notification_import_template.csv"
                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-1 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300">
                             <i class="fa-solid fa-download"></i> Template
                         </a>
