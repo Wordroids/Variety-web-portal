@@ -159,7 +159,7 @@
                             <label class="block text-sm font-medium text-gray-700">Message</label>
                             <textarea placeholder="Enter notification message" x-model="form.message" name="message" value="{{ old('message') }}" required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
                             </textarea>
-                            @error('message')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                            @error('message', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Target Type</label>
@@ -169,7 +169,7 @@
                                 <option value="role">Roles</option>
                                 <option value="user">Users</option>
                             </select>
-                            @error('target_type')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                            @error('target_type', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
 
                         {{-- Events --}}
@@ -189,7 +189,7 @@
                                     </label>
                                     @endforeach
                                 </div>
-                                @error('target_events')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                @error('target_events', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -211,7 +211,7 @@
                                     </label>
                                     @endforeach
                                 </div>
-                                @error('target_roles')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                @error('target_roles', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -232,7 +232,7 @@
                                     </label>
                                     @endforeach
                                 </div>
-                                @error('target_users')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                @error('target_users', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -244,7 +244,7 @@
                                 <option value="scheduled">Schedule for later</option>
                                 <option value="sent">Send now</option>
                             </select>
-                            @error('status')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                            @error('status', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
 
                         <template x-if="form.status == 'scheduled'">
@@ -252,12 +252,12 @@
                                 <div class="w-2/3">                            
                                     <label class="block text-sm font-medium text-gray-700">Schedule Date</label>
                                     <input type="date" placeholder="Select schedule date" x-model="form.schedule_date" name="schedule_date" value="{{ old('schedule_date') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
-                                    @error('schedule_date')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                    @error('schedule_date', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                 </div>
                                 <div class="w-1/3">                            
                                     <label class="block text-sm font-medium text-gray-700">Time</label>
                                     <input type="time" placeholder="Select schedule time" x-model="form.schedule_time" name="schedule_time" value="{{ old('schedule_time') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
-                                    @error('schedule_time')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                    @error('schedule_time', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                 </div>
                             </div>
                         </template>
@@ -280,7 +280,14 @@
                     <button @click="hideImport()"><i class="fa fa-close"></i></button>
                 </div>
 
-                <form class="p-4" id="importNotitificationsForm">
+                <form
+                    class="p-4"
+                    id="importNotitificationsForm"
+                    action="{{ route('notifications.import') }}"
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+                    @csrf
                     <div class="flex justify-between p-4 mb-4 rounded-xl bg-gray-50">
                         <div>
                             <h2 class="font-bold">Download Template</h2>
@@ -301,14 +308,25 @@
                                     class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-red-100 hover:text-red-600 hover:border-red-300"
                                     x-text="file ? 'Change File' : 'Choose File'"
                                 ></p>
-                                <p x-show="file" class="cursor-pointer text-sm text-red-600" @click="$refs.fileInput.value = ''; file = null">Remove File</p>
+                                <p x-show="file" class="cursor-pointer text-sm text-red-600" @click="() => $refs.fileInput.value = ''; file = null">Remove File</p>
                         </div>
                     </label>
 
+                    @if ($errors->import->any())
+                        <div class="mt-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-800">
+                            <ul class="list-disc ml-4 text-sm">
+                                @foreach ($errors->import->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <input 
                         id="file"
+                        type="file"
+                        name="file" 
                         x-ref="fileInput"
-                        type="file" 
                         class="hidden"
                         accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         @change="file = $event.target.files[0] || null"
@@ -332,6 +350,7 @@
             return {
                 // Notifications
                 notifications: rawNotifications,
+                baseUrl: '{{ url('/') }}',
 
                 targetNames(n) {
                     if (n.target_type === 'event' && n.events && n.events.length)
@@ -356,19 +375,19 @@
 
                 // Create & Edit Form
                 form: {
-                    id: @js(old('id'), null),
+                    id: @js(old('id', null, 'notification')),
                     {{-- title: @js(old('title', '')), --}}
-                    message: @js(old('message', '')),
-                    target_type: @js(old('target_type', '')),
-                    target_events: @js(old('target_events', [])),
-                    target_roles: @js(old('target_roles', [])),
-                    target_users: @js(old('target_users', [])),
-                    status: @js(old('status', '')),
-                    schedule_date: @js(old('schedule_date', null)),
-                    schedule_time: @js(old('schedule_time', null)),
+                    message: @js(old('message', '', 'notification')),
+                    target_type: @js(old('target_type', '', 'notification')),
+                    target_events: @js(old('target_events', [], 'notification')),
+                    target_roles: @js(old('target_roles', [], 'notification')),
+                    target_users: @js(old('target_users', [], 'notification')),
+                    status: @js(old('status', '', 'notification')),
+                    schedule_date: @js(old('schedule_date', null, 'notification')),
+                    schedule_time: @js(old('schedule_time', null, 'notification')),
                 },
 
-                isFormShown: @js($errors->any()),
+                isFormShown: @js($errors->notification->any()),
 
                 showForm(notification) {
                     if(notification){
@@ -405,7 +424,7 @@
                 },
 
                 // Import CSV / Excel Form
-                isImportShown: false,
+                isImportShown: @js($errors->import->any()),
                 file: null,
 
                 showImport () {

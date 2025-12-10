@@ -49,7 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('passwords', PasswordController::class)->only('index', 'update');
-    Route::resource('notifications', NotificationController::class);
+    Route::resource('notifications', NotificationController::class)->only('index', 'store', 'update', 'destroy');
+    Route::post('/notifications/import', [NotificationController::class, 'import'])->name('notifications.import');
 
     Route::post('attachments', function (Request $request) {
         $request->validate([
