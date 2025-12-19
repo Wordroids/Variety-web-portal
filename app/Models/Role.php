@@ -6,10 +6,10 @@ use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
-    protected $fillable = ['name', 'guard_name'];
+    protected $fillable = ["name", "guard_name"];
 
-    public function password()
+    public function passwords()
     {
-        return $this->hasOne(Password::class);
+        return $this->hasMany(Password::class);
     }
 }

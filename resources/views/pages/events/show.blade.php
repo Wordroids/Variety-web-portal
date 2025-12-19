@@ -56,6 +56,12 @@
                     <span x-text="showParticipants ? 'Hide Participants' : 'View Participants'"></span>
                 </a>
 
+                <a href="{{ route('events.passwords.index', $event) }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-asterisk"></i>
+                    <span>Passwords</span>
+                </a>
+
                 @can('SUPERADMIN')
                 <a href="{{ route('events.admins.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
@@ -195,11 +201,11 @@
                                             {{ $p->status }}
                                         </span>
                                     </td>
-                                    
+
                                     @can('manage participants')
                                     <td class="px-4 py-2 text-right flex justify-end gap-2">
                                         <button type="button"
-                                            @click="openEditModal({ 
+                                            @click="openEditModal({
                                                 id: {{ $p->id }},
                                                 full_name: '{{ $p->full_name }}',
                                                 email: '{{ $p->email }}',

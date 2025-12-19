@@ -83,7 +83,7 @@
                                 <!-- Users -->
                                 <li>
                                     <a href="{{ route('users.index') }}"
-                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition
                       hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
                                         <i class="w-5 fa-solid fa-users-gear text-gray-700"></i>
                                         <span>User Management</span>
@@ -93,7 +93,7 @@
                                 <!-- Roles -->
                                 <li>
                                     <a href="{{ route('roles.index') }}"
-                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition
                       hover:bg-gray-100 {{ request()->routeIs('roles.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
                                         <i class="w-5 fa-solid fa-shield-halved text-gray-700"></i>
                                         <span>Roles</span>
@@ -103,19 +103,10 @@
                                 <!-- Permissions -->
                                 <li>
                                     <a href="{{ route('permissions.index') }}"
-                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition
                       hover:bg-gray-100 {{ request()->routeIs('permissions.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
                                         <i class="w-5 fa-solid fa-key text-gray-700"></i>
                                         <span>Permissions</span>
-                                    </a>
-                                </li>
-
-                                <!-- Passwords -->
-                                <li>
-                                    <a href="{{ route('passwords.index') }}"
-                                        class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-gray-100 {{ request()->routeIs('passwords.*') ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700' }}">
-                                        <i class="w-5 fa-solid fa-asterisk text-gray-700"></i>
-                                        <span>Passwords</span>
                                     </a>
                                 </li>
                             </ul>
@@ -151,7 +142,7 @@
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
                 <button
-                    class="w-full mt-4 flex items-center gap-3 px-3 py-2 rounded-lg 
+                    class="w-full mt-4 flex items-center gap-3 px-3 py-2 rounded-lg
                    text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
                     <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
                     <span>Logout</span>
