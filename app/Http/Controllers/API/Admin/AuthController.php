@@ -1,39 +1,41 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\ParticipantLoginRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     /**
-     * Handle an incoming participant authentication request.
+     * Handle an incoming authentication request.
      */
-    public function login(ParticipantLoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
-        $participant = $request->authenticated_participant;
 
-        // Create a token for the participant
-        $token = $participant->createToken("Participant API Token")
-            ->plainTextToken;
+        $user = $request->user();
+        $token = $user->createToken("API Token")->plainTextToken;
 
         return response()->json([
+            "user" => $user,
             "token" => $token,
-            "participant" => $participant,
             "message" => "Login successful",
         ]);
     }
 
     /**
-     * Handle participant logout.
+     * Destroy an authenticated session.
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        // Revoke the token that was used to authenticate the current request
+        $user = $request->user();
+        if ($user && method_exists($user->currentAccessToken(), "delete")) {
+            $user->currentAccessToken()->delete();
+        }
 
         return response()->json([
             "message" => "Logout successful",
@@ -41,12 +43,12 @@ class AuthController extends Controller
     }
 
     /**
-     * Get the authenticated participant's profile.
+     * Get the authenticated user.
      */
     public function profile(Request $request): JsonResponse
     {
         return response()->json([
-            "participant" => $request->user(),
+            "user" => $request->user(),
             "message" => "Profile shown",
         ]);
     }

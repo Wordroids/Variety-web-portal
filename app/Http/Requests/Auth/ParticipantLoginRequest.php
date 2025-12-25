@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-class EventParticipantLoginRequest extends FormRequest
+class ParticipantLoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -43,31 +43,36 @@ class EventParticipantLoginRequest extends FormRequest
         $phone = $this->string("phone");
         $password = $this->string("password");
 
-        // Find ALL participants with this phone number
-        $participants = \App\Models\EventParticipant::with(["event", "roles"])
-            ->where("phone", $phone)
-            ->get();
+        // Find all event participants with this phone number
+        $eventParticipants = \App\Models\EventParticipant::where(
+            "phone",
+            $phone,
+        )->get();
 
-        if ($participants->isEmpty()) {
+        if ($eventParticipants->isEmpty()) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 "phone" => trans("auth.failed"),
             ]);
         }
 
+        // Find or create central participant
+        $participant = \App\Models\Participant::firstOrCreate([
+            "phone" => $phone,
+        ]);
+
         // Check if the provided password matches any role password for any of the participant's events
-        $validParticipant = null;
         $validEvent = null;
 
-        foreach ($participants as $participant) {
-            $event = $participant->event;
+        foreach ($eventParticipants as $eventParticipant) {
+            $event = $eventParticipant->event;
 
             if (!$event) {
                 continue;
             }
 
             // Check each role for this participant
-            foreach ($participant->roles as $role) {
+            foreach ($eventParticipant->roles as $role) {
                 $rolePassword = \App\Models\Password::where(
                     "event_id",
                     $event->id,
@@ -79,24 +84,22 @@ class EventParticipantLoginRequest extends FormRequest
                     $rolePassword &&
                     (string) $password === (string) $rolePassword->password
                 ) {
-                    $validParticipant = $participant;
                     $validEvent = $event;
                     break 2; // Break out of both loops
                 }
             }
         }
 
-        if (!$validParticipant || !$validEvent) {
+        if (!$validEvent) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 "password" => trans("auth.failed"),
             ]);
         }
 
-        // Store the authenticated participant and event in the request for later use
+        // Store the participant in the request for later use
         $this->merge([
-            "authenticated_participant" => $validParticipant,
-            "authenticated_event" => $validEvent,
+            "authenticated_participant" => $participant,
         ]);
 
         RateLimiter::clear($this->throttleKey());

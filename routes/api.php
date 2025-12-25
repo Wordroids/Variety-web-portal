@@ -1,28 +1,37 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\EventParticipantAuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
-    return $request->user();
+// Admin Authentication Routes
+Route::prefix("admin/auth")->group(function () {
+    Route::post("/login", [AdminAuthController::class, "login"])->name(
+        "api.admin.login",
+    );
+
+    Route::middleware("auth:sanctum")->group(function () {
+        Route::post("/logout", [AdminAuthController::class, "logout"])->name(
+            "api.admin.logout",
+        );
+        Route::get("/profile", [AdminAuthController::class, "profile"])->name(
+            "api.admin.profile",
+        );
+    });
 });
 
-// Authentication routes
+// Participant Authentication Routes
 Route::prefix("auth")->group(function () {
-    Route::post("/login", [AuthController::class, "login"])->name("api.login");
-    Route::post("/participant-login", [
-        EventParticipantAuthController::class,
-        "login",
-    ])->name("api.participant.login");
+    Route::post("/login", [AuthController::class, "login"])->name(
+        "api.participant.login",
+    );
 
     Route::middleware("auth:sanctum")->group(function () {
         Route::post("/logout", [AuthController::class, "logout"])->name(
-            "api.logout",
+            "api.participant.logout",
         );
         Route::get("/profile", [AuthController::class, "profile"])->name(
-            "api.profile",
+            "api.participant.profile",
         );
     });
 });

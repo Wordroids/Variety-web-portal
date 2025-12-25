@@ -6,12 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\HasApiTokens;
 
 final class EventParticipant extends Model
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory;
 
     protected $fillable = [
         "event_id",
@@ -25,19 +23,9 @@ final class EventParticipant extends Model
         "emergency_contact_phone",
         "emergency_contact_relationship",
         "username",
-        "password",
     ];
 
     protected $with = ["roles"];
-
-    protected static function booted(): void
-    {
-        static::saving(function (self $participant): void {
-            if ($participant->isDirty("password") && $participant->password) {
-                $participant->password = Hash::make($participant->password);
-            }
-        });
-    }
 
     public function event()
     {
