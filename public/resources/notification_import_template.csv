@@ -1,0 +1,2 @@
+message,target_type,target_events,target_roles,target_users,status,schedule_date,schedule_time
+Hello World,event,"1,2,3",,,scheduled,2025-01-20,10:30
