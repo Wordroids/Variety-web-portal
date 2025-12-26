@@ -15,7 +15,10 @@ class EventAdminController extends Controller
     {
         $users = User::all();
         $admins = $event->admins()->paginate(10);
-        return view('pages.events.admins.index', compact('event', 'admins', 'users'));
+        return view(
+            "pages.events.admins.index",
+            compact("event", "admins", "users"),
+        );
     }
 
     /**
@@ -24,16 +27,16 @@ class EventAdminController extends Controller
     public function store(Request $request, Event $event)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id'
+            "user_id" => "required|exists:users,id",
         ]);
 
-        $event->admins()->syncWithoutDetaching($validated['user_id']);
-        return back()->with('success', 'Admin added.');
+        $event->admins()->syncWithoutDetaching($validated["user_id"]);
+        return back()->with("success", "Admin added.");
     }
 
     public function destroy(Request $request, Event $event, User $admin)
     {
         $event->admins()->detach($admin);
-        return back()->with('success', 'Admin removed.');
+        return back()->with("success", "Admin removed.");
     }
 }

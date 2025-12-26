@@ -178,6 +178,7 @@
                                 <th class="px-4 py-2 font-medium">Vehicle</th>
                                 <th class="px-4 py-2 font-medium">Contact</th>
                                 <th class="px-4 py-2 font-medium">Emergency Contact</th>
+                                <th class="px-4 py-2 font-medium">Roles</th>
                                 <th class="px-4 py-2 font-medium">Status</th>
                                 <th class="px-4 py-2 font-medium text-right">Actions</th>
                             </tr>
@@ -194,6 +195,9 @@
                                     <td class="px-4 py-2">
                                         {{ $p->emergency_contact_name ?? '—' }}
                                         <div class="text-xs text-gray-500">{{ $p->emergency_contact_relationship }}</div>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ $p->role_names ?? '—' }}
                                     </td>
                                     <td class="px-4 py-2">
                                         <span class="px-2 py-0.5 text-xs rounded-full font-medium
@@ -213,7 +217,8 @@
                                                 vehicle: '{{ $p->vehicle }}',
                                                 emergency_contact_name: '{{ $p->emergency_contact_name }}',
                                                 emergency_contact_relationship: '{{ $p->emergency_contact_relationship }}',
-                                                status: '{{ $p->status }}'
+                                                status: '{{ $p->status }}',
+                                                roles: [{{ $p->roles->pluck('id')->implode(',') }}]
                                             })"
                                             class="text-gray-600 hover:text-gray-800">
                                             <i class="fa-solid fa-pen"></i>
@@ -234,7 +239,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>

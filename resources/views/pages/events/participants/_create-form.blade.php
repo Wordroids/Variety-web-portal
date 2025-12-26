@@ -41,6 +41,16 @@
                 <option value="inactive">Inactive</option>
             </select>
         </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Roles</label>
+            <select name="roles[]" multiple class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                @foreach(\App\Models\Role::whereNotIn('name', ['Super Admin', 'Administrator'])->get() as $role)
+                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                @endforeach
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple roles</p>
+        </div>
     </div>
 
     <div class="pt-4 border-t border-gray-200">
