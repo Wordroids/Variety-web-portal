@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\API\EventController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes
@@ -34,4 +35,10 @@ Route::prefix("auth")->group(function () {
             "api.participant.profile",
         );
     });
+});
+
+Route::middleware("auth:sanctum")->group(function () {
+    Route::get("/events", [EventController::class, "index"])->name(
+        "api.events.index",
+    );
 });
