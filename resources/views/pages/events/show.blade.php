@@ -83,6 +83,13 @@
             <p class="text-gray-500 text-sm">{{ \Illuminate\Support\Str::limit($event->description, 180) }}</p>
         </div>
 
+        <!-- Cover Image -->
+        @if ($event->cover_image_path)
+        <div class="mt-4">
+            <img src="/storage/{{ $event->cover_image_path }}" class="w-full h-64 md:h-96 object-cover rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        @endif
+
         <!-- Summary Card -->
         <div class="mt-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

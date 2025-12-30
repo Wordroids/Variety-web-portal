@@ -185,7 +185,7 @@
                                                 x-bind:data-name="`days[${i}][itinerary_description]`"
                                                 x-bind:data-id="`days[${i}][itinerary_description]`"
                                                 x-bind:data-value="day.itinerary_description"
-                                            >                                                
+                                            >
                                                 <x-trix-input-alpine
                                                     placeholder="Section description"
                                                 />
@@ -233,52 +233,100 @@
                 </div>
             </section>
 
-            <!-- Sponsors -->
-            <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Sponsors</h2>
-                <div class="w-1/3 justify-center" x-data="{
-                    sponsorImageFile: null,
-                    defaultPreview: '{{$event->sponsor_image_path ? '/storage/' . $event->sponsor_image_path : null}}',
-                }">
-                    <label for="sponsor_image">
-                        {{-- Preview Section --}}
-                        <div class="cursor-pointer bg-gray-100 rounded-lg aspect-square relative">
-                            <button
-                                x-show="sponsorImageFile"
-                                type="button"
-                                class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
-                                @click="$refs.sponsorImageInput.value = ''; sponsorImageFile = null"
-                            >X</button>
-                            <img
-                                class="object-contain w-full h-full rounded-lg"
-                                x-bind:src="sponsorImageFile ? URL.createObjectURL(sponsorImageFile) : defaultPreview"
-                                x-show="sponsorImageFile ?? defaultPreview"
-                            />
-                            <div x-show="!sponsorImageFile && !defaultPreview" class="w-full h-full flex flex-col items-center justify-center">
-                                <img src="/images/icons/icons8-image-64.png" alt="">
-                                <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
-                                <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+            <!-- Cover Image and Sponsors -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cover Image -->
+                <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Cover Image</h2>
+                    <div class="w-full justify-center" x-data="{
+                        coverImageFile: null,
+                        defaultPreview: '{{$event->cover_image_path ? '/storage/' . $event->cover_image_path : null}}',
+                    }">
+                        <label for="cover_image">
+                            {{-- Preview Section --}}
+                            <div class="cursor-pointer bg-gray-100 rounded-lg aspect-video relative">
+                                <button
+                                    x-show="coverImageFile"
+                                    type="button"
+                                    class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
+                                    @click="$refs.coverImageInput.value = ''; coverImageFile = null"
+                                >X</button>
+                                <img
+                                    class="object-cover w-full h-full rounded-lg"
+                                    x-bind:src="coverImageFile ? URL.createObjectURL(coverImageFile) : defaultPreview"
+                                    x-show="coverImageFile ?? defaultPreview"
+                                />
+                                <div x-show="!coverImageFile && !defaultPreview" class="w-full h-full flex flex-col items-center justify-center">
+                                    <img src="/images/icons/icons8-image-64.png" alt="">
+                                    <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
+                                    <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- Button --}}
-                        <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
-                            Upload Image
-                        </div>
-                    </label>
+                            {{-- Button --}}
+                            <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
+                                Upload Cover Image
+                            </div>
+                        </label>
+                        {{-- Cover Image Input --}}
+                        <input
+                            type="file"
+                            x-ref="coverImageInput"
+                            name="cover_image"
+                            id="cover_image"
+                            class="hidden"
+                            accept="image/*"
+                            @change="coverImageFile = $event.target.files[0];"
+                        />
+                    </div>
+                </section>
 
-                    {{-- Sponsor Image Input --}}
-                    <input
-                        type="file"
-                        x-ref="sponsorImageInput"
-                        name="sponsor_image"
-                        id="sponsor_image"
-                        class="hidden"
-                        accept="image/*" 
-                        @change="sponsorImageFile = $event.target.files[0];"
-                    />
-                </div>
-            </section>
+                <!-- Sponsors -->
+                <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Sponsors</h2>
+                    <div class="w-full justify-center" x-data="{
+                        sponsorImageFile: null,
+                        defaultPreview: '{{$event->sponsor_image_path ? '/storage/' . $event->sponsor_image_path : null}}',
+                    }">
+                        <label for="sponsor_image">
+                            {{-- Preview Section --}}
+                            <div class="cursor-pointer bg-gray-100 rounded-lg aspect-video relative">
+                                <button
+                                    x-show="sponsorImageFile"
+                                    type="button"
+                                    class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
+                                    @click="$refs.sponsorImageInput.value = ''; sponsorImageFile = null"
+                                >X</button>
+                                <img
+                                    class="object-contain w-full h-full rounded-lg"
+                                    x-bind:src="sponsorImageFile ? URL.createObjectURL(sponsorImageFile) : defaultPreview"
+                                    x-show="sponsorImageFile ?? defaultPreview"
+                                />
+                                <div x-show="!sponsorImageFile && !defaultPreview" class="w-full h-full flex flex-col items-center justify-center">
+                                    <img src="/images/icons/icons8-image-64.png" alt="">
+                                    <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
+                                    <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+                                </div>
+                            </div>
+
+                            {{-- Button --}}
+                            <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
+                                Upload Sponsor Image
+                            </div>
+                        </label>
+                        {{-- Sponsor Image Input --}}
+                        <input
+                            type="file"
+                            x-ref="sponsorImageInput"
+                            name="sponsor_image"
+                            id="sponsor_image"
+                            class="hidden"
+                            accept="image/*"
+                            @change="sponsorImageFile = $event.target.files[0];"
+                        />
+                    </div>
+                </section>
+            </div>
 
             <div class="flex justify-end gap-3">
                 <a href="{{ route('events.show', $event) }}"

@@ -10,20 +10,21 @@ class Event extends Model
     /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
     protected $fillable = [
-        'title',
-        'description',
-        'start_date',
-        'end_date',
-        'sponsor_image_path'
+        "title",
+        "description",
+        "start_date",
+        "end_date",
+        "sponsor_image_path",
+        "cover_image_path",
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        "start_date" => "date",
+        "end_date" => "date",
     ];
     public function days()
     {
-        return $this->hasMany(EventDay::class)->orderBy('sort_order');
+        return $this->hasMany(EventDay::class)->orderBy("sort_order");
     }
 
     public function participants()
@@ -33,16 +34,20 @@ class Event extends Model
 
     public function admins()
     {
-        return $this->belongsToMany(User::class, 'event_admin', 'event_id', 'user_id')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            User::class,
+            "event_admin",
+            "event_id",
+            "user_id",
+        )->withTimestamps();
     }
 
     public function isAdmin(User $user)
     {
-        if($user->hasRole('Super Admin')){
+        if ($user->hasRole("Super Admin")) {
             return true;
-        };
+        }
 
-        return $this->admins()->where('user_id', $user->id)->exists();
+        return $this->admins()->where("user_id", $user->id)->exists();
     }
 }
