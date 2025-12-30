@@ -41,6 +41,11 @@ class EventController extends Controller
                 ])
                 ->first();
 
+            // Append the rendered itinerary description to each day
+            $event->days->each(function ($day) {
+                $day->append("itinerary_description_rendered");
+            });
+
             $events[$event->id] = [
                 "me" => $eventParticipant,
                 "event" => $event,
