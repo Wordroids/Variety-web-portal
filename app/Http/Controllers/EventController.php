@@ -164,9 +164,7 @@ class EventController extends Controller
                     "subtitle" => $day->subtitle,
                     "itinerary_title" => $day->itinerary_title,
                     "itinerary_description" => $day->itinerary_description->render(),
-                    "image" => $day->image_path
-                        ? Storage::disk("public")->url($day->image_path)
-                        : null,
+                    "image" => $day->image_path,
                     "locations" => $day->locations
                         ->map(
                             fn($l) => [
@@ -412,7 +410,6 @@ class EventController extends Controller
                     // deleting a Day cascades delete its children via model boot() if you added that,
                     // else delete children explicitly:
                     $day->locations()->delete();
-                    $day->details()->delete();
                     $day->resources()->delete();
                     if ($day->image_path) {
                         Storage::disk("public")->delete($day->image_path);

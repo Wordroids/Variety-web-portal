@@ -86,7 +86,7 @@
         <!-- Cover Image -->
         @if ($event->cover_image_path)
         <div class="mt-4">
-            <img src="/storage/{{ $event->cover_image_path }}" class="w-full h-64 md:h-96 object-cover rounded-xl border border-gray-200 shadow-sm">
+            <img src="/storage/{{ $event->cover_image_path }}" class="w-full h-32 md:h-64 object-cover rounded-xl border border-gray-200 shadow-sm">
         </div>
         @endif
 
@@ -311,7 +311,7 @@
                     </div>
 
                     <template x-if="current.image">
-                        <img :src="current.image" alt=""
+                        <img :src="`/storage/${current.image}`" alt=""
                             class="w-full h-56 md:h-64 rounded-lg object-cover">
                     </template>
 
