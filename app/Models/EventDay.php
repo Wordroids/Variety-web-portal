@@ -44,7 +44,7 @@ class EventDay extends Model
      *
      * @return string|null
      */
-    public function getItineraryDescriptionRenderedAttribute()
+    public function getItineraryDescriptionHtmlAttribute()
     {
         return $this->itinerary_description
             ? $this->itinerary_description->render()
