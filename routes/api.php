@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
+use App\Http\Controllers\API\LocationEndpointController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes
@@ -41,4 +42,9 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/events", [EventController::class, "index"])->name(
         "api.events.index",
     );
+
+    Route::get("/location-endpoint", [
+        LocationEndpointController::class,
+        "index",
+    ])->name("api.location-endpoint");
 });

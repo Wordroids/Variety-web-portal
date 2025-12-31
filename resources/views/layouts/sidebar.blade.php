@@ -114,7 +114,7 @@
 
 
                         <li>
-                            <a href="#"
+                            <a href="{{ route('settings.show') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('settings.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                                 <i class="w-5 fa-solid fa-gear text-center"></i>

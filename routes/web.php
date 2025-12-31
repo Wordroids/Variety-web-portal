@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
 
 Route::get("/", function () {
@@ -95,6 +96,10 @@ Route::middleware("auth")->group(function () {
             "image_url" => "/storage/" . $path,
         ];
     })->name("attachments.store");
+
+    // Settings Routes
+    Route::get('/settings', [SettingsController::class, 'show'])->name('settings.show');
+    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
 });
 
 Route::middleware(["auth"])->group(function () {
