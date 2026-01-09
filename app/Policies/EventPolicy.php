@@ -13,8 +13,8 @@ class EventPolicy
      */
     public function before(User $user, $ability): ?bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true; 
+        if ($user->hasRole("Super Admin")) {
+            return true;
         }
 
         return null;
@@ -33,7 +33,7 @@ class EventPolicy
      */
     public function view(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('view events');
+        return $event->isAdmin($user) && $user->can("view events");
     }
 
     /**
@@ -41,7 +41,7 @@ class EventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create events');
+        return $user->can("create events");
     }
 
     /**
@@ -49,7 +49,7 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('edit events');
+        return $event->isAdmin($user) && $user->can("edit events");
     }
 
     /**
@@ -57,7 +57,16 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('delete events');
+        return $event->isAdmin($user) && $user->can("delete events");
+    }
+
+    /**
+     * Determine whether the user can import participants to the event
+     * from excel file.
+     */
+    public function viewParticipants(User $user, Event $event): bool
+    {
+        return $event->isAdmin($user) && $user->can("manage participants");
     }
 
     /**
@@ -66,7 +75,7 @@ class EventPolicy
      */
     public function importParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('manage participants');
+        return $event->isAdmin($user) && $user->can("manage participants");
     }
 
     /**
@@ -74,7 +83,7 @@ class EventPolicy
      */
     public function createParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('manage participants');
+        return $event->isAdmin($user) && $user->can("manage participants");
     }
 
     /**
@@ -82,7 +91,7 @@ class EventPolicy
      */
     public function updateParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('manage participants');
+        return $event->isAdmin($user) && $user->can("manage participants");
     }
 
     /**
@@ -90,7 +99,7 @@ class EventPolicy
      */
     public function deleteParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can('manage participants');
+        return $event->isAdmin($user) && $user->can("manage participants");
     }
 
     /**

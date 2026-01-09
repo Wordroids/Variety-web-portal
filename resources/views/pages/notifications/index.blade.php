@@ -66,10 +66,10 @@
                                     <template x-if="n.target_type === 'role'">
                                         <div class="p-1 rounded-full bg-purple-200 text-purple-800 font-semibold text-xs w-12 text-center">Role</div>
                                     </template>
-                                    <template x-if="n.target_type === 'user'">
-                                        <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-12 text-center">User</div>
+                                    <template x-if="n.target_type === 'participant'">
+                                        <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-12 text-center">Participant</div>
                                     </template>
-                                    <template x-if="!['event','role','user'].includes(n.target_type)">
+                                    <template x-if="!['event','role','participant'].includes(n.target_type)">
                                         <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-12 text-center">Unknown</div>
                                     </template>
                                 </td>
@@ -163,19 +163,19 @@
                         </div>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Target Type</label>
-                            <select placeholder="Select" x-model="form.target_type" name="target_type" value="{{ old('target_type') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
+                            <select placeholder="Select" x-model="form.target_type" name="target_type" value="{{ old('target_type') }}"  required class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" @change="form.target_events = []">
                                 <option value="" disabled>Select</option>
                                 <option value="event">Events</option>
                                 <option value="role">Roles</option>
-                                <option value="user">Users</option>
+                                <option value="participant">Participants</option>
                             </select>
                             @error('target_type', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
 
                         {{-- Events --}}
-                        <template x-if="form.target_type == 'event'">
-                            <div class="mb-4">                            
-                                <label class="block text-sm font-medium text-gray-700">Select Events</label>
+                        <template x-if="form.target_type != ''">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700" x-text="form.target_type == 'event' ? 'Select Events' : 'Select an Event'"></label>
                                 <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
                                     @foreach($events as $e)
                                     <label class="flex items-center gap-2">
@@ -184,7 +184,8 @@
                                             type="checkbox"
                                             name="target_events[]"
                                             :value="{{ $e->id }}"
-                                            x-model="form.target_events">
+                                            x-model="form.target_events"
+                                            @change="handleTargetEventChange(event)">
                                         <span>{{ $e->title }}</span>
                                     </label>
                                     @endforeach
@@ -193,10 +194,9 @@
                             </div>
                         </template>
 
-
                         {{-- Roles --}}
-                        <template x-if="form.target_type == 'role'">
-                            <div class="mb-4">                            
+                        <template x-if="form.target_type == 'role' && form.target_events.length != 0">
+                            <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700">Select Roles</label>
                                 <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
                                     @foreach($roles as $r)
@@ -215,24 +215,27 @@
                             </div>
                         </template>
 
-                        {{-- Users --}}
-                        <template x-if="form.target_type == 'user'">
-                            <div class="mb-4">                            
-                                <label class="block text-sm font-medium text-gray-700">Select Users</label>
+                        {{-- Participants --}}
+                        <template x-if="form.target_type == 'participant' && form.target_events.length != 0">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700">Select Participants</label>
                                 <div class="max-h-56 overflow-y-auto space-y-2 mt-1 w-full border rounded-lg border-gray-300 p-3">
-                                    @foreach($users as $u)
-                                    <label class="flex items-center gap-2">
-                                        <input
-                                            class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
-                                            type="checkbox"
-                                            name="target_users[]"
-                                            :value="{{ $u->id }}"
-                                            x-model="form.target_users">
-                                        <span>{{ $u->first_name }} {{ $u->last_name }} ({{ $u->name }})</span>
-                                    </label>
-                                    @endforeach
+                                    <template x-for="p in eventParticipants">
+                                        <label class="flex items-center gap-2">
+                                            <input
+                                                class="rounded-full border border-red-600 checked:bg-red-600 focus:checked:bg-red-600 hover:checked:bg-red-600 focus:outline-none focus:ring-0"
+                                                type="checkbox"
+                                                name="target_participants[]"
+                                                :value="p.id"
+                                                x-model="form.target_participants">
+                                            <span x-text="`${p.first_name} ${p.last_name} - (${p.phone})`"></span>
+                                        </label>
+                                    </template>
+                                    <template x-if="eventParticipants.length < 1">
+                                        <div class="text-center text-gray-500">No participants found</div>
+                                    </template>
                                 </div>
-                                @error('target_users', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                @error('target_participants', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                             </div>
                         </template>
 
@@ -249,12 +252,12 @@
 
                         <template x-if="form.status == 'scheduled'">
                             <div class="mb-4 flex gap-4">
-                                <div class="w-2/3">                            
+                                <div class="w-2/3">
                                     <label class="block text-sm font-medium text-gray-700">Schedule Date</label>
                                     <input type="date" placeholder="Select schedule date" x-model="form.schedule_date" name="schedule_date" value="{{ old('schedule_date') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                                     @error('schedule_date', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="w-1/3">                            
+                                <div class="w-1/3">
                                     <label class="block text-sm font-medium text-gray-700">Time</label>
                                     <input type="time" placeholder="Select schedule time" x-model="form.schedule_time" name="schedule_time" value="{{ old('schedule_time') }}" class="mt-1 w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                                     @error('schedule_time', 'notification')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
@@ -268,6 +271,7 @@
                     <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                         <span x-text="form.id ? 'Update Notification' : 'Create Notification'"></span>
                     </button>
+                    <button @click="console.log(form.target_events)">Test</button>
                 </div>
             </div>
         </div>
@@ -322,10 +326,10 @@
                         </div>
                     @endif
 
-                    <input 
+                    <input
                         id="file"
                         type="file"
-                        name="file" 
+                        name="file"
                         x-ref="fileInput"
                         class="hidden"
                         accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -357,8 +361,8 @@
                         return n.events.map(e => e.title).join(', ');
                     if (n.target_type === 'role' && n.roles && n.roles.length)
                         return n.roles.map(r => r.name).join(', ');
-                    if (n.target_type === 'user' && n.users && n.users.length)
-                        return n.users.map(u => u.name).join(', ');
+                    if (n.target_type === 'participants' && n.eventParticipants && n.eventParticipants.length)
+                        return n.eventParticipants.map(ep => ep.name).join(', ');
                     return '–';
                 },
 
@@ -381,13 +385,45 @@
                     target_type: @js(old('target_type', '', 'notification')),
                     target_events: @js(old('target_events', [], 'notification')),
                     target_roles: @js(old('target_roles', [], 'notification')),
-                    target_users: @js(old('target_users', [], 'notification')),
+                    target_participants: @js(old('target_participants', [], 'notification')),
                     status: @js(old('status', '', 'notification')),
                     schedule_date: @js(old('schedule_date', null, 'notification')),
                     schedule_time: @js(old('schedule_time', null, 'notification')),
                 },
 
                 isFormShown: @js($errors->notification->any()),
+
+                eventParticipants: [],
+
+                fetchEventParticipants () {
+                    const eventId = this.form.target_events[0];
+                    if(eventId){
+                        console.log("Getting fresh participants for event: ", eventId);
+                        fetch(`/events/${eventId}/participantsAjax`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                this.eventParticipants = data.participants;
+                            });
+                    } else {
+                        this.eventParticipants = [];
+                    }
+
+                    this.form.target_participants = [];
+                },
+
+                handleTargetEventChange(event) {
+                    if (this.form.target_type !== 'event' && this.form.target_events.length > 1) {
+                        this.form.target_events = [
+                            this.form.target_events[this.form.target_events.length - 1]
+                        ];
+                        event.target.checked = true;
+                    }
+
+                    if(this.form.target_type === 'participant'){
+                        this.fetchEventParticipants();
+                    }
+                },
 
                 showForm(notification) {
                     if(notification){
@@ -400,7 +436,7 @@
                         this.form.target_type = notification.target_type;
                         this.form.target_events = notification.events?.map(item => item.id) ?? [];
                         this.form.target_roles = notification.roles?.map(item => item.id) ?? [];
-                        this.form.target_users = notification.users?.map(item => item.id) ?? [];
+                        this.form.target_participants = notification.targetParticipants?.map(item => item.id) ?? [];
                         this.form.status = notification.status;
                         this.form.schedule_date = date;
                         this.form.schedule_time = time?.split(':').slice(0,2).join(':') ?? null;
@@ -411,7 +447,7 @@
                         this.form.target_type = '';
                         this.form.target_events = [];
                         this.form.target_roles = [];
-                        this.form.target_users = [];
+                        this.form.target_participants = [];
                         this.form.status = '';
                         this.form.schedule_date = null;
                         this.form.schedule_time = null;
