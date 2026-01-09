@@ -61,16 +61,16 @@
                                 <!-- Target Type Badge -->
                                 <td class="px-4 py-3">
                                     <template x-if="n.target_type === 'event'">
-                                        <div class="p-1 rounded-full bg-blue-200 text-blue-800 font-semibold text-xs w-12 text-center">Event</div>
+                                        <div class="p-1 rounded-full bg-blue-200 text-blue-800 font-semibold text-xs w-24 text-center">Event</div>
                                     </template>
                                     <template x-if="n.target_type === 'role'">
-                                        <div class="p-1 rounded-full bg-purple-200 text-purple-800 font-semibold text-xs w-12 text-center">Role</div>
+                                        <div class="p-1 rounded-full bg-purple-200 text-purple-800 font-semibold text-xs w-24 text-center">Role</div>
                                     </template>
                                     <template x-if="n.target_type === 'participant'">
-                                        <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-12 text-center">Participant</div>
+                                        <div class="p-1 rounded-full bg-green-200 text-green-800 font-semibold text-xs w-24 text-center">Participant</div>
                                     </template>
                                     <template x-if="!['event','role','participant'].includes(n.target_type)">
-                                        <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-12 text-center">Unknown</div>
+                                        <div class="p-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-xs w-24 text-center">Unknown</div>
                                     </template>
                                 </td>
 
@@ -271,7 +271,6 @@
                     <button form="createNotificationForm" type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                         <span x-text="form.id ? 'Update Notification' : 'Create Notification'"></span>
                     </button>
-                    <button @click="console.log(form.target_events)">Test</button>
                 </div>
             </div>
         </div>
@@ -361,8 +360,8 @@
                         return n.events.map(e => e.title).join(', ');
                     if (n.target_type === 'role' && n.roles && n.roles.length)
                         return n.roles.map(r => r.name).join(', ');
-                    if (n.target_type === 'participants' && n.eventParticipants && n.eventParticipants.length)
-                        return n.eventParticipants.map(ep => ep.name).join(', ');
+                    if (n.target_type === 'participant' && n.event_participants && n.event_participants.length)
+                        return n.events.map(e => e.title).join(', ') + ' : ' + n.event_participants.map(ep => `${ep.first_name} ${ep.last_name}`).join(', ');
                     return '–';
                 },
 
@@ -408,8 +407,6 @@
                     } else {
                         this.eventParticipants = [];
                     }
-
-                    this.form.target_participants = [];
                 },
 
                 handleTargetEventChange(event) {
@@ -421,6 +418,7 @@
                     }
 
                     if(this.form.target_type === 'participant'){
+                        this.form.target_participants = [];
                         this.fetchEventParticipants();
                     }
                 },
@@ -436,10 +434,12 @@
                         this.form.target_type = notification.target_type;
                         this.form.target_events = notification.events?.map(item => item.id) ?? [];
                         this.form.target_roles = notification.roles?.map(item => item.id) ?? [];
-                        this.form.target_participants = notification.targetParticipants?.map(item => item.id) ?? [];
+                        this.form.target_participants = notification.event_participants?.map(item => item.id) ?? [];
                         this.form.status = notification.status;
                         this.form.schedule_date = date;
                         this.form.schedule_time = time?.split(':').slice(0,2).join(':') ?? null;
+
+                        this.fetchEventParticipants();
                     } else if(this.form.id) {
                         this.form.id = null;
                         {{-- this.form.title = ''; --}}
