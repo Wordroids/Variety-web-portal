@@ -53,4 +53,9 @@ Route::middleware("auth:sanctum")->group(function () {
         NotificationController::class,
         "index",
     ])->name("api.notifications");
+
+    Route::post("/notifications/token", [
+        NotificationController::class,
+        "token",
+    ])->name("api.notifications.set_token");
 });

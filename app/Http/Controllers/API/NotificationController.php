@@ -14,4 +14,22 @@ class NotificationController extends Controller
             "notifications" => auth()->user()->notifications(),
         ]);
     }
+
+    public function token(Request $request)
+    {
+        $request->validate([
+            "token" => "required|string",
+        ]);
+
+        auth()
+            ->user()
+            ->update([
+                "push_token" => $request->token,
+            ]);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Token saved successfully",
+        ]);
+    }
 }
