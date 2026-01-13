@@ -12,4 +12,9 @@ class Role extends SpatieRole
     {
         return $this->hasMany(Password::class);
     }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, "notification_role");
+    }
 }

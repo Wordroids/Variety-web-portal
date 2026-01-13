@@ -359,7 +359,7 @@
                     if (n.target_type === 'event' && n.events && n.events.length)
                         return n.events.map(e => e.title).join(', ');
                     if (n.target_type === 'role' && n.roles && n.roles.length)
-                        return n.roles.map(r => r.name).join(', ');
+                        return n.events.map(e => e.title).join(', ') + ' : ' + n.roles.map(r => r.name).join(', ');
                     if (n.target_type === 'participant' && n.event_participants && n.event_participants.length)
                         return n.events.map(e => e.title).join(', ') + ' : ' + n.event_participants.map(ep => `${ep.first_name} ${ep.last_name}`).join(', ');
                     return '–';

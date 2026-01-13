@@ -37,6 +37,14 @@ final class EventParticipant extends Model
         return $this->belongsToMany(Role::class, "event_participant_role");
     }
 
+    public function notifications()
+    {
+        return $this->belongsToMany(
+            Notification::class,
+            "notification_event_participant",
+        );
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");
