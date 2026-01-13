@@ -60,61 +60,42 @@ final class Participant extends Authenticatable
      */
     public function notifications()
     {
-        $notifications = [];
+        $notifications = collect();
 
-        // Notifications targeted at the participant directly
         $this->eventParticipants()->each(function ($eventParticipant) use (
-            &$notifications,
+            $notifications,
         ) {
-            if ($eventParticipant->notifications->count()) {
-                $notifications = [
-                    ...$notifications,
-                    ...$eventParticipant->notifications->toArray(),
-                ];
-            }
-        });
+            // Direct participant notifications
+            $eventParticipant->notifications->each(
+                fn($n) => $notifications->put($n->id, $n),
+            );
 
-        // Notifications targeted at events the participant is registered for
-        $this->eventParticipants()->each(function ($eventParticipant) use (
-            &$notifications,
-        ) {
-            $notifications = [
-                ...$notifications,
-                ...$eventParticipant->event->notifications
-                    ->where("target_type", "event")
-                    ->toArray(),
-            ];
-        });
+            // Event-level notifications
+            $eventParticipant->event->notifications
+                ->where("target_type", "event")
+                ->each(fn($n) => $notifications->put($n->id, $n));
 
-        // Notifications targeted at roles the participant has in events
-        $this->eventParticipants()->each(function ($eventParticipant) use (
-            &$notifications,
-        ) {
-            $event = $eventParticipant->event;
-            $roleNotifications = [];
+            // Role-based notifications scoped to event
             $eventParticipant
                 ->roles()
-                ->each(function ($role) use (&$roleNotifications, &$event) {
+                ->each(function ($role) use (
+                    $notifications,
+                    $eventParticipant,
+                ) {
                     $role
                         ->notifications()
-                        ->each(function ($notification) use (
-                            &$roleNotifications,
-                            &$event,
-                        ) {
-                            if (
-                                $notification->target_type === "role" &&
-                                $notification->events->contains($event->id)
-                            ) {
-                                $roleNotifications = [
-                                    ...$roleNotifications,
-                                    $notification,
-                                ];
-                            }
-                        });
+                        ->where("target_type", "role")
+                        ->whereHas(
+                            "events",
+                            fn($q) => $q->where(
+                                "events.id",
+                                $eventParticipant->event_id,
+                            ),
+                        )
+                        ->each(fn($n) => $notifications->put($n->id, $n));
                 });
-            $notifications = [...$notifications, ...$roleNotifications];
         });
 
-        return $notifications;
+        return $notifications->values();
     }
 }
