@@ -10,7 +10,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "alymosul/exponent-server-sdk-php": "*",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^1.1",
         "phpoffice/phpspreadsheet": "^5.2",

@@ -9,62 +9,109 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get("/", function () {
+    return view("welcome");
 });
 
-
-
-Route::middleware('auth')->group(function () {
-
+Route::middleware("auth")->group(function () {
     // App Routes
-    Route::view('/', 'pages.dashboard')->name("dashboard");
+    Route::view("/", "pages.dashboard")->name("dashboard");
 
     //Events
-    Route::resource('events', EventController::class);
-    Route::resource('events.admins', EventAdminController::class)->only('index', 'store', 'destroy');
+    Route::resource("events", EventController::class);
+    Route::resource("events.admins", EventAdminController::class)->only(
+        "index",
+        "store",
+        "destroy",
+    );
 
-    // Event Participants 
-    Route::prefix('events/{event}')->group(function () {
-        Route::post('participants', [EventParticipantController::class, 'store'])->name('participants.store');
-        Route::put('participants/{participant}', [EventParticipantController::class, 'update'])->name('participants.update');
-        Route::delete('participants/{participant}', [EventParticipantController::class, 'destroy'])->name('participants.destroy');
-        Route::post('participants/import', [EventParticipantController::class, 'import'])->name('participants.import');//todo
+    // Event Participants
+    Route::prefix("events/{event}")->group(function () {
+        Route::get("participantsAjax", [
+            EventParticipantController::class,
+            "indexAjax",
+        ])->name("participants.indexAjax");
+        Route::post("participants", [
+            EventParticipantController::class,
+            "store",
+        ])->name("participants.store");
+        Route::put("participants/{participant}", [
+            EventParticipantController::class,
+            "update",
+        ])->name("participants.update");
+        Route::delete("participants/{participant}", [
+            EventParticipantController::class,
+            "destroy",
+        ])->name("participants.destroy");
+        Route::post("participants/import", [
+            EventParticipantController::class,
+            "import",
+        ])->name("participants.import"); //todo
     });
 
     // Download Participant Template
-    Route::get('/participants/template', [EventParticipantController::class, 'downloadTemplate'])
-        ->name('participants.template')
-        ->middleware('auth');
+    Route::get("/participants/template", [
+        EventParticipantController::class,
+        "downloadTemplate",
+    ])
+        ->name("participants.template")
+        ->middleware("auth");
 
+    Route::get("/profile", [ProfileController::class, "edit"])->name(
+        "profile.edit",
+    );
+    Route::patch("/profile", [ProfileController::class, "update"])->name(
+        "profile.update",
+    );
+    Route::delete("/profile", [ProfileController::class, "destroy"])->name(
+        "profile.destroy",
+    );
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource("users", UserController::class);
+    Route::resource("roles", RoleController::class);
+    Route::resource("permissions", PermissionController::class);
+    Route::resource("events.passwords", PasswordController::class)->only(
+        "index",
+        "update",
+    );
+    Route::resource("notifications", NotificationController::class)->only(
+        "index",
+        "store",
+        "update",
+        "destroy",
+    );
+    Route::post("/notifications/import", [
+        NotificationController::class,
+        "import",
+    ])->name("notifications.import");
 
-    Route::resource('users', UserController::class);
-    Route::resource('roles', RoleController::class);
-    Route::resource('permissions', PermissionController::class);
-    Route::resource('passwords', PasswordController::class)->only('index', 'update');
-
-    Route::post('attachments', function (Request $request) {
+    Route::post("attachments", function (Request $request) {
         $request->validate([
-            'attachment' => ['required', 'file'],
+            "attachment" => ["required", "file"],
         ]);
 
-        $path = $request->file('attachment')->store('attachments', 'public');
+        $path = $request->file("attachment")->store("attachments", "public");
 
         return [
-            'image_url' => '/storage/' . $path,
+            "image_url" => "/storage/" . $path,
         ];
-    })->name('attachments.store');
+    })->name("attachments.store");
+
+    // Settings Routes
+    Route::get("/settings", [SettingsController::class, "show"])->name(
+        "settings.show",
+    );
+    Route::post("/settings", [SettingsController::class, "store"])->name(
+        "settings.store",
+    );
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::resource('roles', RoleController::class);
+Route::middleware(["auth"])->group(function () {
+    Route::resource("roles", RoleController::class);
 });
 
-
-require __DIR__ . '/auth.php';
+require __DIR__ . "/auth.php";

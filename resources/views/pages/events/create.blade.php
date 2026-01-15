@@ -29,10 +29,10 @@
         @endif
 
         <!-- 🎯 Main Event Form -->
-        <form 
-            x-data="eventForm()" 
-            method="POST" 
-            action="{{ route('events.store') }}" 
+        <form
+            x-data="eventForm()"
+            method="POST"
+            action="{{ route('events.store') }}"
             enctype="multipart/form-data"
             @submit="loading = true"
             class="space-y-8"
@@ -53,31 +53,31 @@
                     <!-- Title -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Event Title *</label>
-                        <input 
-                            name="title" 
-                            type="text" 
+                        <input
+                            name="title"
+                            type="text"
                             value="{{ old('title') }}"
-                            required 
+                            required
                             placeholder="Enter event title"
                             class="mt-1 w-full rounded-lg border {{ $errors->has('title') ? 'border-red-500' : 'border-gray-300' }} focus:border-red-500 focus:ring-red-500"
                         />
-                        @error('title') 
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p> 
+                        @error('title')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Description -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Description *</label>
-                        <textarea 
-                            name="description" 
-                            required 
-                            rows="5" 
+                        <textarea
+                            name="description"
+                            required
+                            rows="5"
                             placeholder="Describe the event"
                             class="mt-1 w-full rounded-lg border {{ $errors->has('description') ? 'border-red-500' : 'border-gray-300' }} focus:border-red-500 focus:ring-red-500"
                         >{{ old('description') }}</textarea>
-                        @error('description') 
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p> 
+                        @error('description')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -85,28 +85,28 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Start Date *</label>
-                            <input 
-                                name="start_date" 
-                                type="date" 
+                            <input
+                                name="start_date"
+                                type="date"
                                 value="{{ old('start_date') }}"
                                 required
                                 class="mt-1 w-full rounded-lg border {{ $errors->has('start_date') ? 'border-red-500' : 'border-gray-300' }} focus:border-red-500 focus:ring-red-500"
                             />
-                            @error('start_date') 
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p> 
+                            @error('start_date')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">End Date *</label>
-                            <input 
-                                name="end_date" 
-                                type="date" 
+                            <input
+                                name="end_date"
+                                type="date"
                                 value="{{ old('end_date') }}"
                                 required
                                 class="mt-1 w-full rounded-lg border {{ $errors->has('end_date') ? 'border-red-500' : 'border-gray-300' }} focus:border-red-500 focus:ring-red-500"
                             />
-                            @error('end_date') 
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p> 
+                            @error('end_date')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -210,7 +210,7 @@
                                             <div
                                                 x-bind:data-name="`days[${i}][itinerary_description]`"
                                                 x-bind:data-id="`days[${i}][itinerary_description]`"
-                                            >                                                
+                                            >
                                                 <x-trix-input-alpine
                                                     placeholder="Section description"
                                                 />
@@ -255,57 +255,103 @@
                 </div>
             </section>
 
-            <!-- Sponsors -->
-            <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Sponsors</h2>
-                <div class="w-1/3 justify-center" x-data="{sponsorImageFile: null, defaultPreview: ''}">
-                    <label for="sponsor_image">
-                        {{-- Preview Section --}}
-                        <div class="cursor-pointer bg-gray-100 rounded-lg aspect-square relative">
-                            <button
-                                x-show="sponsorImageFile"
-                                type="button"
-                                class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
-                                @click="$refs.sponsorImageInput.value = ''; sponsorImageFile = null"
-                            >X</button>
-                            <img
-                                class="object-contain w-full h-full rounded-lg"
-                                x-bind:src="sponsorImageFile ? URL.createObjectURL(sponsorImageFile) : ''"
-                                x-show="sponsorImageFile"
-                            />
-                            <div x-show="!sponsorImageFile" class="w-full h-full flex flex-col items-center justify-center">
-                                <img src="/images/icons/icons8-image-64.png" alt="">
-                                <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
-                                <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+            <!-- Cover Image and Sponsors -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cover Image -->
+                <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Cover Image</h2>
+                    <div class="w-full justify-center" x-data="{coverImageFile: null, defaultPreview: ''}">
+                        <label for="cover_image">
+                            {{-- Preview Section --}}
+                            <div class="cursor-pointer bg-gray-100 rounded-lg aspect-video relative">
+                                <button
+                                    x-show="coverImageFile"
+                                    type="button"
+                                    class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
+                                    @click="$refs.coverImageInput.value = ''; coverImageFile = null"
+                                >X</button>
+                                <img
+                                    class="object-cover w-full h-full rounded-lg"
+                                    x-bind:src="coverImageFile ? URL.createObjectURL(coverImageFile) : ''"
+                                    x-show="coverImageFile"
+                                />
+                                <div x-show="!coverImageFile" class="w-full h-full flex flex-col items-center justify-center">
+                                    <img src="/images/icons/icons8-image-64.png" alt="">
+                                    <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
+                                    <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- Button --}}
-                        <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
-                            Upload Image
-                        </div>
-                    </label>
-                    {{-- Sponsor Image Input --}}
-                    <input
-                        type="file"
-                        x-ref="sponsorImageInput"
-                        name="sponsor_image"
-                        id="sponsor_image"
-                        class="hidden"
-                        accept="image/*" 
-                        @change="sponsorImageFile = $event.target.files[0];"
-                    />
-                </div>
-            </section>
+                            {{-- Button --}}
+                            <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
+                                Upload Cover Image
+                            </div>
+                        </label>
+                        {{-- Cover Image Input --}}
+                        <input
+                            type="file"
+                            x-ref="coverImageInput"
+                            name="cover_image"
+                            id="cover_image"
+                            class="hidden"
+                            accept="image/*"
+                            @change="coverImageFile = $event.target.files[0];"
+                        />
+                    </div>
+                </section>
+
+                <!-- Sponsors -->
+                <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Sponsors</h2>
+                    <div class="w-full justify-center" x-data="{sponsorImageFile: null, defaultPreview: ''}">
+                        <label for="sponsor_image">
+                            {{-- Preview Section --}}
+                            <div class="cursor-pointer bg-gray-100 rounded-lg aspect-video relative">
+                                <button
+                                    x-show="sponsorImageFile"
+                                    type="button"
+                                    class="w-8 h-8 bg-red-600 rounded-full text-white absolute -right-2 -top-2"
+                                    @click="$refs.sponsorImageInput.value = ''; sponsorImageFile = null"
+                                >X</button>
+                                <img
+                                    class="object-contain w-full h-full rounded-lg"
+                                    x-bind:src="sponsorImageFile ? URL.createObjectURL(sponsorImageFile) : ''"
+                                    x-show="sponsorImageFile"
+                                />
+                                <div x-show="!sponsorImageFile" class="w-full h-full flex flex-col items-center justify-center">
+                                    <img src="/images/icons/icons8-image-64.png" alt="">
+                                    <p class="mt-6">Drag and drop or <span class="font-bold">browse</span> files</p>
+                                    <p class="text-gray-500 text-sm">PNG, JPEG or JPG</p>
+                                </div>
+                            </div>
+
+                            {{-- Button --}}
+                            <div type="button" class="mt-2 text-center cursor-pointer rounded-lg bg-white border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50">
+                                Upload Sponsor Image
+                            </div>
+                        </label>
+                        {{-- Sponsor Image Input --}}
+                        <input
+                            type="file"
+                            x-ref="sponsorImageInput"
+                            name="sponsor_image"
+                            id="sponsor_image"
+                            class="hidden"
+                            accept="image/*"
+                            @change="sponsorImageFile = $event.target.files[0];"
+                        />
+                    </div>
+                </section>
+            </div>
 
             <!-- Submit -->
             <div class="flex justify-end gap-3">
-                <a href="{{ url()->previous() }}" 
+                <a href="{{ url()->previous() }}"
                    class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
                     Cancel
                 </a>
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     :disabled="loading"
                     class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
                     <template x-if="loading">

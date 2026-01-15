@@ -29,6 +29,19 @@
                                         <label class="text-sm font-medium text-gray-700">Relationship</label>
                                         <input type="text" name="emergency_contact_relationship" class="mt-1 w-full rounded-lg border-gray-300 focus:ring-red-500" x-model="modalData.emergency_contact_relationship">
                                     </div>
+
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Roles</label>
+                                        <select name="roles[]" multiple class="mt-1 w-full rounded-lg border-gray-300 focus:ring-red-500">
+                                            @foreach(\App\Models\Role::whereNotIn('name', ['Super Admin', 'Administrator'])->get() as $role)
+                                                <option value="{{ $role->id }}"
+                                                    @if(isset($modalData['roles']) && in_array($role->id, $modalData['roles'])) selected @endif>
+                                                    {{ $role->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple roles</p>
+                                    </div>
                                 </div>
 
                                 <div class="mt-4 flex justify-end gap-2">

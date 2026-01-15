@@ -56,6 +56,12 @@
                     <span x-text="showParticipants ? 'Hide Participants' : 'View Participants'"></span>
                 </a>
 
+                <a href="{{ route('events.passwords.index', $event) }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-asterisk"></i>
+                    <span>Passwords</span>
+                </a>
+
                 @can('SUPERADMIN')
                 <a href="{{ route('events.admins.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
@@ -76,6 +82,13 @@
             <h1 class="text-xl md:text-2xl font-bold text-gray-900">{{ $event->title }}</h1>
             <p class="text-gray-500 text-sm">{{ \Illuminate\Support\Str::limit($event->description, 180) }}</p>
         </div>
+
+        <!-- Cover Image -->
+        @if ($event->cover_image_path)
+        <div class="mt-4">
+            <img src="/storage/{{ $event->cover_image_path }}" class="w-full h-32 md:h-64 object-cover rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        @endif
 
         <!-- Summary Card -->
         <div class="mt-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -172,6 +185,7 @@
                                 <th class="px-4 py-2 font-medium">Vehicle</th>
                                 <th class="px-4 py-2 font-medium">Contact</th>
                                 <th class="px-4 py-2 font-medium">Emergency Contact</th>
+                                <th class="px-4 py-2 font-medium">Roles</th>
                                 <th class="px-4 py-2 font-medium">Status</th>
                                 <th class="px-4 py-2 font-medium text-right">Actions</th>
                             </tr>
@@ -190,16 +204,19 @@
                                         <div class="text-xs text-gray-500">{{ $p->emergency_contact_relationship }}</div>
                                     </td>
                                     <td class="px-4 py-2">
+                                        {{ $p->role_names ?? '—' }}
+                                    </td>
+                                    <td class="px-4 py-2">
                                         <span class="px-2 py-0.5 text-xs rounded-full font-medium
                                             {{ $p->status === 'active' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600' }}">
                                             {{ $p->status }}
                                         </span>
                                     </td>
-                                    
+
                                     @can('manage participants')
                                     <td class="px-4 py-2 text-right flex justify-end gap-2">
                                         <button type="button"
-                                            @click="openEditModal({ 
+                                            @click="openEditModal({
                                                 id: {{ $p->id }},
                                                 full_name: '{{ $p->full_name }}',
                                                 email: '{{ $p->email }}',
@@ -207,7 +224,8 @@
                                                 vehicle: '{{ $p->vehicle }}',
                                                 emergency_contact_name: '{{ $p->emergency_contact_name }}',
                                                 emergency_contact_relationship: '{{ $p->emergency_contact_relationship }}',
-                                                status: '{{ $p->status }}'
+                                                status: '{{ $p->status }}',
+                                                roles: [{{ $p->roles->pluck('id')->implode(',') }}]
                                             })"
                                             class="text-gray-600 hover:text-gray-800">
                                             <i class="fa-solid fa-pen"></i>
@@ -228,7 +246,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -293,7 +311,7 @@
                     </div>
 
                     <template x-if="current.image">
-                        <img :src="current.image" alt=""
+                        <img :src="`/storage/${current.image}`" alt=""
                             class="w-full h-56 md:h-64 rounded-lg object-cover">
                     </template>
 
