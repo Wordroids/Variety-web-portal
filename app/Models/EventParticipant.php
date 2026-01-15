@@ -27,6 +27,11 @@ final class EventParticipant extends Model
 
     protected $with = ["roles"];
 
+    public function participant()
+    {
+        return $this->hasOne(Participant::class, "phone", "phone");
+    }
+
     public function event()
     {
         return $this->belongsTo(Event::class);
