@@ -50,4 +50,12 @@ class Event extends Model
 
         return $this->admins()->where("user_id", $user->id)->exists();
     }
+
+    /**
+     * Notificaions
+     */
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, "notification_event");
+    }
 }

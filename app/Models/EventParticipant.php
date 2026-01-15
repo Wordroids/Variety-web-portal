@@ -27,6 +27,11 @@ final class EventParticipant extends Model
 
     protected $with = ["roles"];
 
+    public function participant()
+    {
+        return $this->hasOne(Participant::class, "phone", "phone");
+    }
+
     public function event()
     {
         return $this->belongsTo(Event::class);
@@ -35,6 +40,14 @@ final class EventParticipant extends Model
     public function roles()
     {
         return $this->belongsToMany(Role::class, "event_participant_role");
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(
+            Notification::class,
+            "notification_event_participant",
+        );
     }
 
     public function getFullNameAttribute(): string

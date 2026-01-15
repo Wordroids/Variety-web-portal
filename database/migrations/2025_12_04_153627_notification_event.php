@@ -10,14 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create("passwords", function (Blueprint $table) {
+        Schema::create("notification_event", function (Blueprint $table) {
             $table->id();
             $table->foreignId("event_id")->constrained()->cascadeOnDelete();
-            $table->foreignId("role_id")->constrained()->cascadeOnDelete();
-            $table->string("password");
+            $table
+                ->foreignId("notification_id")
+                ->constrained()
+                ->cascadeOnDelete();
             $table->timestamps();
-
-            $table->unique(["role_id", "event_id"]); // One password per event
+            $table->unique(["event_id", "notification_id"]);
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists("passwords");
+        Schema::dropIfExists("notification_user");
     }
 };

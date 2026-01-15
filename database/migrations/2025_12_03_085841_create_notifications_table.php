@@ -4,21 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create("notifications", function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('message')->nullable();
-            $table->enum('target_type', ['event', 'role', 'user']);
-            $table->enum('status', ['draft', 'scheduled', 'sent'])->default('draft');
-            $table->dateTime('scheduled_at')->nullable();
-            $table->dateTime('sent_at')->nullable();
+            $table
+                ->foreignId("user_id")
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+            $table->string("title")->nullable();
+            $table->text("message");
+            $table->enum("target_type", ["event", "role", "participant"]);
+            $table
+                ->enum("status", ["draft", "scheduled", "sent"])
+                ->default("draft");
+            $table->dateTime("scheduled_at")->nullable();
+            $table->dateTime("sent_at")->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists("notifications");
     }
 };

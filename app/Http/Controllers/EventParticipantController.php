@@ -8,6 +8,7 @@ use App\Http\Requests\StoreEventParticipantRequest;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Services\EventParticipantService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,21 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 final class EventParticipantController extends Controller
 {
+    /**
+     * Import participants from Excel file.
+     */
+    public function indexAjax(Request $request, Event $event): JsonResponse
+    {
+        if (Auth::user()->cannot("viewParticipants", Event::class)) {
+            abort(403);
+        }
+
+        return response()->json([
+            "success" => true,
+            "participants" => $event->participants,
+        ]);
+    }
+
     public function store(
         StoreEventParticipantRequest $request,
         Event $event,
@@ -127,6 +143,7 @@ final class EventParticipantController extends Controller
 
         return back()->with("success", "Participant updated successfully.");
     }
+
     /**
      * Import participants from Excel file.
      */

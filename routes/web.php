@@ -31,6 +31,10 @@ Route::middleware("auth")->group(function () {
 
     // Event Participants
     Route::prefix("events/{event}")->group(function () {
+        Route::get("participantsAjax", [
+            EventParticipantController::class,
+            "indexAjax",
+        ])->name("participants.indexAjax");
         Route::post("participants", [
             EventParticipantController::class,
             "store",
@@ -98,8 +102,12 @@ Route::middleware("auth")->group(function () {
     })->name("attachments.store");
 
     // Settings Routes
-    Route::get('/settings', [SettingsController::class, 'show'])->name('settings.show');
-    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
+    Route::get("/settings", [SettingsController::class, "show"])->name(
+        "settings.show",
+    );
+    Route::post("/settings", [SettingsController::class, "store"])->name(
+        "settings.store",
+    );
 });
 
 Route::middleware(["auth"])->group(function () {

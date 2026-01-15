@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\LocationEndpointController;
+use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes
@@ -47,4 +48,14 @@ Route::middleware("auth:sanctum")->group(function () {
         LocationEndpointController::class,
         "index",
     ])->name("api.location-endpoint");
+
+    Route::get("/notifications", [
+        NotificationController::class,
+        "index",
+    ])->name("api.notifications");
+
+    Route::post("/notifications/token", [
+        NotificationController::class,
+        "token",
+    ])->name("api.notifications.set_token");
 });
