@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendNotificationJob;
 use App\Models\Event;
 use App\Models\Notification;
 use App\Models\Role;
@@ -68,13 +69,16 @@ class NotificationController extends Controller
                             " " .
                             $validated["schedule_time"],
                     )
-                    : null;
+                    : Carbon::createFromTimestamp(0);
 
             $notification = Notification::create([
                 "title" => $validated["title"] ?? "Untitled",
                 "message" => $validated["message"],
                 "target_type" => $validated["target_type"],
-                "status" => $validated["status"],
+                "status" =>
+                    $validated["status"] == "sent"
+                        ? "scheduled"
+                        : $validated["status"],
                 "scheduled_at" => $scheduledAt,
             ]);
 
@@ -86,6 +90,10 @@ class NotificationController extends Controller
 
             return $notification;
         });
+
+        if ($validated["status"] == "sent") {
+            SendNotificationJob::dispatch($notification);
+        }
 
         return redirect()
             ->route("notifications.index")
@@ -123,13 +131,18 @@ class NotificationController extends Controller
                             " " .
                             $validated["schedule_time"],
                     )
-                    : null;
+                    : Carbon::createFromTimestamp(0);
+
+            $status = $validated["status"];
+            if ($status == "sent" && $notification->sent_at == null) {
+                $status = "scheduled";
+            }
 
             $notification->update([
                 "title" => $validated["title"] ?? "Untitled",
                 "message" => $validated["message"],
                 "target_type" => $validated["target_type"],
-                "status" => $validated["status"],
+                "status" => $status,
                 "scheduled_at" => $scheduledAt,
             ]);
 
@@ -139,6 +152,10 @@ class NotificationController extends Controller
                 ->eventParticipants()
                 ->sync($validated["target_participants"] ?? []);
         });
+
+        if ($validated["status"] == "sent" && $notification->sent_at == null) {
+            SendNotificationJob::dispatch($notification);
+        }
 
         return redirect()
             ->route("notifications.index")
