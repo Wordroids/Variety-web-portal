@@ -14,7 +14,8 @@ class DispatchScheduledNotifications extends Command
     public function handle()
     {
         Notification::query()
-            ->where("status", "scheduled")
+            ->where("sent_at", null)
+            ->where("status", "!=", "draft")
             ->where("scheduled_at", "<=", now())
             ->chunkById(100, function ($notifications) {
                 foreach ($notifications as $notification) {

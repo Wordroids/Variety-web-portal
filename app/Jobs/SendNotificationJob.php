@@ -40,22 +40,26 @@ class SendNotificationJob implements ShouldQueue
         // Get all expo push tokens
         $tokens = $participants->pluck("push_token");
 
-        // Send notification to all participants
-        $channel = "channel_" . $this->notification->id;
-        $expo = \ExponentPhpSDK\Expo::normalSetup();
+        if ($tokens->empty()) {
+            logger("No tokens found");
+        } else {
+            // Send notification to all participants
+            $channel = "channel_" . $this->notification->id;
+            $expo = \ExponentPhpSDK\Expo::normalSetup();
 
-        foreach ($tokens as $token) {
-            $expo->subscribe($channel, $token);
+            foreach ($tokens as $token) {
+                $expo->subscribe($channel, $token);
+            }
+
+            $expo->notify(
+                [$channel],
+                [
+                    "body" => $this->notification->message,
+                ],
+            );
+
+            logger("Sent..");
         }
-
-        $expo->notify(
-            [$channel],
-            [
-                "body" => $this->notification->message,
-            ],
-        );
-
-        logger("Sent..");
 
         // Update notification status
         $this->notification->update([

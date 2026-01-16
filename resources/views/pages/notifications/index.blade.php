@@ -98,7 +98,7 @@
                                 <!-- Date -->
                                 <td class="px-4 py-3"
                                     :class="{ 'text-yellow-600': n.status === 'scheduled' }"
-                                    x-text="formatDate(n.created_at)"></td>
+                                    x-text=" n.status === 'scheduled' ? formatDate(n.scheduled_at) : formatDate(n.sent_at ?? n.created_at)"></td>
 
                                 <!-- Actions -->
                                 <td class="px-4 py-3 text-right">
