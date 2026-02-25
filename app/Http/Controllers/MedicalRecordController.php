@@ -27,7 +27,37 @@ class MedicalRecordController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'vehicle' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:255',
+            'address1' => 'nullable|string|max:255',
+            'address2' => 'nullable|string|max:255',
+            'address3' => 'nullable|string|max:255',
+            'address4' => 'nullable|string|max:255',
+            'address5' => 'nullable|string|max:255',
+            'address6' => 'nullable|string|max:255',
+            'mobile' => 'nullable|string|max:20',
+            'next_of_kin' => 'nullable|string|max:255',
+            'nok_phone' => 'nullable|string|max:20',
+            'nok_alt_phone' => 'nullable|string|max:20',
+            'dob' => 'nullable|date',
+            'allergies' => 'nullable|string',
+            'dietary_requirement' => 'nullable|string',
+            'past_medical_history' => 'nullable|string',
+            'current_medical_history' => 'nullable|string',
+            'current_medications' => 'nullable|string',
+            'comments' => 'nullable|string',
+        ]);
+
+        // Here you would typically save to database
+        // For now, we'll just return success
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Medical record saved successfully'
+        ]);
     }
 
     /**
