@@ -226,198 +226,21 @@
 
             <!-- Modal panel -->
             <div class="flex min-h-full items-center justify-center p-4">
-                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <form @submit.prevent="saveRecord">
-                        <div class="bg-white px-6 pt-5 pb-4">
-                            <!-- Header -->
-                            <div class="flex items-center justify-between mb-4 border-b pb-3">
-                                <h3 class="text-lg font-semibold text-gray-900">
-                                    <i class="fa-solid fa-file-medical text-red-600"></i> Add Medical Record
-                                </h3>
-                                <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-600">
-                                    <i class="fa-solid fa-times text-xl"></i>
-                                </button>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Vehicle -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
-                                    <input type="text" x-model="form.vehicle" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" 
-                                        required>
-                                </div>
-
-                                <!-- First Name -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                    <input type="text" x-model="form.first_name" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" 
-                                        required>
-                                </div>
-
-                                <!-- Last Name -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" x-model="form.last_name" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" 
-                                        required>
-                                </div>
-
-                                <!-- Nickname -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nickname</label>
-                                    <input type="text" x-model="form.nickname" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 1 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 1</label>
-                                    <input type="text" x-model="form.address1" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 2 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 2</label>
-                                    <input type="text" x-model="form.address2" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 3 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 3</label>
-                                    <input type="text" x-model="form.address3" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 4 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 4</label>
-                                    <input type="text" x-model="form.address4" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 5 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 5</label>
-                                    <input type="text" x-model="form.address5" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Address 6 -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address 6</label>
-                                    <input type="text" x-model="form.address6" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Mobile -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Mobile</label>
-                                    <input type="tel" x-model="form.mobile" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Next Of Kin -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Next Of Kin</label>
-                                    <input type="text" x-model="form.next_of_kin" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- NOK Phone -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">NOK Phone</label>
-                                    <input type="tel" x-model="form.nok_phone" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- NOK Alt Phone -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">NOK Alt Phone</label>
-                                    <input type="tel" x-model="form.nok_alt_phone" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- DOB -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                                    <input type="date" x-model="form.dob" 
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Allergies -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
-                                    <textarea x-model="form.allergies" rows="2"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-
-                                <!-- Dietary Requirement -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dietary Requirement</label>
-                                    <textarea x-model="form.dietary_requirement" rows="2"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-
-                                <!-- Past Medical History -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Past Medical History</label>
-                                    <textarea x-model="form.past_medical_history" rows="3"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-
-                                <!-- Current Medical History -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Medical History</label>
-                                    <textarea x-model="form.current_medical_history" rows="3"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-
-                                <!-- Current Medications -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Medications</label>
-                                    <textarea x-model="form.current_medications" rows="3"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-
-                                <!-- Vehicle Image -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle Image</label>
-                                    <input type="file" @change="handleVehicleImage" accept="image/*"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Images -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Additional Images</label>
-                                    <input type="file" @change="handleImages" accept="image/*" multiple
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
-                                </div>
-
-                                <!-- Comments -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
-                                    <textarea x-model="form.comments" rows="3"
-                                        class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="bg-gray-50 px-6 py-3 flex justify-end gap-3">
-                            <button type="button" @click="closeModal()"
-                                class="rounded-lg bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                                <i class="fa-solid fa-save"></i> Save Record
+                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div class="bg-white px-6 pt-5 pb-4">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6 border-b pb-3">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                <i class="fa-solid fa-file-medical text-red-600"></i> Upload Medical Record
+                            </h3>
+                            <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fa-solid fa-times text-xl"></i>
                             </button>
                         </div>
-                    </form>
+
+                        <!-- Form Component -->
+                        @include('pages.medical-records.addMedicalRecord')
+                    </div>
                 </div>
             </div>
         </div>
@@ -429,35 +252,19 @@
             return {
                 showModal: false,
                 records: [],
+                events: [], // Will be populated from server
                 form: {
-                    vehicle: '',
-                    first_name: '',
-                    last_name: '',
-                    nickname: '',
-                    address1: '',
-                    address2: '',
-                    address3: '',
-                    address4: '',
-                    address5: '',
-                    address6: '',
-                    mobile: '',
-                    next_of_kin: '',
-                    nok_phone: '',
-                    nok_alt_phone: '',
-                    dob: '',
-                    allergies: '',
-                    dietary_requirement: '',
-                    past_medical_history: '',
-                    current_medical_history: '',
-                    current_medications: '',
-                    vehicle_image: null,
-                    images: [],
-                    comments: ''
+                    event_id: '',
+                    csv_filename: '',
+                    csv_file: null,
+                    destroy_date: '',
+                    acknowledge: false
                 },
 
                 openModal() {
                     this.showModal = true;
                     document.body.style.overflow = 'hidden';
+                    this.loadEvents();
                 },
 
                 closeModal() {
@@ -468,74 +275,58 @@
 
                 resetForm() {
                     this.form = {
-                        vehicle: '',
-                        first_name: '',
-                        last_name: '',
-                        nickname: '',
-                        address1: '',
-                        address2: '',
-                        address3: '',
-                        address4: '',
-                        address5: '',
-                        address6: '',
-                        mobile: '',
-                        next_of_kin: '',
-                        nok_phone: '',
-                        nok_alt_phone: '',
-                        dob: '',
-                        allergies: '',
-                        dietary_requirement: '',
-                        past_medical_history: '',
-                        current_medical_history: '',
-                        current_medications: '',
-                        vehicle_image: null,
-                        images: [],
-                        comments: ''
+                        event_id: '',
+                        csv_filename: '',
+                        csv_file: null,
+                        destroy_date: '',
+                        acknowledge: false
                     };
                 },
 
-                handleVehicleImage(event) {
+                loadEvents() {
+                    // Fetch events from server
+                    fetch('{{ route("events.list") }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.events = data;
+                        })
+                        .catch(error => console.error('Error loading events:', error));
+                },
+
+                handleCsvFile(event) {
                     const file = event.target.files[0];
                     if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            this.form.vehicle_image = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
+                        this.form.csv_file = file;
+                        this.form.csv_filename = file.name;
                     }
                 },
 
-                handleImages(event) {
-                    const files = Array.from(event.target.files);
-                    files.forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            this.form.images.push(e.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                },
+                uploadMedicalRecords() {
+                    const formData = new FormData();
+                    formData.append('event_id', this.form.event_id);
+                    formData.append('csv_file', this.form.csv_file);
+                    formData.append('destroy_date', this.form.destroy_date);
+                    formData.append('acknowledge', this.form.acknowledge);
 
-                saveRecord() {
-                    // Add the record to the records array
-                    this.records.push({ ...this.form, id: Date.now() });
-                    
-                    // Send to server
-                    fetch('{{ route("medical-records.store") }}', {
+                    fetch('{{ route("medical-records.upload") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify(this.form)
+                        body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             window.location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error uploading medical records');
+                    });
 
                     this.closeModal();
                 }

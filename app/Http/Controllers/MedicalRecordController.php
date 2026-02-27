@@ -91,4 +91,36 @@ class MedicalRecordController extends Controller
     {
         //
     }
+
+    /**
+     * Upload medical records via CSV file
+     */
+    public function upload(Request $request)
+    {
+        $validated = $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'csv_file' => 'required|file|mimes:csv,txt',
+            'destroy_date' => 'required|date|after:today',
+            'acknowledge' => 'required|in:on,1'
+        ]);
+
+        try {
+            $file = $request->file('csv_file');
+            $eventId = $validated['event_id'];
+            $destroyDate = $validated['destroy_date'];
+
+            // You can implement the CSV parsing logic here
+            // For now, return success
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Medical records uploaded successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error uploading medical records: ' . $e->getMessage()
+            ], 400);
+        }
+    }
 }

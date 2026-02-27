@@ -458,4 +458,20 @@ class EventController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get events as JSON for API calls
+     */
+    public function list()
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole("Super Admin")) {
+            $events = Event::latest()->get(['id', 'name']);
+        } else {
+            $events = $user->events()->latest()->get(['id', 'name']);
+        }
+
+        return response()->json($events);
+    }
 }
