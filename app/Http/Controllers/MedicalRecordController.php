@@ -61,14 +61,6 @@ class MedicalRecordController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        return view('pages.medical-records.show', compact('id'));
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
