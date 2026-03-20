@@ -4,6 +4,7 @@ use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventFormController;
 use App\Http\Controllers\EventParticipantController;
+use App\Http\Controllers\EventPermitController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
@@ -84,6 +85,7 @@ Route::middleware("auth")->group(function () {
         "update",
     );
     Route::get("events/{event}/forms", [EventFormController::class, "index"])->name("events.forms.index");
+    Route::get("events/{event}/permits", [EventPermitController::class, "index"])->name("events.permits.index");
     Route::resource("notifications", NotificationController::class)->only(
         "index",
         "store",
