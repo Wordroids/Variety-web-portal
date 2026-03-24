@@ -65,6 +65,14 @@
                                 <span>Notifications</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('medical-records.index') }}"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2
+                                   {{ request()->routeIs('medical-records.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                                <i class="fa-solid fa-file-medical w-5 text-center"></i>
+                                <span>Medical Records</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
