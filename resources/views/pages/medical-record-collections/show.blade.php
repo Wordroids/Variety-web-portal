@@ -26,10 +26,24 @@
                     Back to Medical Record Collections
                 </a>
 
-                <a href="{{ route('events.show', $event) }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                    <i class="fa-solid fa-eye"></i> View Event
-                </a>
+                <div class="flex gap-2">
+                    <a href="{{ route('events.show', $event) }}"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                        <i class="fa-solid fa-eye"></i> View Event
+                    </a>
+                    <form action="{{ route('medical-records.destroy', $medicalRecordCollection) }}"
+                          method="POST"
+                          onsubmit="return confirm('Are you sure you want to delete these records?');">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">
+                            <i class="fa-solid fa-trash"></i> Delete Records
+                        </button>
+                    </form>
+                </div>
             </div>
             <!-- Title + subtitle -->
             <div class="mt-2">

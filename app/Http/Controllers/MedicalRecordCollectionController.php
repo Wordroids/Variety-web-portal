@@ -166,10 +166,7 @@ class MedicalRecordCollectionController extends Controller
             fclose($handle);
             DB::commit();
 
-            return response()->json([
-                "success" => true,
-                "message" => "CSV imported successfully",
-            ]);
+            return back()->with("success", "CSV imported successfully");
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -223,8 +220,13 @@ class MedicalRecordCollectionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MedicalRecordCollection $medicalRecordCollection)
+    public function destroy(int $id)
     {
-        //
+        $medicalRecordCollection = MedicalRecordCollection::findOrFail($id);
+        $medicalRecordCollection->delete();
+
+        return redirect()
+            ->route("medical-records.index")
+            ->with("success", "Medical records deleted");
     }
 }
