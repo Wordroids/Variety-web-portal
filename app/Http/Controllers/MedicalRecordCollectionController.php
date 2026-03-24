@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\MedicalRecordCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MedicalRecordCollectionController extends Controller
 {
@@ -12,7 +14,16 @@ class MedicalRecordCollectionController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+
+        $events = $user->hasRole("Super Admin")
+            ? Event::latest()->get()
+            : $user->events()->latest()->get();
+
+        return view(
+            "pages.medical-record-collections.index",
+            compact("events"),
+        );
     }
 
     /**
@@ -20,7 +31,7 @@ class MedicalRecordCollectionController extends Controller
      */
     public function create()
     {
-        //
+        return view("pages.medical-record-collections.create");
     }
 
     /**
@@ -50,8 +61,10 @@ class MedicalRecordCollectionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MedicalRecordCollection $medicalRecordCollection)
-    {
+    public function update(
+        Request $request,
+        MedicalRecordCollection $medicalRecordCollection,
+    ) {
         //
     }
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventParticipantController;
+use App\Http\Controllers\MedicalRecordCollectionController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
@@ -75,9 +76,24 @@ Route::middleware("auth")->group(function () {
     Route::resource("users", UserController::class);
     Route::resource("roles", RoleController::class);
     Route::resource("permissions", PermissionController::class);
-    Route::get("events/list", [EventController::class, "list"])->name("events.list");
-    Route::post("medical-records/upload", [MedicalRecordController::class, "upload"])->name("medical-records.upload");
-    Route::resource("medical-records", MedicalRecordController::class)->except(['show']);
+    Route::get("events/list", [EventController::class, "list"])->name(
+        "events.list",
+    );
+    Route::post("medical-records/upload", [
+        MedicalRecordController::class,
+        "upload",
+    ])->name("medical-records.upload");
+
+    Route::resource(
+        "medical-records",
+        MedicalRecordCollectionController::class,
+    );
+
+    Route::post("medical-records/import", [
+        MedicalRecordCollectionController::class,
+        "import",
+    ])->name("medical-records.import");
+
     Route::resource("events.passwords", PasswordController::class)->only(
         "index",
         "update",
