@@ -104,10 +104,7 @@ Route::middleware("auth")->group(function () {
         EventFormController::class,
         "index",
     ])->name("events.forms.index");
-    Route::get("events/{event}/permits", [
-        EventPermitController::class,
-        "index",
-    ])->name("events.permits.index");
+    Route::resource("events.permits", EventPermitController::class);
     Route::resource("notifications", NotificationController::class)->only(
         "index",
         "store",
