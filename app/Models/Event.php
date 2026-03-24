@@ -68,4 +68,9 @@ class Event extends Model
     {
         return $this->hasMany(EventPermit::class);
     }
+
+    public function forms()
+    {
+        return $this->hasMany(EventForm::class);
+    }
 }
