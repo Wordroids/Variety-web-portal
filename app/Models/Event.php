@@ -63,4 +63,14 @@ class Event extends Model
     {
         return $this->hasOne(MedicalRecordCollection::class);
     }
+
+    public function permits()
+    {
+        return $this->hasMany(EventPermit::class);
+    }
+
+    public function forms()
+    {
+        return $this->hasMany(EventForm::class);
+    }
 }
