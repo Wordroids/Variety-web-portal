@@ -39,7 +39,7 @@
                         class="text-gray-400 hover:text-red-600 transition-colors" title="View PDF">
                             <i class="fa-solid fa-file-pdf fa-lg"></i>
                         </a>
-                        <form action="{{ route("events.permits.destroy", [$event, $permit]) }}" method="POST">
+                        <form action="{{ route("events.permits.destroy", [$event, $permit]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this permit? This action cannot be undone.');">
                             @method("DELETE")
                             @csrf
                             <button class="mt-auto text-red-600 hover:text-red-900 text-sm">Delete</button>
