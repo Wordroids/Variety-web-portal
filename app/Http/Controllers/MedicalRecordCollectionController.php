@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Models\MedicalRecordCollection;
+use App\Models\MedicalRecordComment;
 use App\Models\MedicalRecordItem;
 use App\Models\Participant;
 use Illuminate\Http\Request;
@@ -187,27 +188,18 @@ class MedicalRecordCollectionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view("pages.medical-record-collections.create");
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
-    public function show(MedicalRecordCollection $medicalRecordCollection)
+    public function show(int $id)
     {
-        //
+        $medicalRecordCollection = MedicalRecordCollection::findOrFail($id);
+        $event = Event::findOrFail($medicalRecordCollection->event_id);
+        $records = $medicalRecordCollection->records;
+
+        return view(
+            "pages.medical-record-collections.show",
+            compact("medicalRecordCollection", "records", "event"),
+        );
     }
 
     /**
