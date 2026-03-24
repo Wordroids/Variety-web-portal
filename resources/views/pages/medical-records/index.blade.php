@@ -1,22 +1,20 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-6" x-data="medicalRecordsPage()">
 
-        <!-- Success Message -->
         @if (session('success'))
         <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
-            {{ session('success') }}
+        {{ session('success') }}
         </div>
         @endif
 
-        <!-- Error Message -->
         @if ($errors->any())
-        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
-            <ul class="list-disc pl-5 text-sm">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                <ul class="list-disc pl-5 text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
         <div class="flex items-center justify-between mb-4">
@@ -25,7 +23,7 @@
                 <p class="text-sm text-gray-500 mt-1">Displaying all medical records</p>
             </div>
 
-            <button @click="openModal()" 
+            <button @click="openModal()"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                 <i class="fa-solid fa-file-medical"></i> Import Medical Record
             </button>
@@ -34,7 +32,8 @@
         <!-- Search and Filters -->
         <div class="mb-4 flex gap-4">
             <form method="GET" class="flex-1">
-                <input name="q" value="{{ request('q') }}" placeholder="Search by name, vehicle, mobile, or address…"
+                <input name="q" value="{{ request('q') }}"
+                    placeholder="Search by name, vehicle, mobile, or address…"
                     class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
             </form>
             <select name="filter" class="rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500">
@@ -62,7 +61,7 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-gray-50">
-                        <tr class="text-left text-gray-600">
+                        <tr class="text-left text-gray-600 whitespace-nowrap">
                             <th class="px-4 py-3 font-medium">Vehicle</th>
                             <th class="px-4 py-3 font-medium">First Name</th>
                             <th class="px-4 py-3 font-medium">Last Name</th>
@@ -84,7 +83,7 @@
                             <th class="px-4 py-3 font-medium">Current Medical History</th>
                             <th class="px-4 py-3 font-medium">Current Medications</th>
                             <th class="px-4 py-3 font-medium">Vehicle Image</th>
-                            <th class="px-4 py-3 font-medium text-right">Actions</th>
+                            <th class="px-4 py-3 font-medium text-right sticky right-0 bg-gray-50">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -99,26 +98,25 @@
                             </tr>
                         </template>
 
-                        <!-- Records -->
                         <template x-for="record in records" :key="record.id">
-                            <tr>
-                                <td class="px-4 py-3">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="font-semibold text-gray-900" x-text="record.vehicle"></div>
                                 </td>
-                                <td class="px-4 py-3" x-text="record.first_name"></td>
-                                <td class="px-4 py-3" x-text="record.last_name"></td>
-                                <td class="px-4 py-3" x-text="record.nickname || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address1 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address2 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address3 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address4 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address5 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.address6 || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.mobile || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.next_of_kin || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.nok_phone || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.nok_alt_phone || '—'"></td>
-                                <td class="px-4 py-3" x-text="record.dob || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.first_name"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.last_name"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.nickname || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address1 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address2 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address3 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address4 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address5 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.address6 || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.mobile || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.next_of_kin || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.nok_phone || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="record.nok_alt_phone || '—'"></td>
+                                <td class="px-4 py-3 whitespace-nowrap" x-text="formatDate(record.dob) || '—'"></td>
                                 <td class="px-4 py-3">
                                     <div class="max-w-[200px] truncate" x-text="record.allergies || '—'"></div>
                                 </td>
@@ -134,7 +132,7 @@
                                 <td class="px-4 py-3">
                                     <div class="max-w-[200px] truncate" x-text="record.current_medications || '—'"></div>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <template x-if="record.vehicle_image">
                                         <img :src="record.vehicle_image" alt="Vehicle" class="w-10 h-10 object-cover rounded">
                                     </template>
@@ -142,21 +140,21 @@
                                         <span class="text-gray-400">—</span>
                                     </template>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex justify-end gap-2">
-                                        <button @click="openCommentsModal(record)" class="text-purple-600 hover:text-purple-800" title="Comments">
+                                <td class="px-4 py-3 sticky right-0 bg-white whitespace-nowrap border-l border-gray-100">
+                                    <div class="flex justify-end gap-3">
+                                        <button @click="openCommentsModal(record)" class="text-purple-600 hover:text-purple-800 transition" title="Comments">
                                             <i class="fa-solid fa-comment"></i>
                                         </button>
-                                        <button @click="openImagesModal(record)" class="text-orange-600 hover:text-orange-800" title="Images">
+                                        <button @click="openImagesModal(record)" class="text-orange-600 hover:text-orange-800 transition" title="Images">
                                             <i class="fa-solid fa-image"></i>
                                         </button>
-                                        <button class="text-blue-600 hover:text-blue-800" title="View">
+                                        <button @click="openViewModal(record)" class="text-blue-600 hover:text-blue-800 transition" title="View">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
-                                        <button class="text-green-600 hover:text-green-800" title="Edit">
+                                        <button @click="openEditModal(record)" class="text-green-600 hover:text-green-800 transition" title="Edit">
                                             <i class="fa-solid fa-edit"></i>
                                         </button>
-                                        <button class="text-red-600 hover:text-red-800" title="Delete">
+                                        <button @click="deleteRecord(record.id)" class="text-red-600 hover:text-red-800 transition" title="Delete">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -168,26 +166,11 @@
             </div>
         </div>
 
-        {{-- Pagination will go here --}}
-        {{-- {{ $records->links() }} --}}
-
-        <!-- Add Medical Record Modal -->
-        <div x-show="showModal" 
-            x-cloak
-            class="fixed inset-0 z-50 overflow-y-auto" 
-            aria-labelledby="modal-title" 
-            role="dialog" 
-            aria-modal="true">
-            
-            <!-- Background overlay -->
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-                @click="closeModal()"></div>
-
-            <!-- Modal panel -->
+        <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4">
                 <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                     <div class="bg-white px-6 pt-5 pb-4">
-                        <!-- Header -->
                         <div class="flex items-center justify-between mb-6 border-b pb-3">
                             <h3 class="text-lg font-semibold text-gray-900">
                                 <i class="fa-solid fa-file-medical text-red-600"></i> Upload Medical Record
@@ -196,202 +179,210 @@
                                 <i class="fa-solid fa-times text-xl"></i>
                             </button>
                         </div>
-
-                        <!-- Form Component -->
                         @include('pages.medical-records.addMedicalRecord')
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- View Events Modal -->
-        <div x-show="showEventsModal" 
-            x-cloak
-            class="fixed inset-0 z-50 overflow-y-auto" 
-            aria-labelledby="events-modal-title" 
-            role="dialog" 
-            aria-modal="true">
-            
-            <!-- Background overlay -->
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-                @click="closeEventsModal()"></div>
-
-            <!-- Modal panel -->
+        <div x-show="showViewModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="view-modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeViewModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4">
-                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                     <div class="bg-white px-6 pt-5 pb-4">
-                        <!-- Header -->
                         <div class="flex items-center justify-between mb-6 border-b pb-3">
                             <h3 class="text-lg font-semibold text-gray-900">
-                                <i class="fa-solid fa-calendar-alt text-red-600"></i> Events Details
+                                <i class="fa-solid fa-eye text-blue-600"></i> View Medical Record
                             </h3>
-                            <button type="button" @click="closeEventsModal()" class="text-gray-400 hover:text-gray-600">
+                            <button type="button" @click="closeViewModal()" class="text-gray-400 hover:text-gray-600">
                                 <i class="fa-solid fa-times text-xl"></i>
                             </button>
                         </div>
-
-                        <!-- Loading State -->
-                        <div x-show="loadingEvents" class="text-center py-12">
-                            <i class="fa-solid fa-spinner fa-spin text-4xl text-red-600 mb-4"></i>
-                            <p class="text-gray-600">Loading events...</p>
-                        </div>
-
-                        <!-- Events List -->
-                        <div x-show="!loadingEvents">
-                            <!-- No Events State -->
-                            <template x-if="eventsData.length === 0">
-                                <div class="text-center py-12">
-                                    <i class="fa-solid fa-calendar-times text-6xl text-gray-300 mb-4"></i>
-                                    <p class="text-gray-600 text-lg">No events found</p>
-                                    <p class="text-gray-500 text-sm mt-2">There are currently no events available</p>
+                        <template x-if="selectedRecord">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                                <div class="col-span-1 md:col-span-2 bg-gray-50 p-3 rounded-lg border border-gray-100 mb-2">
+                                    <h4 class="font-bold text-gray-800 mb-3 border-b pb-2">Personal Information</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div><span class="font-semibold text-gray-600">Vehicle:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.vehicle || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">First Name:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.first_name || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Last Name:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.last_name || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Nickname:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.nickname || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">DOB:</span> <span class="ml-1 text-gray-900" x-text="formatDate(selectedRecord.dob) || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Mobile:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.mobile || 'N/A'"></span></div>
+                                    </div>
                                 </div>
-                            </template>
 
-                            <!-- Events Grid -->
-                            <div class="grid gap-6">
-                                <template x-for="event in eventsData" :key="event.id">
-                                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                                        <!-- Event Header with Cover Image -->
-                                        <div class="relative h-48 bg-gradient-to-r from-red-500 to-red-600">
-                                            <template x-if="event.cover_image_path">
-                                                <img :src="event.cover_image_path" :alt="event.title" 
-                                                     class="w-full h-full object-cover">
-                                            </template>
-                                            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end">
-                                                <div class="p-6 text-white w-full">
-                                                    <h4 class="text-2xl font-bold mb-2" x-text="event.title"></h4>
-                                                    <div class="flex items-center gap-4 text-sm">
-                                                        <span>
-                                                            <i class="fa-solid fa-calendar"></i>
-                                                            <span x-text="formatDate(event.start_date)"></span>
-                                                        </span>
-                                                        <span>
-                                                            <i class="fa-solid fa-calendar-check"></i>
-                                                            <span x-text="formatDate(event.end_date)"></span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                <div class="col-span-1 bg-white p-3 rounded-lg border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-3 border-b pb-2">Address Information</h4>
+                                    <div class="space-y-2">
+                                        <div><span class="font-semibold text-gray-600">Address 1:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address1 || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Address 2:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address2 || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Address 3:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address3 || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Address 4:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address4 || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Address 5:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address5 || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">Address 6:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.address6 || 'N/A'"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-1 bg-white p-3 rounded-lg border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-3 border-b pb-2">Emergency Contact</h4>
+                                    <div class="space-y-2">
+                                        <div><span class="font-semibold text-gray-600">Next of Kin:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.next_of_kin || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">NOK Phone:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.nok_phone || 'N/A'"></span></div>
+                                        <div><span class="font-semibold text-gray-600">NOK Alt Phone:</span> <span class="ml-1 text-gray-900" x-text="selectedRecord.nok_alt_phone || 'N/A'"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-1 md:col-span-2 bg-red-50 p-3 rounded-lg border border-red-100 mt-2">
+                                    <h4 class="font-bold text-red-800 mb-3 border-b border-red-200 pb-2">Medical Information</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <span class="font-semibold text-gray-700 block mb-1">Allergies:</span>
+                                            <p class="text-gray-900 bg-white p-2 rounded border border-gray-200" x-text="selectedRecord.allergies || 'None recorded'"></p>
                                         </div>
-
-                                        <!-- Event Details -->
-                                        <div class="p-6">
-                                            <div class="grid md:grid-cols-2 gap-6">
-                                                <!-- Left Column -->
-                                                <div class="space-y-4">
-                                                    <!-- Description -->
-                                                    <div>
-                                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                                            <i class="fa-solid fa-align-left text-red-600"></i>
-                                                            Description
-                                                        </h5>
-                                                        <p class="text-gray-600 text-sm" x-text="event.description || 'No description available'"></p>
-                                                    </div>
-
-                                                    <!-- Event Days -->
-                                                    <div>
-                                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                                            <i class="fa-solid fa-calendar-day text-red-600"></i>
-                                                            Event Days
-                                                        </h5>
-                                                        <template x-if="event.days && event.days.length > 0">
-                                                            <div class="space-y-2">
-                                                                <template x-for="day in event.days" :key="day.id">
-                                                                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                                                        <div class="flex items-center justify-between">
-                                                                            <span class="font-medium text-gray-800" x-text="day.name"></span>
-                                                                            <span class="text-sm text-gray-600" x-text="formatDate(day.date)"></span>
-                                                                        </div>
-                                                                        <template x-if="day.description">
-                                                                            <p class="text-sm text-gray-600 mt-1" x-text="day.description"></p>
-                                                                        </template>
-                                                                    </div>
-                                                                </template>
-                                                            </div>
-                                                        </template>
-                                                        <template x-if="!event.days || event.days.length === 0">
-                                                            <p class="text-gray-500 text-sm">No event days configured</p>
-                                                        </template>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Right Column -->
-                                                <div class="space-y-4">
-                                                    <!-- Sponsor Image -->
-                                                    <div>
-                                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                                            <i class="fa-solid fa-handshake text-red-600"></i>
-                                                            Sponsor
-                                                        </h5>
-                                                        <template x-if="event.sponsor_image_path">
-                                                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                                                <img :src="event.sponsor_image_path" alt="Sponsor" 
-                                                                     class="max-h-32 object-contain">
-                                                            </div>
-                                                        </template>
-                                                        <template x-if="!event.sponsor_image_path">
-                                                            <p class="text-gray-500 text-sm">No sponsor image available</p>
-                                                        </template>
-                                                    </div>
-
-                                                    <!-- Participants Count -->
-                                                    <div>
-                                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                                            <i class="fa-solid fa-users text-red-600"></i>
-                                                            Participants
-                                                        </h5>
-                                                        <div class="bg-red-50 rounded-lg p-4 border border-red-200">
-                                                            <div class="flex items-center justify-between">
-                                                                <span class="text-gray-700">Total Participants</span>
-                                                                <span class="text-2xl font-bold text-red-600" 
-                                                                      x-text="event.participants_count || 0"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Event Status -->
-                                                    <div>
-                                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                                            <i class="fa-solid fa-info-circle text-red-600"></i>
-                                                            Status
-                                                        </h5>
-                                                        <div class="flex gap-2">
-                                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                                                                  :class="getEventStatusClass(event)">
-                                                                <i class="fa-solid fa-circle text-xs mr-1"></i>
-                                                                <span x-text="getEventStatus(event)"></span>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <span class="font-semibold text-gray-700 block mb-1">Dietary Requirements:</span>
+                                            <p class="text-gray-900 bg-white p-2 rounded border border-gray-200" x-text="selectedRecord.dietary_requirement || 'None recorded'"></p>
+                                        </div>
+                                        <div>
+                                            <span class="font-semibold text-gray-700 block mb-1">Past Medical History:</span>
+                                            <p class="text-gray-900 bg-white p-2 rounded border border-gray-200" x-text="selectedRecord.past_medical_history || 'None recorded'"></p>
+                                        </div>
+                                        <div>
+                                            <span class="font-semibold text-gray-700 block mb-1">Current Medical History:</span>
+                                            <p class="text-gray-900 bg-white p-2 rounded border border-gray-200" x-text="selectedRecord.current_medical_history || 'None recorded'"></p>
+                                        </div>
+                                        <div class="col-span-1 md:col-span-2">
+                                            <span class="font-semibold text-gray-700 block mb-1">Current Medications:</span>
+                                            <p class="text-gray-900 bg-white p-2 rounded border border-gray-200" x-text="selectedRecord.current_medications || 'None recorded'"></p>
                                         </div>
                                     </div>
-                                </template>
+                                </div>
                             </div>
+                        </template>
+                        <div class="mt-6 flex justify-end">
+                            <button @click="closeViewModal()" class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Comments Modal -->
-        <div x-show="showCommentsModal" 
-            x-cloak
-            class="fixed inset-0 z-50 overflow-y-auto" 
-            aria-labelledby="comments-modal-title" 
-            role="dialog" 
-            aria-modal="true">
-            
-            <!-- Background overlay -->
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-                @click="closeCommentsModal()"></div>
+        <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="edit-modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeEditModal()"></div>
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+                    <div class="bg-white px-6 pt-5 pb-4">
+                        <div class="flex items-center justify-between mb-6 border-b pb-3">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                <i class="fa-solid fa-edit text-green-600"></i> Edit Medical Record
+                            </h3>
+                            <button type="button" @click="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fa-solid fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <form @submit.prevent="updateRecord" class="space-y-6">
 
-            <!-- Modal panel -->
+                            <h4 class="font-bold text-gray-800 border-b pb-2">Personal Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Vehicle</label>
+                                    <input type="text" x-model="editForm.vehicle" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">First Name</label>
+                                    <input type="text" x-model="editForm.first_name" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                                    <input type="text" x-model="editForm.last_name" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Nickname</label>
+                                    <input type="text" x-model="editForm.nickname" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">DOB (yyyy-mm-dd)</label>
+                                    <input type="date" x-model="editForm.dob" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Mobile</label>
+                                    <input type="text" x-model="editForm.mobile" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Address</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="col-span-2"><input type="text" x-model="editForm.address1" placeholder="Address 1" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                        <div class="col-span-2"><input type="text" x-model="editForm.address2" placeholder="Address 2" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                        <div><input type="text" x-model="editForm.address3" placeholder="Address 3" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                        <div><input type="text" x-model="editForm.address4" placeholder="Address 4" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                        <div><input type="text" x-model="editForm.address5" placeholder="Address 5" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                        <div><input type="text" x-model="editForm.address6" placeholder="Address 6" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Emergency Contact (Next of Kin)</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Name</label>
+                                            <input type="text" x-model="editForm.next_of_kin" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">Phone</label>
+                                                <input type="text" x-model="editForm.nok_phone" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">Alt Phone</label>
+                                                <input type="text" x-model="editForm.nok_alt_phone" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="font-bold text-red-800 border-b border-red-200 pb-2 mt-4">Medical Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-red-50 p-4 rounded-lg border border-red-100">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Allergies</label>
+                                    <textarea x-model="editForm.allergies" rows="2" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Dietary Requirements</label>
+                                    <textarea x-model="editForm.dietary_requirement" rows="2" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Past Medical History</label>
+                                    <textarea x-model="editForm.past_medical_history" rows="2" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Current Medical History</label>
+                                    <textarea x-model="editForm.current_medical_history" rows="2" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></textarea>
+                                </div>
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700">Current Medications</label>
+                                    <textarea x-model="editForm.current_medications" rows="2" class="mt-1 w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex justify-end gap-3 border-t pt-4">
+                                <button type="button" @click="closeEditModal()" class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">Cancel</button>
+                                <button type="submit" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="showCommentsModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="comments-modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeCommentsModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4">
                 <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-2xl">
                     <div class="bg-white px-6 pt-5 pb-4">
-                        <!-- Header -->
                         <div class="flex items-center justify-between mb-6 border-b pb-3">
                             <h3 class="text-lg font-semibold text-gray-900">
                                 <i class="fa-solid fa-comment text-purple-600"></i> Comments
@@ -400,24 +391,13 @@
                                 <i class="fa-solid fa-times text-xl"></i>
                             </button>
                         </div>
-
-                        <!-- Comments Content -->
                         <div class="space-y-4">
-                            <!-- Record Info -->
                             <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                 <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <span class="font-semibold text-gray-700">Vehicle:</span>
-                                        <span class="text-gray-900 ml-2" x-text="selectedRecord?.vehicle || 'N/A'"></span>
-                                    </div>
-                                    <div>
-                                        <span class="font-semibold text-gray-700">Name:</span>
-                                        <span class="text-gray-900 ml-2" x-text="(selectedRecord?.first_name || '') + ' ' + (selectedRecord?.last_name || '')"></span>
-                                    </div>
+                                    <div><span class="font-semibold text-gray-700">Vehicle:</span> <span class="text-gray-900 ml-2" x-text="selectedRecord?.vehicle || 'N/A'"></span></div>
+                                    <div><span class="font-semibold text-gray-700">Name:</span> <span class="text-gray-900 ml-2" x-text="(selectedRecord?.first_name || '') + ' ' + (selectedRecord?.last_name || '')"></span></div>
                                 </div>
                             </div>
-
-                            <!-- Comments Display -->
                             <div class="bg-white rounded-lg border border-gray-200 p-4 min-h-[200px]">
                                 <template x-if="selectedRecord?.comments && selectedRecord.comments !== ''">
                                     <div class="prose max-w-none">
@@ -432,36 +412,19 @@
                                 </template>
                             </div>
                         </div>
-
-                        <!-- Footer -->
                         <div class="mt-6 flex justify-end">
-                            <button @click="closeCommentsModal()" 
-                                class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">
-                                Close
-                            </button>
+                            <button @click="closeCommentsModal()" class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Images Modal -->
-        <div x-show="showImagesModal" 
-            x-cloak
-            class="fixed inset-0 z-50 overflow-y-auto" 
-            aria-labelledby="images-modal-title" 
-            role="dialog" 
-            aria-modal="true">
-            
-            <!-- Background overlay -->
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-                @click="closeImagesModal()"></div>
-
-            <!-- Modal panel -->
+        <div x-show="showImagesModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="images-modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeImagesModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4">
                 <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-4xl">
                     <div class="bg-white px-6 pt-5 pb-4">
-                        <!-- Header -->
                         <div class="flex items-center justify-between mb-6 border-b pb-3">
                             <h3 class="text-lg font-semibold text-gray-900">
                                 <i class="fa-solid fa-image text-orange-600"></i> Images
@@ -470,32 +433,19 @@
                                 <i class="fa-solid fa-times text-xl"></i>
                             </button>
                         </div>
-
-                        <!-- Images Content -->
                         <div class="space-y-4">
-                            <!-- Record Info -->
                             <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                 <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <span class="font-semibold text-gray-700">Vehicle:</span>
-                                        <span class="text-gray-900 ml-2" x-text="selectedRecord?.vehicle || 'N/A'"></span>
-                                    </div>
-                                    <div>
-                                        <span class="font-semibold text-gray-700">Name:</span>
-                                        <span class="text-gray-900 ml-2" x-text="(selectedRecord?.first_name || '') + ' ' + (selectedRecord?.last_name || '')"></span>
-                                    </div>
+                                    <div><span class="font-semibold text-gray-700">Vehicle:</span> <span class="text-gray-900 ml-2" x-text="selectedRecord?.vehicle || 'N/A'"></span></div>
+                                    <div><span class="font-semibold text-gray-700">Name:</span> <span class="text-gray-900 ml-2" x-text="(selectedRecord?.first_name || '') + ' ' + (selectedRecord?.last_name || '')"></span></div>
                                 </div>
                             </div>
-
-                            <!-- Images Display -->
                             <div class="bg-white rounded-lg border border-gray-200 p-4 min-h-[300px]">
                                 <template x-if="selectedRecord?.images && selectedRecord.images.length > 0">
                                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         <template x-for="(image, index) in selectedRecord.images" :key="index">
                                             <div class="relative group">
-                                                <img :src="image" :alt="'Image ' + (index + 1)" 
-                                                     class="w-full h-48 object-cover rounded-lg border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
-                                                     @click="viewFullImage(image)">
+                                                <img :src="image" :alt="'Image ' + (index + 1)" class="w-full h-48 object-cover rounded-lg border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer" @click="viewFullImage(image)">
                                                 <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg"></div>
                                             </div>
                                         </template>
@@ -509,13 +459,8 @@
                                 </template>
                             </div>
                         </div>
-
-                        <!-- Footer -->
                         <div class="mt-6 flex justify-end">
-                            <button @click="closeImagesModal()" 
-                                class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">
-                                Close
-                            </button>
+                            <button @click="closeImagesModal()" class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300">Close</button>
                         </div>
                     </div>
                 </div>
@@ -531,11 +476,14 @@
                 showEventsModal: false,
                 showCommentsModal: false,
                 showImagesModal: false,
+                showViewModal: false,
+                showEditModal: false,
                 loadingEvents: false,
-                records: [],
-                events: [], // Will be populated from server
-                eventsData: [], // For events modal
-                selectedRecord: null, // For comments and images modals
+                records: @json($records ?? []),
+                events: @json($events ?? []),
+                eventsData: [],
+                selectedRecord: null,
+                editForm: {},
                 form: {
                     event_id: '',
                     csv_filename: '',
@@ -547,13 +495,95 @@
                 openModal() {
                     this.showModal = true;
                     document.body.style.overflow = 'hidden';
-                    this.loadEvents();
                 },
-
                 closeModal() {
                     this.showModal = false;
                     document.body.style.overflow = 'auto';
                     this.resetForm();
+                },
+
+                //VIEW
+                openViewModal(record) {
+                    this.selectedRecord = record;
+                    this.showViewModal = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeViewModal() {
+                    this.showViewModal = false;
+                    document.body.style.overflow = 'auto';
+                    this.selectedRecord = null;
+                },
+
+                //EDIT & UPDATE
+                openEditModal(record) {
+                    this.selectedRecord = record;
+
+
+                    let dobFormatted = record.dob;
+                    if(dobFormatted && dobFormatted.includes('T')) {
+                        dobFormatted = dobFormatted.split('T')[0];
+                    }
+
+                    this.editForm = { ...record, dob: dobFormatted };
+                    this.showEditModal = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeEditModal() {
+                    this.showEditModal = false;
+                    document.body.style.overflow = 'auto';
+                    this.selectedRecord = null;
+                    this.editForm = {};
+                },
+                async updateRecord() {
+                    try {
+                        const response = await fetch(`/medical-records/${this.selectedRecord.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify(this.editForm)
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to update the record.');
+                    }
+                },
+
+                // DELETE
+                async deleteRecord(id) {
+                    if (!confirm('Are you sure you want to delete this medical record? This action cannot be undone.')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/medical-records/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to delete the record.');
+                    }
                 },
 
                 resetForm() {
@@ -564,16 +594,6 @@
                         destroy_date: '',
                         acknowledge: false
                     };
-                },
-
-                loadEvents() {
-                    // Fetch events from server
-                    fetch('{{ route("events.list") }}')
-                        .then(response => response.json())
-                        .then(data => {
-                            this.events = data;
-                        })
-                        .catch(error => console.error('Error loading events:', error));
                 },
 
                 handleCsvFile(event) {
@@ -591,132 +611,70 @@
                     formData.append('destroy_date', this.form.destroy_date);
                     formData.append('acknowledge', this.form.acknowledge);
 
-                    fetch('{{ route("medical-records.upload") }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.reload();
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error uploading medical records');
-                    });
+                    fetch('{{ route('medical-records.upload') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Error: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error uploading medical records');
+                        });
 
                     this.closeModal();
                 },
 
-                // Events Modal Functions
-                openEventsModal() {
-                    this.showEventsModal = true;
-                    document.body.style.overflow = 'hidden';
-                    this.loadEventDetails();
-                },
-
-                closeEventsModal() {
-                    this.showEventsModal = false;
-                    document.body.style.overflow = 'auto';
-                },
-
-                // Comments Modal Functions
+                // Comments/Images
                 openCommentsModal(record) {
                     this.selectedRecord = record;
                     this.showCommentsModal = true;
                     document.body.style.overflow = 'hidden';
                 },
-
                 closeCommentsModal() {
                     this.showCommentsModal = false;
                     document.body.style.overflow = 'auto';
                     this.selectedRecord = null;
                 },
-
-                // Images Modal Functions
                 openImagesModal(record) {
                     this.selectedRecord = record;
                     this.showImagesModal = true;
                     document.body.style.overflow = 'hidden';
                 },
-
                 closeImagesModal() {
                     this.showImagesModal = false;
                     document.body.style.overflow = 'auto';
                     this.selectedRecord = null;
                 },
-
                 viewFullImage(imageUrl) {
-                    // Open image in new tab for full view
                     window.open(imageUrl, '_blank');
                 },
 
-                loadEventDetails() {
-                    this.loadingEvents = true;
-                    
-                    // Fetch events with full details from server
-                    fetch('{{ route("events.list") }}')
-                        .then(response => response.json())
-                        .then(data => {
-                            this.eventsData = data;
-                            this.loadingEvents = false;
-                        })
-                        .catch(error => {
-                            console.error('Error loading events:', error);
-                            this.loadingEvents = false;
-                            alert('Failed to load events. Please try again.');
-                        });
-                },
-
                 formatDate(date) {
-                    if (!date) return 'N/A';
+                    if (!date) return '';
                     const dateObj = new Date(date);
                     return dateObj.toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric'
                     });
-                },
-
-                getEventStatus(event) {
-                    const now = new Date();
-                    const startDate = new Date(event.start_date);
-                    const endDate = new Date(event.end_date);
-                    
-                    if (now < startDate) {
-                        return 'Upcoming';
-                    } else if (now > endDate) {
-                        return 'Completed';
-                    } else {
-                        return 'Ongoing';
-                    }
-                },
-
-                getEventStatusClass(event) {
-                    const status = this.getEventStatus(event);
-                    
-                    switch(status) {
-                        case 'Upcoming':
-                            return 'bg-blue-100 text-blue-800';
-                        case 'Ongoing':
-                            return 'bg-green-100 text-green-800';
-                        case 'Completed':
-                            return 'bg-gray-100 text-gray-800';
-                        default:
-                            return 'bg-gray-100 text-gray-800';
-                    }
                 }
             }
         }
     </script>
 
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </x-app-layout>
