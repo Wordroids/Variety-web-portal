@@ -45,11 +45,20 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $event->title }}</td>
                         @if($event->medicalRecordCollection)
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $event->medicalRecordCollection->records->count() }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $event->medicalRecordCollection->importedAt }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $event->medicalRecordCollection->expiresAt }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                {{ $event->medicalRecordCollection->records->count() }}
+                                {{ Str::plural('record', $event->medicalRecordCollection->records->count()) }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" title="{{ $event->medicalRecordCollection->imported_at }}">
+                                {{ $event->medicalRecordCollection->imported_at?->diffForHumans() ?? 'Not imported' }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {{ $event->medicalRecordCollection->expires_at?->isPast() ? 'text-red-600' : 'text-gray-500' }}">
+                                {{ $event->medicalRecordCollection->expires_at?->format('M j, Y') ?? 'Never' }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <a href="{{ route('events.show', $event->id) }}" class="text-blue-600 hover:text-blue-900 font-medium">View</a>
+                                <a href="{{ route('medical-records.show', $event->id) }}" class="text-red-600 hover:text-red-900 font-medium">View Records</a>
                             </td>
                         @else
                             <td colspan="3" class="px-6 py-4 text-sm text-center text-gray-400 italic">No Records Found</td>
@@ -67,29 +76,12 @@
             </table>
         </div>
 
-        <div x-show="showModal"
-             class="fixed inset-0 z-50 overflow-y-auto"
-             x-cloak>
+        <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
 
-            <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
-                 x-show="showModal"
-                 x-transition:enter="ease-out duration-300"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 @click="closeModal()"></div>
+            <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"  x-show="showModal" @click="closeModal()"></div>
 
             <div class="flex min-h-full items-center justify-center p-4">
-                <div x-show="showModal"
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                     class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
+                <div x-show="showModal" class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
 
                     <div class="p-6">
                         <div class="mb-6">
@@ -97,7 +89,7 @@
                             <p class="text-sm text-gray-500">Upload a CSV file to associate records with an event.</p>
                         </div>
 
-                        <form action="{{ route('medical-records.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                        <form action="{{ route('medical-records.import') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                             @csrf
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Related Event</label>

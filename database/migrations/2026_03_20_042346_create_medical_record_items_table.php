@@ -16,14 +16,15 @@ return new class extends Migration {
                 ->foreignId("collection_id")
                 ->references("id")
                 ->on("medical_record_collections")
-                ->constrained()
                 ->cascadeOnDelete();
             $table
                 ->foreignId("participant_id")
+                ->nullable()
                 ->unique()
-                ->constrained()
+                ->references("id")
+                ->on("event_participants")
                 ->cascadeOnDelete();
-            $table->json("content");
+            $table->longText("content");
             $table->timestamps();
         });
     }

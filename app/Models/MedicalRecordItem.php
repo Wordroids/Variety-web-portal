@@ -21,7 +21,7 @@ class MedicalRecordItem extends Model
 
     public function participant(): BelongsTo
     {
-        return $this->belongsTo(Participant::class);
+        return $this->belongsTo(EventParticipant::class);
     }
 
     public function images(): HasMany
