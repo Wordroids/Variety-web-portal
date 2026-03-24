@@ -49,6 +49,18 @@
             </a>
 
             <div class="flex items-center gap-2">
+                <a href="{{ route('events.forms.index', $event) }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-file-alt"></i>
+                    <span>Forms</span>
+                </a>
+
+                <a href="{{ route('events.permits.index', $event) }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-id-card"></i>
+                    <span>Permits</span>
+                </a>
+
                 <a href="#"
                     @click.prevent="toggleParticipants()"
                     class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
