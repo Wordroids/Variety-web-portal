@@ -193,6 +193,7 @@ class MedicalRecordController extends Controller
             "pages.medical-records.show-record",
             compact("event", "record"),
         );
+    }
 
     /**
      * Remove the specified resource from storage.
