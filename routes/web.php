@@ -81,18 +81,10 @@ Route::middleware("auth")->group(function () {
     Route::get("events/list", [EventController::class, "list"])->name(
         "events.list",
     );
-    Route::post("medical-records/upload", [
-        MedicalRecordController::class,
-        "upload",
-    ])->name("medical-records.upload");
 
-    Route::resource(
-        "medical-records",
-        MedicalRecordCollectionController::class,
-    );
-
+    Route::resource("medical-records", MedicalRecordController::class);
     Route::post("medical-records/import", [
-        MedicalRecordCollectionController::class,
+        MedicalRecordController::class,
         "import",
     ])->name("medical-records.import");
 

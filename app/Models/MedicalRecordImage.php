@@ -12,7 +12,7 @@ class MedicalRecordImage extends Model
 
     public function record(): BelongsTo
     {
-        return $this->belongsTo(MedicalRecordItem::class, "record_id");
+        return $this->belongsTo(MedicalRecord::class);
     }
 
     protected static function booted()

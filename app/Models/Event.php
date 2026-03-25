@@ -59,9 +59,9 @@ class Event extends Model
         return $this->belongsToMany(Notification::class, "notification_event");
     }
 
-    public function medicalRecordCollection()
+    public function medicalRecords()
     {
-        return $this->hasOne(MedicalRecordCollection::class);
+        return $this->hasMany(MedicalRecord::class);
     }
 
     public function permits()

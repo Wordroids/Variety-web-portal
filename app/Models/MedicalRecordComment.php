@@ -15,6 +15,6 @@ class MedicalRecordComment extends Model
 
     public function record(): BelongsTo
     {
-        return $this->belongsTo(MedicalRecordItem::class, "record_id");
+        return $this->belongsTo(MedicalRecord::class);
     }
 }

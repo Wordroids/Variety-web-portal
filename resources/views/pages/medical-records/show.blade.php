@@ -23,7 +23,7 @@
                 <a href="{{ route('medical-records.index') }}"
                     class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900">
                     <i class="fa-solid fa-chevron-left"></i>
-                    Back to Medical Record Collections
+                    Back to all Medical Records
                 </a>
 
                 <div class="flex gap-2">
@@ -31,7 +31,7 @@
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         <i class="fa-solid fa-eye"></i> View Event
                     </a>
-                    <form action="{{ route('medical-records.destroy', $medicalRecordCollection) }}"
+                    <form action="{{ route('medical-records.destroy', $event) }}"
                           method="POST"
                           onsubmit="return confirm('Are you sure you want to delete these records?');">
 
@@ -71,11 +71,11 @@
         <div class="mb-4 text-sm text-black flex gap-4">
             <div class="mb-1">
                 <span class="font-semibold">Import Date:</span>
-                <span>{{ date('d/m/Y H:i:s') }}</span>
+                <span>{{ $records->first()->imported_at->format('d/m/Y') }}</span>
             </div>
             <div>
                 <span class="font-semibold">Destroy Date:</span>
-                <span>{{ date('d/m/Y H:i:s') }}</span>
+                <span>{{ $records->first()->expires_at->format('d/m/Y') }}</span>
             </div>
         </div>
 
