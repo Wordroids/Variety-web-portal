@@ -157,7 +157,15 @@
                     <h3 class="text-lg font-bold">Images</h3>
                     <hr class="my-4">
 
-                    <img src="/storage/events/covers/frYCKWDF0wW1Wki3jkmQqkzI1x2tVBY8LPlxxckm.jpg" alt="" class="rounded-lg w-full mb-2">
+                    <div class="mb-4">
+                        <img src="/storage/events/covers/frYCKWDF0wW1Wki3jkmQqkzI1x2tVBY8LPlxxckm.jpg" alt="" class="rounded-lg w-full mb-2">
+                        <div class="flex justify-between">
+                            <p class="text-neutral-800 text-sm">
+                                13/02/2026, 7:53:10
+                            </p>
+                            <a href="#" class="text-red-600 text-sm">Remove</a>
+                        </div>
+                    </div>
 
                     <div class="flex justify-end">
                         <button class="bg-red-600 p-3 text-white rounded-lg">Add Image</button>
