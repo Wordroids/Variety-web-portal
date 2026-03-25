@@ -34,11 +34,11 @@ class MedicalRecord extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(MedicalRecordImage::class, "record_id");
+        return $this->hasMany(MedicalRecordImage::class);
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(MedicalRecordComment::class, "record_id");
+        return $this->hasMany(MedicalRecordComment::class);
     }
 }

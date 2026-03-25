@@ -105,6 +105,7 @@
                             <th class="px-4 py-3 font-medium">Current Medical History</th>
                             <th class="px-4 py-3 font-medium">Current Medications</th>
                             <th class="px-4 py-3 font-medium">Vehicle Image</th>
+                            <th class="px-4 py-3 font-medium">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -142,6 +143,10 @@
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                    <a href="{{ route('medical-records.show-record', [$event, $record]) }}" class="text-red-600 hover:text-red-900 font-medium">View</a>
                                 </td>
                             </tr>
                         @endforeach

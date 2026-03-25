@@ -88,6 +88,11 @@ Route::middleware("auth")->group(function () {
         "import",
     ])->name("medical-records.import");
 
+    Route::get("medical-records/{event}/{record}", [
+        MedicalRecordController::class,
+        "showRecord",
+    ])->name("medical-records.show-record");
+
     Route::resource("events.passwords", PasswordController::class)->only(
         "index",
         "update",

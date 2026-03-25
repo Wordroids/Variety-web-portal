@@ -185,6 +185,16 @@ class MedicalRecordController extends Controller
     }
 
     /**
+     * Display individual record
+     */
+    public function showRecord(Event $event, MedicalRecord $record)
+    {
+        return view(
+            "pages.medical-records.show-record",
+            compact("event", "record"),
+        );
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(int $id)
