@@ -13,9 +13,7 @@ return new class extends Migration {
         Schema::create("medical_record_comments", function (Blueprint $table) {
             $table->id();
             $table
-                ->foreignId("record_id")
-                ->references("id")
-                ->on("medical_record_items")
+                ->foreignId("medical_record_id")
                 ->constrained()
                 ->cascadeOnDelete();
             $table->text("content");

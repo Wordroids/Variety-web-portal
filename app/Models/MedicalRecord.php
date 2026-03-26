@@ -2,49 +2,43 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MedicalRecord extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'event_id',
-        'vehicle',
-        'first_name',
-        'last_name',
-        'nickname',
-        'address1',
-        'address2',
-        'address3',
-        'address4',
-        'address5',
-        'address6',
-        'mobile',
-        'next_of_kin',
-        'nok_phone',
-        'nok_alt_phone',
-        'dob',
-        'allergies',
-        'dietary_requirement',
-        'past_medical_history',
-        'current_medical_history',
-        'current_medications',
-        'vehicle_image',
-        'images',
-        'comments',
-        'destroy_date',
+        "event_id",
+        "participant_id",
+        "content",
+        "imported_at",
+        "expires_at",
     ];
 
     protected $casts = [
-        'dob' => 'date',
-        'destroy_date' => 'date',
-        'images' => 'array',
+        "content" => "encrypted:json", // Automatically encrypts/decrypts the JSON blob
+        "imported_at" => "date",
+        "expires_at" => "date",
     ];
 
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function participant(): BelongsTo
+    {
+        return $this->belongsTo(EventParticipant::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(MedicalRecordImage::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(MedicalRecordComment::class);
     }
 }

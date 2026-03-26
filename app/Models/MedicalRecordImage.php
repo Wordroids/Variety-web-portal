@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MedicalRecordImage extends Model
 {
-    protected $fillable = ["record_id", "path"];
+    protected $fillable = ["medical_record_id", "path", "mime"];
 
     public function record(): BelongsTo
     {
-        return $this->belongsTo(MedicalRecordItem::class, "record_id");
+        return $this->belongsTo(MedicalRecord::class);
     }
 
     protected static function booted()
