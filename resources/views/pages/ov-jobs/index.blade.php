@@ -1,5 +1,24 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6">
+    <div
+        x-data="{
+            importModalOpen: false,
+            selectedEventId: null,
+            selectedEventTitle: '',
+            permitStoreUrlTemplate: @js(route('events.permits.store', ['event' => '__EVENT__'])),
+            eventEditUrlTemplate: @js(route('events.edit', ['event' => '__EVENT__'])),
+            permitIndexUrlTemplate: @js(route('events.permits.index', ['event' => '__EVENT__'])),
+            openImportModal(id, title) {
+                this.selectedEventId = id;
+                this.selectedEventTitle = title;
+                this.importModalOpen = true;
+            },
+            closeImportModal() {
+                this.importModalOpen = false;
+            }
+        }"
+        x-effect="document.body.classList.toggle('overflow-hidden', importModalOpen)"
+        @keydown.escape.window="closeImportModal()"
+        class="max-w-7xl mx-auto p-6">
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-900">OV Jobs</h1>
             <p class="text-sm text-gray-500 mt-1">Jobs are synced from event uploads automatically.</p>
@@ -24,16 +43,20 @@
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                                 <div class="inline-flex items-center justify-center gap-2">
                                     <button
+                                        type="button"
+                                        @click="openImportModal({{ $event->id }}, @js($event->title))"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-solid fa-file-import"></i>
                                         Import Jobs
                                     </button>
                                     <button
+                                        type="button"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-regular fa-eye"></i>
                                         View Jobs
                                     </button>
                                     <button
+                                        type="button"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
                                         <i class="fa-regular fa-trash-can"></i>
                                         Delete Jobs
@@ -49,5 +72,7 @@
                 </tbody>
             </table>
         </div>
+
+        @include('pages.ov-jobs.import-modal')
     </div>
 </x-app-layout>
