@@ -10,17 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create("medical_record_collections", function (
-            Blueprint $table,
-        ) {
+        Schema::create("medical_records", function (Blueprint $table) {
             $table->id();
+            $table->foreignId("event_id")->constrained()->cascadeOnDelete();
             $table
-                ->foreignId("event_id")
+                ->foreignId("participant_id")
+                ->nullable()
                 ->unique()
-                ->constrained()
+                ->references("id")
+                ->on("event_participants")
                 ->cascadeOnDelete();
+            $table->longText("content");
             $table->date("imported_at");
-            $table->date("expires_at")->index();
+            $table->date("expires_at");
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists("medical_record_collections");
+        Schema::dropIfExists("medical_record_items");
     }
 };

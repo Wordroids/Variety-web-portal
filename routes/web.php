@@ -6,7 +6,9 @@ use App\Http\Controllers\EventFormController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\EventPermitController;
 use App\Http\Controllers\MedicalRecordCollectionController;
+use App\Http\Controllers\MedicalRecordCommentController;
 use App\Http\Controllers\MedicalRecordController;
+use App\Http\Controllers\MedicalRecordImageController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -81,20 +83,28 @@ Route::middleware("auth")->group(function () {
     Route::get("events/list", [EventController::class, "list"])->name(
         "events.list",
     );
-    Route::post("medical-records/upload", [
-        MedicalRecordController::class,
-        "upload",
-    ])->name("medical-records.upload");
 
-    Route::resource(
-        "medical-records",
-        MedicalRecordCollectionController::class,
-    );
+    Route::resource("medical-records", MedicalRecordController::class);
 
     Route::post("medical-records/import", [
-        MedicalRecordCollectionController::class,
+        MedicalRecordController::class,
         "import",
     ])->name("medical-records.import");
+
+    Route::get("medical-records/{event}/{record}", [
+        MedicalRecordController::class,
+        "showRecord",
+    ])->name("medical-records.show-record");
+
+    Route::resource(
+        "medical-record-comments",
+        MedicalRecordCommentController::class,
+    )->only(["store", "destroy"]);
+
+    Route::resource(
+        "medical-record-images",
+        MedicalRecordImageController::class,
+    )->only(["store", "destroy"]);
 
     Route::resource("events.passwords", PasswordController::class)->only(
         "index",
