@@ -6,7 +6,9 @@ use App\Http\Controllers\EventFormController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\EventPermitController;
 use App\Http\Controllers\MedicalRecordCollectionController;
+use App\Http\Controllers\MedicalRecordCommentController;
 use App\Http\Controllers\MedicalRecordController;
+use App\Http\Controllers\MedicalRecordImageController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -83,6 +85,7 @@ Route::middleware("auth")->group(function () {
     );
 
     Route::resource("medical-records", MedicalRecordController::class);
+
     Route::post("medical-records/import", [
         MedicalRecordController::class,
         "import",
@@ -92,6 +95,16 @@ Route::middleware("auth")->group(function () {
         MedicalRecordController::class,
         "showRecord",
     ])->name("medical-records.show-record");
+
+    Route::resource(
+        "medical-record-comments",
+        MedicalRecordCommentController::class,
+    )->only(["store", "destroy"]);
+
+    Route::resource(
+        "medical-record-images",
+        MedicalRecordImageController::class,
+    )->only(["store", "destroy"]);
 
     Route::resource("events.passwords", PasswordController::class)->only(
         "index",

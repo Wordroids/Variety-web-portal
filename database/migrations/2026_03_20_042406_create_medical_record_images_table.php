@@ -17,6 +17,7 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string("path");
+            $table->string("mime");
             $table->timestamps();
         });
     }

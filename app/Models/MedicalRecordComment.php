@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MedicalRecordComment extends Model
 {
-    protected $fillable = ["record_id", "content"];
+    protected $fillable = ["medical_record_id", "content"];
 
     protected $casts = [
         "content" => "encrypted", // Encrypts the string content

@@ -137,39 +137,73 @@
                 <div class="mb-4 rounded-xl bg-white p-4 shadow">
                     <h3 class="text-lg font-bold">Comments</h3>
                     <hr class="my-4">
+
+                    @forelse($record->comments as $comment)
                     <div class="mb-4">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia debitis voluptas officia?</p>
+                        <p>{{ $comment->content }}</p>
                         <div class="flex justify-between">
                             <p class="text-neutral-800 text-sm">
-                                13/02/2026, 7:53:10
+                                {{ $comment->created_at->format('M j, Y h:i:s') }}
                             </p>
-                            <a href="#" class="text-red-600 text-sm">Remove</a>
+                            <form action="{{ route('medical-record-comments.destroy', $comment) }}" method="POST">
+                                @method("DELETE")
+                                @csrf
+                                <button type="submit" class="text-red-600 text-sm">Remove</button>
+                            </form>
                         </div>
+                    </div>
+                    @empty
+                    <div class="mb-4">
+                        <p class="text-neutral-600 text-sm">No comments found</p>
+                    </div>
+                    @endforelse
 
-                    </div>
-                    <textarea class="w-full rounded-lg mb-2"></textarea>
-                    <div class="flex justify-end">
-                        <button class="bg-red-600 p-3 text-white rounded-lg">Add Comment</button>
-                    </div>
+                    <form action="{{ route('medical-record-comments.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="medical_record_id" value="{{ $record->id }}">
+                        <textarea class="w-full rounded-lg mb-2" name="comment"></textarea>
+                        <div class="flex justify-end">
+                            <button class="bg-red-600 p-3 text-white rounded-lg" type="submit">Add Comment</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="mb-4 rounded-xl bg-white p-4 shadow">
                     <h3 class="text-lg font-bold">Images</h3>
                     <hr class="my-4">
 
-                    <div class="mb-4">
-                        <img src="/storage/events/covers/frYCKWDF0wW1Wki3jkmQqkzI1x2tVBY8LPlxxckm.jpg" alt="" class="rounded-lg w-full mb-2">
-                        <div class="flex justify-between">
-                            <p class="text-neutral-800 text-sm">
-                                13/02/2026, 7:53:10
-                            </p>
-                            <a href="#" class="text-red-600 text-sm">Remove</a>
+                    @forelse($record->images as $image)
+                        @php
+                            $encryptedContent = Illuminate\Support\Facades\Storage::disk('private')->get($image->path);
+                            $decryptedContent = Illuminate\Support\Facades\Crypt::decrypt($encryptedContent);
+                            $base64Image = base64_encode($decryptedContent);
+                            $src = 'data:' . $image->mime . ';base64,' . $base64Image;
+                        @endphp
+                        <div class="mb-4">
+                            <img src="{{ $src }}" alt="" class="rounded-lg w-full mb-2">
+                            <div class="flex justify-between">
+                                <p class="text-neutral-800 text-sm">
+                                    {{ $image->created_at->format('M j, Y h:i:s') }}
+                                </p>
+                                <form action="{{ route('medical-record-images.destroy', $image) }}" method="POST">
+                                    @method("DELETE")
+                                    @csrf
+                                    <button type="submit" class="text-red-600 text-sm">Remove</button>
+                                </form>
+                            </div>
                         </div>
+                    @empty
+                    <div class="mb-4">
+                        <p class="text-neutral-600 text-sm">No comments found</p>
                     </div>
+                    @endforelse
 
-                    <div class="flex justify-end">
+                    <form action="{{ route('medical-record-images.store') }}" method="POST" enctype="multipart/form-data" class="flex justify-between items-center">
+                        @csrf
+                        <input type="hidden" name="medical_record_id" value="{{ $record->id }}">
+                        <input type="file" name="image" />
                         <button class="bg-red-600 p-3 text-white rounded-lg">Add Image</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
