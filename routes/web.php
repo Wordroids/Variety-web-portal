@@ -9,6 +9,7 @@ use App\Http\Controllers\MedicalRecordCollectionController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
+use App\Models\Event;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
@@ -24,6 +25,14 @@ Route::get("/", function () {
 Route::middleware("auth")->group(function () {
     // App Routes
     Route::view("/", "pages.dashboard")->name("dashboard");
+    Route::get("/ov-jobs", function () {
+        $events = Event::query()
+            ->withCount("permits")
+            ->orderByDesc("id")
+            ->get();
+
+        return view("pages.ov-jobs.index", compact("events"));
+    })->name("ov-jobs.index");
 
     //Events
     Route::resource("events", EventController::class);
