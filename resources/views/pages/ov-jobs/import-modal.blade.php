@@ -18,21 +18,6 @@
                 class="space-y-5 px-6 pt-2 pb-5">
                 @csrf
 
-                <div class="flex flex-wrap items-center gap-2">
-                    <a href="{{ route('events.index') }}"
-                        class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100">
-                        View events
-                    </a>
-                    <a :href="selectedEventId ? eventEditUrlTemplate.replace('__EVENT__', selectedEventId) : '#'"
-                        class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100">
-                        Edit event
-                    </a>
-                    <button type="button"
-                        class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100">
-                        View jobs
-                    </button>
-                </div>
-
                 <p class="text-sm text-gray-500">Select an event to upload jobs.</p>
 
                 <div class="grid gap-6 md:grid-cols-[170px_minmax(0,1fr)] md:items-start">

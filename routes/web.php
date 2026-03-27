@@ -34,6 +34,21 @@ Route::middleware("auth")->group(function () {
         return view("pages.ov-jobs.index", compact("events"));
     })->name("ov-jobs.index");
 
+    Route::get("/ov-jobs/{event}/view", function (Event $event) {
+        $jobs = $event->permits()->latest()->get();
+        $events = Event::query()->orderByDesc("id")->get();
+
+        return view("pages.ov-jobs.view", compact("event", "jobs", "events"));
+    })->name("ov-jobs.view");
+
+    Route::delete("/ov-jobs/{event}/clear", function (Event $event) {
+        $event->permits()->delete();
+
+        return redirect()
+            ->route("ov-jobs.view", $event)
+            ->with("success", "Jobs deleted successfully.");
+    })->name("ov-jobs.clear");
+
     //Events
     Route::resource("events", EventController::class);
     Route::resource("events.admins", EventAdminController::class)->only(

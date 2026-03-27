@@ -6,11 +6,14 @@
             selectedEventTitle: '',
             permitStoreUrlTemplate: @js(route('events.permits.store', ['event' => '__EVENT__'])),
             eventEditUrlTemplate: @js(route('events.edit', ['event' => '__EVENT__'])),
-            permitIndexUrlTemplate: @js(route('events.permits.index', ['event' => '__EVENT__'])),
+            jobsViewUrlTemplate: @js(route('ov-jobs.view', ['event' => '__EVENT__'])),
             openImportModal(id, title) {
                 this.selectedEventId = id;
                 this.selectedEventTitle = title;
                 this.importModalOpen = true;
+            },
+            viewJobs(eventId) {
+                window.location.href = this.jobsViewUrlTemplate.replace('__EVENT__', eventId);
             },
             closeImportModal() {
                 this.importModalOpen = false;
@@ -51,6 +54,7 @@
                                     </button>
                                     <button
                                         type="button"
+                                        @click="viewJobs({{ $event->id }})"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-regular fa-eye"></i>
                                         View Jobs
