@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\EventFormController;
+use App\Http\Controllers\API\EventPermitController;
 use App\Http\Controllers\API\LocationEndpointController;
 use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -49,7 +50,12 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/events/{event}/forms", [
         EventFormController::class,
         "index",
-    ])->name("api.events.forms");
+    ])->name("api.events.forms.index");
+
+    Route::get("/events/{event}/permits", [
+        EventPermitController::class,
+        "index",
+    ])->name("api.events.permits.index");
 
     Route::get("/location-endpoint", [
         LocationEndpointController::class,
