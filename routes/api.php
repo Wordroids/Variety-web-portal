@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
+use App\Http\Controllers\API\EventFormController;
 use App\Http\Controllers\API\LocationEndpointController;
 use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -39,10 +40,16 @@ Route::prefix("auth")->group(function () {
     });
 });
 
+// Private routes
 Route::middleware("auth:sanctum")->group(function () {
     Route::get("/events", [EventController::class, "index"])->name(
         "api.events.index",
     );
+
+    Route::get("/events/{event}/forms", [
+        EventFormController::class,
+        "index",
+    ])->name("api.events.forms");
 
     Route::get("/location-endpoint", [
         LocationEndpointController::class,
