@@ -3,6 +3,7 @@
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventFormController;
+use App\Http\Controllers\EventJobController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\EventPermitController;
 use App\Http\Controllers\MedicalRecordCollectionController;
@@ -27,29 +28,20 @@ Route::get("/", function () {
 Route::middleware("auth")->group(function () {
     // App Routes
     Route::view("/", "pages.dashboard")->name("dashboard");
-    Route::get("/ov-jobs", function () {
-        $events = Event::query()
-            ->withCount("permits")
-            ->orderByDesc("id")
-            ->get();
 
-        return view("pages.ov-jobs.index", compact("events"));
-    })->name("ov-jobs.index");
+    // Jobs
+    Route::get("/jobs", [EventJobController::class, "index"])->name(
+        "jobs.index",
+    );
 
-    Route::get("/ov-jobs/{event}/view", function (Event $event) {
-        $jobs = $event->permits()->latest()->get();
-        $events = Event::query()->orderByDesc("id")->get();
+    Route::get("/jobs/{event}", [EventJobController::class, "show"])->name(
+        "jobs.view",
+    );
 
-        return view("pages.ov-jobs.view", compact("event", "jobs", "events"));
-    })->name("ov-jobs.view");
-
-    Route::delete("/ov-jobs/{event}/clear", function (Event $event) {
-        $event->permits()->delete();
-
-        return redirect()
-            ->route("ov-jobs.view", $event)
-            ->with("success", "Jobs deleted successfully.");
-    })->name("ov-jobs.clear");
+    Route::delete("/jobs/{event}", [
+        EventJobController::class,
+        "destroy",
+    ])->name("jobs.destroy");
 
     //Events
     Route::resource("events", EventController::class);

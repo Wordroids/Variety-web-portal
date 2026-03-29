@@ -44,7 +44,7 @@
                     class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-gray-50">
                     Import jobs
                 </button>
-                <form action="{{ route('ov-jobs.clear', $event) }}" method="POST"
+                <form action="{{ route('jobs.destroy', $event) }}" method="POST"
                     onsubmit="return confirm('Delete all jobs for this event?');">
                     @csrf
                     @method('DELETE')
@@ -116,6 +116,6 @@
             </div>
         </div>
 
-        @include('pages.ov-jobs.import-modal')
+        @include('pages.jobs.import-modal')
     </div>
 </x-app-layout>

@@ -6,7 +6,7 @@
             selectedEventTitle: '',
             permitStoreUrlTemplate: @js(route('events.permits.store', ['event' => '__EVENT__'])),
             eventEditUrlTemplate: @js(route('events.edit', ['event' => '__EVENT__'])),
-            jobsViewUrlTemplate: @js(route('ov-jobs.view', ['event' => '__EVENT__'])),
+            jobsViewUrlTemplate: @js(route('jobs.view', ['event' => '__EVENT__'])),
             openImportModal(id, title) {
                 this.selectedEventId = id;
                 this.selectedEventTitle = title;
@@ -77,6 +77,6 @@
             </table>
         </div>
 
-        @include('pages.ov-jobs.import-modal')
+        @include('pages.jobs.import-modal')
     </div>
 </x-app-layout>
