@@ -65,6 +65,11 @@ Route::middleware("auth:sanctum")->group(function () {
         "store",
     ])->name("api.events.permits.store");
 
+    Route::delete("/events/{event}/permits/{permit}", [
+        EventPermitController::class,
+        "destroy",
+    ])->name("api.events.permits.destory");
+
     // Location
     Route::get("/location-endpoint", [
         LocationEndpointController::class,

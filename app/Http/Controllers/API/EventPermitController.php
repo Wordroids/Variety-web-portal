@@ -39,4 +39,13 @@ class EventPermitController extends Controller
             "permit" => $eventPermit,
         ]);
     }
+
+    public function destroy(Event $event, EventPermit $permit)
+    {
+        $permit->delete();
+        return response()->json([
+            "success" => true,
+            "message" => "Permit deleted.",
+        ]);
+    }
 }
