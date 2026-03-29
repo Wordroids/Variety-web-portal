@@ -8,58 +8,29 @@ use Illuminate\Http\Request;
 class MedicalRecordCommentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "medical_record_id" => "required|exists:medical_records,id",
+            "comment" => "required",
+        ]);
+
+        MedicalRecordComment::create([
+            "medical_record_id" => $request->medical_record_id,
+            "content" => $request->comment,
+        ]);
+
+        return back()->with("success", "Comment added");
     }
 
     /**
-     * Display the specified resource.
+     * Delete the resource in storage.
      */
-    public function show(MedicalRecordComment $medicalRecordComment)
+    public function destroy(int $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MedicalRecordComment $medicalRecordComment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, MedicalRecordComment $medicalRecordComment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MedicalRecordComment $medicalRecordComment)
-    {
-        //
+        MedicalRecordComment::findOrFail($id)->delete();
+        return back()->with("success", "Comment deleted");
     }
 }

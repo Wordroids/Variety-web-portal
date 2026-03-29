@@ -13,12 +13,11 @@ return new class extends Migration {
         Schema::create("medical_record_images", function (Blueprint $table) {
             $table->id();
             $table
-                ->foreignId("record_id")
-                ->references("id")
-                ->on("medical_record_items")
+                ->foreignId("medical_record_id")
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string("path");
+            $table->string("mime");
             $table->timestamps();
         });
     }
