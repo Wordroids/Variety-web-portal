@@ -43,25 +43,35 @@ Route::prefix("auth")->group(function () {
 
 // Private routes
 Route::middleware("auth:sanctum")->group(function () {
+    // Events
     Route::get("/events", [EventController::class, "index"])->name(
         "api.events.index",
     );
 
+    // Forms
     Route::get("/events/{event}/forms", [
         EventFormController::class,
         "index",
     ])->name("api.events.forms.index");
 
+    // Permits
     Route::get("/events/{event}/permits", [
         EventPermitController::class,
         "index",
     ])->name("api.events.permits.index");
 
+    Route::post("/events/{event}/permits", [
+        EventPermitController::class,
+        "store",
+    ])->name("api.events.permits.store");
+
+    // Location
     Route::get("/location-endpoint", [
         LocationEndpointController::class,
         "index",
     ])->name("api.location-endpoint");
 
+    // Notifications
     Route::get("/notifications", [
         NotificationController::class,
         "index",

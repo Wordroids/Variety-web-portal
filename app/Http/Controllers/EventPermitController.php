@@ -18,7 +18,7 @@ class EventPermitController extends Controller
     {
         $request->validate([
             "title" => "required",
-            "file" => "file",
+            "file" => "required|file",
         ]);
 
         $eventPermit = EventPermit::create([
