@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventPermit;
 use Illuminate\Http\Request;
@@ -10,8 +11,11 @@ class EventPermitController extends Controller
 {
     public function index(Event $event)
     {
-        $permits = $event->permits;
-        return view("pages.events.permits.index", compact("event", "permits"));
+        return response()->json([
+            "success" => true,
+            "message" => "Permits listed.",
+            "permits" => $event->permits,
+        ]);
     }
 
     public function store(Request $request, Event $event)
@@ -29,12 +33,19 @@ class EventPermitController extends Controller
             "uploaded_at" => now(),
         ]);
 
-        return back()->with("success", "Permit Uploaded");
+        return response()->json([
+            "success" => true,
+            "message" => "Permit added.",
+            "permit" => $eventPermit,
+        ]);
     }
 
     public function destroy(Event $event, EventPermit $permit)
     {
         $permit->delete();
-        return back()->with("success", "Permit Deleted");
+        return response()->json([
+            "success" => true,
+            "message" => "Permit deleted.",
+        ]);
     }
 }
