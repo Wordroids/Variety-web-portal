@@ -6,7 +6,9 @@ use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\EventFormController;
 use App\Http\Controllers\API\EventPermitController;
 use App\Http\Controllers\API\LocationEndpointController;
+use App\Http\Controllers\API\MedicalRecordCommentController;
 use App\Http\Controllers\API\MedicalRecordController;
+use App\Http\Controllers\API\MedicalRecordImageController;
 use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +78,22 @@ Route::middleware("auth:sanctum")->group(function () {
         MedicalRecordController::class,
         "index",
     ])->name("api.events.medical.index");
+
+    // Comments
+    Route::get("/events/{event}/medical/{record}/comments", [
+        MedicalRecordCommentController::class,
+        "index",
+    ])->name("api.events.medical.comments.index");
+
+    Route::post("/events/{event}/medical/{record}/comments", [
+        MedicalRecordCommentController::class,
+        "store",
+    ])->name("api.events.medical.comments.store");
+
+    Route::delete("/events/{event}/medical/{record}/comments/{comment}", [
+        MedicalRecordCommentController::class,
+        "destroy",
+    ])->name("api.events.medical.comments.destroy");
 
     // Location
     Route::get("/location-endpoint", [
