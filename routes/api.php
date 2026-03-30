@@ -6,6 +6,7 @@ use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\EventFormController;
 use App\Http\Controllers\API\EventPermitController;
 use App\Http\Controllers\API\LocationEndpointController;
+use App\Http\Controllers\API\MedicalRecordController;
 use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +70,12 @@ Route::middleware("auth:sanctum")->group(function () {
         EventPermitController::class,
         "destroy",
     ])->name("api.events.permits.destory");
+
+    // Medical Records
+    Route::get("/events/{event}/medical", [
+        MedicalRecordController::class,
+        "index",
+    ])->name("api.events.medical.index");
 
     // Location
     Route::get("/location-endpoint", [
