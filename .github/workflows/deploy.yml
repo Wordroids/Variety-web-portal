@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/variety-web-portal
+  IMAGE_NAME: ghcr.io/wordroids/variety-web-portal
 
 jobs:
   build:
