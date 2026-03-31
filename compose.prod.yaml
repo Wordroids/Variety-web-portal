@@ -1,0 +1,60 @@
+services:
+  app:
+    image: ghcr.io/wordroids/variety-web-portal:latest
+    container_name: variety-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - laravel_storage:/var/www/html/storage
+      - laravel_cache:/var/www/html/bootstrap/cache
+    networks:
+      - laravel
+
+  web:
+    image: nginx:alpine
+    container_name: variety-web
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+      - laravel_storage:/var/www/html/storage
+      - laravel_cache:/var/www/html/bootstrap/cache
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - laravel
+
+  queue:
+    image: ghcr.io/wordroids/variety-web-portal:latest
+    container_name: variety-queue
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: php artisan queue:work --sleep=3 --tries=3
+    volumes:
+      - laravel_storage:/var/www/html/storage
+      - laravel_cache:/var/www/html/bootstrap/cache
+    networks:
+      - laravel
+
+  scheduler:
+    image: ghcr.io/wordroids/variety-web-portal:latest
+    container_name: variety-scheduler
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    volumes:
+      - laravel_storage:/var/www/html/storage
+      - laravel_cache:/var/www/html/bootstrap/cache
+    networks:
+      - laravel
+
+volumes:
+  laravel_storage:
+  laravel_cache:
+
+networks:
+  laravel:
