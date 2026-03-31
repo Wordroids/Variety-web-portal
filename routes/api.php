@@ -10,6 +10,7 @@ use App\Http\Controllers\API\MedicalRecordCommentController;
 use App\Http\Controllers\API\MedicalRecordController;
 use App\Http\Controllers\API\MedicalRecordImageController;
 use App\Http\Controllers\API\NotificationController;
+use App\Models\MedicalRecordImage;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes
@@ -94,6 +95,22 @@ Route::middleware("auth:sanctum")->group(function () {
         MedicalRecordCommentController::class,
         "destroy",
     ])->name("api.events.medical.comments.destroy");
+
+    // Images
+    Route::get("/events/{event}/medical/{record}/images", [
+        MedicalRecordImageController::class,
+        "index",
+    ])->name("api.events.medical.images.index");
+
+    Route::post("/events/{event}/medical/{record}/images", [
+        MedicalRecordImageController::class,
+        "store",
+    ])->name("api.events.medical.images.store");
+
+    Route::delete("/events/{event}/medical/{record}/images/{image}", [
+        MedicalRecordImageController::class,
+        "destroy",
+    ])->name("api.events.medical.images.destroy");
 
     // Location
     Route::get("/location-endpoint", [

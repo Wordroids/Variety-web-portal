@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 
 class MedicalRecordCommentController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Event $event, MedicalRecord $record)
     {
         return response()->json([
