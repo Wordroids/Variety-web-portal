@@ -31,19 +31,17 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jobs</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($events as $event)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $event->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $event->title }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $event->permits_count }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $event->jobs->count() }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-end text-sm">
                                 <div class="inline-flex items-center justify-center gap-2">
                                     <button
                                         type="button"
