@@ -73,4 +73,9 @@ class Event extends Model
     {
         return $this->hasMany(EventForm::class);
     }
+
+    public function jobs()
+    {
+        return $this->hasMany(EventJob::class);
+    }
 }
