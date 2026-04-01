@@ -12,7 +12,7 @@ class EventJobController extends Controller
         return response()->json([
             "success" => true,
             "message" => "Jobs listed.",
-            "permits" => $event->jobs,
+            "jobs" => $event->jobs()->get()->keyBy("id"),
         ]);
     }
 }
