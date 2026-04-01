@@ -4,13 +4,13 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\EventFormController;
+use App\Http\Controllers\API\EventJobController;
 use App\Http\Controllers\API\EventPermitController;
 use App\Http\Controllers\API\LocationEndpointController;
 use App\Http\Controllers\API\MedicalRecordCommentController;
 use App\Http\Controllers\API\MedicalRecordController;
 use App\Http\Controllers\API\MedicalRecordImageController;
 use App\Http\Controllers\API\NotificationController;
-use App\Models\MedicalRecordImage;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes
@@ -73,6 +73,12 @@ Route::middleware("auth:sanctum")->group(function () {
         EventPermitController::class,
         "destroy",
     ])->name("api.events.permits.destory");
+
+    // Jobs
+    Route::get("/events/{event}/jobs", [
+        EventJobController::class,
+        "index",
+    ])->name("api.events.jobs.index");
 
     // Medical Records
     Route::get("/events/{event}/medical", [
