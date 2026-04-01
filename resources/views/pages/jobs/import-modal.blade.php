@@ -15,7 +15,7 @@
                 </div>
 
                 <form method="POST"
-                      :action="selectedEventId ? permitStoreUrlTemplate.replace('__EVENT__', selectedEventId) : '#'"
+                      :action="{{ route('jobs.store') }}"
                       enctype="multipart/form-data"
                       class="space-y-5">
                     @csrf
@@ -52,8 +52,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <input type="hidden" name="title" :value="selectedEventId ? 'Jobs import - ' + (document.querySelector('#relatedEvent option:checked')?.text || '') : 'Jobs import'">
 
                     <div class="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
                         <input type="checkbox" id="acknowledge_delete" x-model="jobAcknowledge" required

@@ -34,6 +34,10 @@ Route::middleware("auth")->group(function () {
         "jobs.index",
     );
 
+    Route::post("/jobs/", [EventJobController::class, "store"])->name(
+        "jobs.store",
+    );
+
     Route::get("/jobs/{event}", [EventJobController::class, "show"])->name(
         "jobs.view",
     );

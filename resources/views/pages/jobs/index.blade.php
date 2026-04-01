@@ -4,9 +4,6 @@
             importModalOpen: false,
             selectedEventId: null,
             selectedEventTitle: '',
-            permitStoreUrlTemplate: @js(route('events.permits.store', ['event' => '__EVENT__'])),
-            eventEditUrlTemplate: @js(route('events.edit', ['event' => '__EVENT__'])),
-            jobsViewUrlTemplate: @js(route('jobs.view', ['event' => '__EVENT__'])),
             openImportModal(id, title) {
                 this.selectedEventId = id;
                 this.selectedEventTitle = title;
@@ -50,13 +47,13 @@
                                         <i class="fa-solid fa-file-import"></i>
                                         Import Jobs
                                     </button>
-                                    <button
+                                    <a
                                         type="button"
-                                        @click="viewJobs({{ $event->id }})"
+                                        href="{{ route('jobs.view', $event)}}"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-regular fa-eye"></i>
                                         View Jobs
-                                    </button>
+                                    </a>
                                     <button
                                         type="button"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
