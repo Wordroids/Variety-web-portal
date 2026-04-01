@@ -27,6 +27,10 @@ class EventJobController extends Controller
 
         $file = $request->file("file");
 
+        // Delete existing jobs
+        $event = Event::find($request->event_id);
+        $event->jobs()->delete();
+
         // Open the file for reading
         if (($handle = fopen($file->getRealPath(), "r")) !== false) {
             // Extract the header row
@@ -36,7 +40,8 @@ class EventJobController extends Controller
                 // Combine header with row data to create an associative array
                 $jobRow = array_combine($header, $row);
 
-                $job = EventJob::create([
+                // Create job
+                EventJob::create([
                     "event_id" => $request->event_id,
                     "event_day" => $jobRow["Event Day"],
                     "vehicle" => $jobRow["Vehicle"],
@@ -69,8 +74,7 @@ class EventJobController extends Controller
      */
     public function show(Event $event)
     {
-        // Note: Using permits() as per your original logic
-        $jobs = $event->jobs()->latest()->get();
+        $jobs = $event->jobs()->latest()->paginate(10);
         $events = Event::query()->withCount("jobs")->orderByDesc("id")->get();
 
         return view("pages.jobs.view", compact("events", "event", "jobs"));

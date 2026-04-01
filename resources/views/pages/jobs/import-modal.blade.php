@@ -15,7 +15,7 @@
                 </div>
 
                 <form method="POST"
-                      :action="{{ route('jobs.store') }}"
+                      action="{{ route('jobs.store') }}"
                       enctype="multipart/form-data"
                       class="space-y-5">
                     @csrf

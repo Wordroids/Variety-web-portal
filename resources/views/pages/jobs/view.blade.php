@@ -59,54 +59,57 @@
                 <table class="min-w-[1600px] w-full border-collapse text-sm text-gray-700">
                     <thead class="bg-gray-50 text-gray-600">
                         <tr>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">#</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Import Date</th>
+                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">ID</th>
+                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Created At</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Event Day</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Vehicle</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Duty Code</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Duty Description</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Location</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">AM/PM</th>
+                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Period (AM/PM)</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">KM</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Arrive</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Field Arrive</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Comment</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Vehicle Description</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Image</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Latitude</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Longitude</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($jobs as $job)
-                            @php
-                                $importedAt = $job->uploaded_at ? \Carbon\Carbon::parse($job->uploaded_at) : $job->created_at;
-                            @endphp
                             <tr class="odd:bg-white even:bg-gray-50">
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ optional($importedAt)->format('Y-m-d h:i:s A') ?? '-' }}</td>
-                                <td class="border border-gray-200 px-3 py-2">-1</td>
-                                <td class="border border-gray-200 px-3 py-2">OV</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ $job->title }}</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ $job->title }}</td>
-                                <td class="border border-gray-200 px-3 py-2">-</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ optional($importedAt)->format('A') ?? '-' }}</td>
-                                <td class="border border-gray-200 px-3 py-2">0</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ optional($importedAt)->format('g:i A') ?? '-' }}</td>
-                                <td class="border border-gray-200 px-3 py-2">-</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ optional($importedAt)->format('g:i A') ?? '-' }}</td>
-                                <td class="border border-gray-200 px-3 py-2">-</td>
-                                <td class="border border-gray-200 px-3 py-2">{{ $job->filename }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->created_at->format('Y-m-d H:i') }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->vehicle }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->duty_code }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->duty_description }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->location }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
-                                    <a href="{{ Storage::url($job->path) }}" target="_blank" class="text-sky-700 hover:text-sky-900">Open</a>
+                                    <span class="rounded px-2 py-1 text-xs font-bold {{ $job->period === 'AM' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700' }}">
+                                        {{ $job->period }}
+                                    </span>
                                 </td>
-                                <td class="border border-gray-200 px-3 py-2">-</td>
-                                <td class="border border-gray-200 px-3 py-2">-</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ number_format($job->km, 2) }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->ov_arrive ?? '-' }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->field_arrive ?? '-' }}</td>
+                                <td class="border border-gray-200 px-3 py-2">{{ $job->ov_departure ?? '-' }}</td>
+                                <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">
+                                    {{$job->comment }}
+                                </td>
+                                <td class="border border-gray-200 px-3 py-2">
+                                    @if($job->image_path)
+                                        <a href="{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
+                                            View Image
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400 italic text-xs">No image</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="17" class="border border-gray-200 px-3 py-10 text-center text-gray-500">
+                                <td colspan="14" class="border border-gray-200 px-3 py-10 text-center text-gray-500">
                                     No jobs found for this event.
                                 </td>
                             </tr>
@@ -114,8 +117,8 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-4"> {{ $jobs->links() }} </div>
         </div>
-
         @include('pages.jobs.import-modal')
     </div>
 </x-app-layout>
