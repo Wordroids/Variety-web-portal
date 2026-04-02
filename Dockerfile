@@ -20,6 +20,7 @@ RUN apk add --no-cache \
     icu-libs \
     libpng \
     libjpeg-turbo \
+    libxml2 \
     freetype \
     libzip \
     libpq \
@@ -48,6 +49,9 @@ RUN apk add --no-cache --virtual .build-deps \
         pcntl \
         gd \
         zip \
+        dom \
+        xml \
+        simplexml \
     && apk del .build-deps
 
 # 3. Copy Composer from the official image
