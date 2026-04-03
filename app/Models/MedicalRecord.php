@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Crypt;
 
 class MedicalRecord extends Model
 {
@@ -17,7 +18,7 @@ class MedicalRecord extends Model
     ];
 
     protected $casts = [
-        "content" => "encrypted:json", // Automatically encrypts/decrypts the JSON blob
+        "content" => "encrypted:array", // Automatically encrypts/decrypts the JSON blob
         "imported_at" => "date",
         "expires_at" => "date",
     ];

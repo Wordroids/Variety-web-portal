@@ -3,6 +3,7 @@
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventFormController;
+use App\Http\Controllers\EventJobController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\EventPermitController;
 use App\Http\Controllers\MedicalRecordCollectionController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\MedicalRecordImageController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
+use App\Models\Event;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
@@ -26,6 +28,24 @@ Route::get("/", function () {
 Route::middleware("auth")->group(function () {
     // App Routes
     Route::view("/", "pages.dashboard")->name("dashboard");
+
+    // Jobs
+    Route::get("/jobs", [EventJobController::class, "index"])->name(
+        "jobs.index",
+    );
+
+    Route::post("/jobs/", [EventJobController::class, "store"])->name(
+        "jobs.store",
+    );
+
+    Route::get("/jobs/{event}", [EventJobController::class, "show"])->name(
+        "jobs.view",
+    );
+
+    Route::delete("/jobs/{event}", [
+        EventJobController::class,
+        "destroy",
+    ])->name("jobs.destroy");
 
     //Events
     Route::resource("events", EventController::class);

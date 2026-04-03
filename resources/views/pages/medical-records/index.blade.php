@@ -58,12 +58,23 @@
                                 {{ $event->medicalRecords->first()->expires_at?->format('M j, Y') ?? 'Never' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <a href="{{ route('medical-records.show', $event) }}" class="text-red-600 hover:text-red-900 font-medium">View Records</a>
+                                <a
+                                    href="{{ route('medical-records.show', $event) }}"
+                                    class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
+                                    <i class="fa-solid fa-eye"></i>
+                                    View Records
+                                </a>
                             </td>
                         @else
                             <td colspan="3" class="px-6 py-4 text-sm text-center text-gray-400 italic">No Records Found</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <button @click="openModal({{ $event->id }})" class="text-red-600 hover:text-red-900 font-medium">Import</button>
+                                <button
+                                    type="button"
+                                    @click="openModal({{ $event->id }})"
+                                    class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
+                                    <i class="fa-solid fa-file-import"></i>
+                                    Import Records
+                                </button>
                             </td>
                         @endif
                     </tr>

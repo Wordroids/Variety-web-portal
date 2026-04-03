@@ -4,8 +4,12 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\API\EventController;
 use App\Http\Controllers\API\EventFormController;
+use App\Http\Controllers\API\EventJobController;
 use App\Http\Controllers\API\EventPermitController;
 use App\Http\Controllers\API\LocationEndpointController;
+use App\Http\Controllers\API\MedicalRecordCommentController;
+use App\Http\Controllers\API\MedicalRecordController;
+use App\Http\Controllers\API\MedicalRecordImageController;
 use App\Http\Controllers\API\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +73,50 @@ Route::middleware("auth:sanctum")->group(function () {
         EventPermitController::class,
         "destroy",
     ])->name("api.events.permits.destory");
+
+    // Jobs
+    Route::get("/events/{event}/jobs", [
+        EventJobController::class,
+        "index",
+    ])->name("api.events.jobs.index");
+
+    // Medical Records
+    Route::get("/events/{event}/medical", [
+        MedicalRecordController::class,
+        "index",
+    ])->name("api.events.medical.index");
+
+    // Comments
+    Route::get("/events/{event}/medical/{record}/comments", [
+        MedicalRecordCommentController::class,
+        "index",
+    ])->name("api.events.medical.comments.index");
+
+    Route::post("/events/{event}/medical/{record}/comments", [
+        MedicalRecordCommentController::class,
+        "store",
+    ])->name("api.events.medical.comments.store");
+
+    Route::delete("/events/{event}/medical/{record}/comments/{comment}", [
+        MedicalRecordCommentController::class,
+        "destroy",
+    ])->name("api.events.medical.comments.destroy");
+
+    // Images
+    Route::get("/events/{event}/medical/{record}/images", [
+        MedicalRecordImageController::class,
+        "index",
+    ])->name("api.events.medical.images.index");
+
+    Route::post("/events/{event}/medical/{record}/images", [
+        MedicalRecordImageController::class,
+        "store",
+    ])->name("api.events.medical.images.store");
+
+    Route::delete("/events/{event}/medical/{record}/images/{image}", [
+        MedicalRecordImageController::class,
+        "destroy",
+    ])->name("api.events.medical.images.destroy");
 
     // Location
     Route::get("/location-endpoint", [

@@ -73,6 +73,14 @@
                                 <span>Medical Records</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('jobs.index') }}"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2
+                                   {{ request()->routeIs('jobs.*') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                                <i class="fa-solid fa-briefcase w-5 text-center"></i>
+                                <span>OV Jobs</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
