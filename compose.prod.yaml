@@ -23,7 +23,7 @@ services:
     depends_on:
       - app
     ports:
-      - "127.0.0.1:8080:80"
+      - "80:80"
     volumes:
       - laravel_public:/var/www/html/public:ro
       - laravel_storage:/var/www/html/storage
