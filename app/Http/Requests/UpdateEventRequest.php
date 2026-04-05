@@ -9,83 +9,70 @@ class UpdateEventRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('update events') ?? true; // adjust as needed
+        return $this->user()?->can("update events") ?? true; // adjust as needed
     }
 
     public function rules(): array
     {
         return [
             // Event
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            "title" => ["required", "string", "max:255"],
+            "description" => ["required", "string"],
+            "start_date" => ["required", "date"],
+            "end_date" => ["required", "date", "after_or_equal:start_date"],
 
             // Days (existing/new)
-            'days' => ['array'],
-            'days.*.id' => ['nullable', 'integer'], // present for existing rows
-            'days.*.title' => [
-                'required_with:days.*.date',
-                'string',
-                'max:255',
+            "days" => ["array"],
+            "days.*.id" => ["nullable", "integer"], // present for existing rows
+            "days.*.title" => [
+                "required_with:days.*.date",
+                "string",
+                "max:255",
             ],
-            'days.*.date' => ['required_with:days.*.title', 'date'],
-            'days.*.subtitle' => ['nullable', 'string', 'max:255'],
-            'days.*.remove_image' => ['sometimes', 'boolean'],
-            'days.*.image' => ['nullable', new OptionalImageUpload],
-            'days.*.sort_order' => ['nullable', 'integer', 'min:0'],
+            "days.*.date" => ["required_with:days.*.title", "date"],
+            "days.*.subtitle" => ["nullable", "string", "max:255"],
+            "days.*.remove_image" => ["sometimes", "boolean"],
+            "days.*.image" => ["nullable", "image", "max:4096"],
+            "days.*.sort_order" => ["nullable", "integer", "min:0"],
 
             // Locations
-            'days.*.locations' => ['array'],
-            'days.*.locations.*.id' => ['nullable', 'integer'],
-            'days.*.locations.*.name' => [
-                'required_with:days.*.locations.*.link_title,days.*.locations.*.link_url',
-                'string',
-                'max:255',
+            "days.*.locations" => ["array"],
+            "days.*.locations.*.id" => ["nullable", "integer"],
+            "days.*.locations.*.name" => [
+                "required_with:days.*.locations.*.link_title,days.*.locations.*.link_url",
+                "string",
+                "max:255",
             ],
-            'days.*.locations.*.link_title' => [
-                'nullable',
-                'string',
-                'max:255',
+            "days.*.locations.*.link_title" => [
+                "nullable",
+                "string",
+                "max:255",
             ],
-            'days.*.locations.*.link_url' => ['nullable'],
-            'days.*.locations.*.sort_order' => ['nullable', 'integer', 'min:0'],
+            "days.*.locations.*.link_url" => ["nullable"],
+            "days.*.locations.*.sort_order" => ["nullable", "integer", "min:0"],
 
             // Details
-            'days.*.itinerary_title' => [
-                'required_with:days.*.itinerary_description',
-                'string',
-                'max:255',
+            "days.*.itinerary_title" => [
+                "required_with:days.*.itinerary_description",
+                "string",
+                "max:255",
             ],
-            'days.*.itinerary_description' => ['nullable', 'string'],
+            "days.*.itinerary_description" => ["nullable", "string"],
 
             // Resources
-            'days.*.resources' => ['array'],
-            'days.*.resources.*.id' => ['nullable', 'integer'],
-            'days.*.resources.*.title' => [
-                'required_with:days.*.resources.*.url',
-                'string',
-                'max:255',
+            "days.*.resources" => ["array"],
+            "days.*.resources.*.id" => ["nullable", "integer"],
+            "days.*.resources.*.title" => [
+                "required_with:days.*.resources.*.url",
+                "string",
+                "max:255",
             ],
-            'days.*.resources.*.url' => ['nullable'],
-            'days.*.resources.*.sort_order' => ['nullable', 'integer', 'min:0'],
+            "days.*.resources.*.url" => ["nullable"],
+            "days.*.resources.*.sort_order" => ["nullable", "integer", "min:0"],
 
             // Sponsors
-            'sponsor_image' => ['nullable', new OptionalImageUpload],
-            'cover_image' => ['nullable', new OptionalImageUpload],
+            "sponsor_image" => ["nullable", "image", "max:4096"],
+            "cover_image" => ["nullable", "image", "max:4096"],
         ];
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function attributes(): array
-    {
-        $attrs = [];
-        foreach ($this->input('days', []) as $i => $_) {
-            $attrs['days.'.$i.'.image'] = 'Day '.($i + 1).' image';
-        }
-
-        return $attrs;
     }
 }
