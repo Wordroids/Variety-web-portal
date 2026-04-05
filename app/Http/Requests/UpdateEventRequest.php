@@ -2,22 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Event;
+use App\Rules\OptionalImageUpload;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEventRequest extends FormRequest
 {
-    /**
-     * Align with EventPolicy::update (edit events + event admin), not a separate "update events" permission.
-     */
     public function authorize(): bool
     {
-        /** @var Event|null $event */
-        $event = $this->route('event');
-
-        return $event !== null
-            && $this->user() !== null
-            && $this->user()->can('update', $event);
+        return $this->user()?->can('update events') ?? true; // adjust as needed
     }
 
     public function rules(): array
@@ -40,7 +32,7 @@ class UpdateEventRequest extends FormRequest
             'days.*.date' => ['required_with:days.*.title', 'date'],
             'days.*.subtitle' => ['nullable', 'string', 'max:255'],
             'days.*.remove_image' => ['sometimes', 'boolean'],
-            'days.*.image' => ['nullable', 'image', 'max:4096'],
+            'days.*.image' => ['nullable', new OptionalImageUpload],
             'days.*.sort_order' => ['nullable', 'integer', 'min:0'],
 
             // Locations
@@ -79,8 +71,21 @@ class UpdateEventRequest extends FormRequest
             'days.*.resources.*.sort_order' => ['nullable', 'integer', 'min:0'],
 
             // Sponsors
-            'sponsor_image' => ['nullable', 'image', 'max:4096'],
-            'cover_image' => ['nullable', 'image', 'max:4096'],
+            'sponsor_image' => ['nullable', new OptionalImageUpload],
+            'cover_image' => ['nullable', new OptionalImageUpload],
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        $attrs = [];
+        foreach ($this->input('days', []) as $i => $_) {
+            $attrs['days.'.$i.'.image'] = 'Day '.($i + 1).' image';
+        }
+
+        return $attrs;
     }
 }
