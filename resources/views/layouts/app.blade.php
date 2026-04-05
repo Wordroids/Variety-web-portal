@@ -19,14 +19,16 @@
     <x-rich-text::styles theme="richtextlaravel" data-turbo-track="false" />
 </head>
 
-<body class="font-sans antialiased">
-    <div class="flex min-h-screen">
+<body class="font-sans antialiased h-screen overflow-hidden">
+    <div class="flex h-full min-h-0">
         <!-- Sidebar -->
         @include('layouts.sidebar')
 
-        <!-- Main Content -->
-        <main class="flex-1 min-h-screen p-6 bg-gray-50 overflow-y-auto">
-            {{ $slot ?? '' }}
+        <!-- Main Content (only this column scrolls) -->
+        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-gray-50">
+            <div class="flex-1 overflow-y-auto p-6">
+                {{ $slot ?? '' }}
+            </div>
         </main>
     </div>
 
