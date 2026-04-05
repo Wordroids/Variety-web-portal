@@ -34,9 +34,30 @@
               method="POST"
               action="{{ route('events.update', $event) }}"
               enctype="multipart/form-data"
+              @submit="loading = true"
+              :aria-busy="loading"
               class="space-y-8">
             @csrf
             @method('PUT')
+
+            <!-- Full-page submitting state -->
+            <div
+                x-show="loading"
+                x-cloak
+                x-transition.opacity.duration.200ms
+                class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-white/85 backdrop-blur-sm"
+                role="status"
+                aria-live="polite"
+            >
+                <svg class="h-12 w-12 animate-spin text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <div class="text-center">
+                    <p class="text-lg font-semibold text-gray-900">Updating your event</p>
+                    <p class="mt-1 text-sm text-gray-600">Please wait — uploading can take a moment for large images.</p>
+                </div>
+            </div>
 
             <!-- Event Info -->
             <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -333,10 +354,20 @@
                    class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
                     Cancel
                 </a>
-                <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Update Event
+                <button
+                    type="submit"
+                    :disabled="loading"
+                    class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <template x-if="loading">
+                        <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                    </template>
+                    <template x-if="!loading">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </template>
+                    <span x-text="loading ? 'Updating...' : 'Update Event'"></span>
                 </button>
             </div>
         </form>
@@ -347,7 +378,13 @@
             return {
                 days: [],
                 sponsors: [],
+                loading: false,
                 init() {
+                    window.addEventListener('pageshow', (e) => {
+                        if (e.persisted) {
+                            this.loading = false;
+                        }
+                    });
                     // If validation failed, prefer old() snapshot
                     if (old && old.days) {
                         this.days = old.days;
@@ -382,4 +419,10 @@
             }
         }
     </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </x-app-layout>

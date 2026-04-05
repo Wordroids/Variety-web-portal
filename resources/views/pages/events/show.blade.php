@@ -154,7 +154,7 @@
 
             <!-- Footer meta -->
             <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
-                <span>Organized by: <span class="font-medium text-gray-700">James Wilson</span></span>
+                <span>Organized by: <span class="font-medium text-gray-700">{{ $event->organizerDisplayName() ?: '—' }}</span></span>
                 <span>Event duration: {{ $durationDays }} {{ \Illuminate\Support\Str::plural('day', $durationDays) }}</span>
             </div>
         </div>
