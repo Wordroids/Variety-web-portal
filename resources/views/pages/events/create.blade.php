@@ -35,9 +35,29 @@
             action="{{ route('events.store') }}"
             enctype="multipart/form-data"
             @submit="loading = true"
+            :aria-busy="loading"
             class="space-y-8"
         >
             @csrf
+
+            <!-- Full-page submitting state -->
+            <div
+                x-show="loading"
+                x-cloak
+                x-transition.opacity.duration.200ms
+                class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-white/85 backdrop-blur-sm"
+                role="status"
+                aria-live="polite"
+            >
+                <svg class="h-12 w-12 animate-spin text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <div class="text-center">
+                    <p class="text-lg font-semibold text-gray-900">Saving your event</p>
+                    <p class="mt-1 text-sm text-gray-600">Please wait — uploading can take a moment for large images.</p>
+                </div>
+            </div>
 
             <!-- Event Information -->
             <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -378,6 +398,14 @@
                 days: [],
                 loading: false,
 
+                init() {
+                    window.addEventListener('pageshow', (e) => {
+                        if (e.persisted) {
+                            this.loading = false;
+                        }
+                    });
+                },
+
                 // Dynamic handlers
                 addDay() {
                     this.days.push({
@@ -397,4 +425,10 @@
             }
         }
     </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </x-app-layout>
