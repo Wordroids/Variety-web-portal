@@ -34,7 +34,7 @@
               method="POST"
               action="{{ route('events.update', $event) }}"
               enctype="multipart/form-data"
-              @submit="loading = true"
+              @submit="days.forEach(d => d.expanded = true); loading = true"
               :aria-busy="loading"
               class="space-y-8">
             @csrf
@@ -109,21 +109,46 @@
                     </button>
                 </div>
 
-                <div class="p-6 space-y-8">
-                    <template x-for="(day, i) in days" :key="i">
-                        <div class="rounded-xl border border-gray-200 p-5 bg-white">
-                            <div class="flex items-start justify-between">
-                                <h3 class="text-lg font-semibold text-gray-900">Day <span x-text="i + 1"></span></h3>
-                                <button type="button" @click="removeDay(i)" class="text-sm text-red-600 hover:underline">Remove Day</button>
+                <div class="p-6 space-y-4">
+                    <template x-for="(day, i) in days" :key="'itinerary-day-' + i + '-' + (day.id ?? 'new')">
+                        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                            <div class="flex items-stretch gap-2 border-b border-gray-100 bg-gray-50/90 px-3 py-3 sm:px-4">
+                                <button
+                                    type="button"
+                                    @click="day.expanded = !day.expanded"
+                                    class="flex min-w-0 flex-1 items-center gap-3 rounded-lg text-left text-gray-900 hover:bg-gray-100/80"
+                                    :aria-expanded="day.expanded"
+                                >
+                                    <i
+                                        class="fa-solid fa-chevron-down shrink-0 text-gray-500 transition-transform duration-200"
+                                        :class="day.expanded ? 'rotate-180' : ''"
+                                        aria-hidden="true"
+                                    ></i>
+                                    <span class="text-base font-semibold">Day <span x-text="i + 1"></span></span>
+                                    <span class="truncate text-sm font-normal text-gray-600" x-text="day.title || 'Untitled day'"></span>
+                                </button>
+                                <button type="button" @click.stop="removeDay(i)" class="shrink-0 self-center rounded-lg px-2 py-1 text-sm text-red-600 hover:bg-red-50 hover:underline">
+                                    Remove
+                                </button>
                             </div>
 
+                            <div
+                                x-show="day.expanded"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 -translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 -translate-y-1"
+                            >
+                            <div class="space-y-6 p-5 pt-4">
                             <!-- Hidden ID (existing days) -->
                             <template x-if="day.id">
                                 <input type="hidden" :name="`days[${i}][id]`" x-model="day.id">
                             </template>
                             <input type="hidden" :name="`days[${i}][sort_order]`" :value="i">
 
-                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Day Title *</label>
                                     <input :name="`days[${i}][title]`" x-model="day.title" required
@@ -247,6 +272,8 @@
                             <div class="mt-6 flex justify-end">
                                 <button type="button" @click="moveDayUp(i)" class="mr-2 text-sm text-gray-600 hover:underline">Move Up</button>
                                 <button type="button" @click="moveDayDown(i)" class="text-sm text-gray-600 hover:underline">Move Down</button>
+                            </div>
+                            </div>
                             </div>
                         </div>
                     </template>
@@ -381,17 +408,45 @@
                             this.loading = false;
                         }
                     });
-                    // If validation failed, prefer old() snapshot
-                    if (old && old.days) {
-                        this.days = old.days;
-                    } else {
-                        this.days = Array.isArray(initDays) ? initDays : JSON.parse(initDays || '[]');
+                    // If validation failed, prefer old() snapshot (normalize to array — PHP/old() can be object-shaped)
+                    let raw = [];
+                    if (old && old.days != null) {
+                        raw = old.days;
+                        if (typeof raw === 'string') {
+                            try {
+                                raw = JSON.parse(raw);
+                            } catch {
+                                raw = [];
+                            }
+                        }
+                    } else if (Array.isArray(initDays)) {
+                        raw = initDays;
+                    } else if (typeof initDays === 'string') {
+                        try {
+                            raw = JSON.parse(initDays || '[]');
+                        } catch {
+                            raw = [];
+                        }
+                    } else if (initDays && typeof initDays === 'object') {
+                        raw = Object.values(initDays);
                     }
+                    const list = Array.isArray(raw) ? raw : Object.values(raw || {});
+                    this.days = list.map((d, i) => ({
+                        ...d,
+                        expanded: d.expanded ?? i === 0,
+                    }));
                 },
 
                 // Days
                 addDay() {
+                    if (!Array.isArray(this.days)) {
+                        this.days = [];
+                    }
+                    this.days.forEach((d) => {
+                        d.expanded = false;
+                    });
                     this.days.push({
+                        expanded: true,
                         id: null, title: '', date: '', subtitle: '',
                         image_url: null, remove_image: false,
                         locations: [], details: [], resources: []
