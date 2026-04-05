@@ -40,21 +40,18 @@
             @csrf
             @method('PUT')
 
-            <!-- Submitting overlay -->
+            <!-- Saving: slim top bar only (no modal) -->
             <div
                 x-show="loading"
                 x-cloak
-                x-transition.opacity.duration.300ms
-                class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-[2px]"
+                x-transition.opacity.duration.200ms
+                class="pointer-events-none fixed inset-x-0 top-0 z-[200]"
                 role="status"
                 aria-live="polite"
             >
-                <div class="w-full max-w-sm rounded-2xl border border-gray-200/90 bg-white p-8 text-center shadow-xl shadow-slate-900/10">
-                    <div class="mx-auto mb-5 flex h-10 w-10 items-center justify-center">
-                        <span class="inline-block h-9 w-9 rounded-full border-[2.5px] border-gray-200 border-t-red-600 animate-spin" aria-hidden="true"></span>
-                    </div>
-                    <p class="text-base font-semibold tracking-tight text-gray-900">Updating your event</p>
-                    <p class="mt-2 text-sm leading-relaxed text-gray-500">Large images may take a little while to upload.</p>
+                <span class="sr-only">Updating event, please wait</span>
+                <div class="h-1 w-full overflow-hidden bg-red-100">
+                    <div class="submit-progress-indeterminate h-full w-1/3 rounded-full bg-red-600"></div>
                 </div>
             </div>
 
@@ -474,6 +471,17 @@
     <style>
         [x-cloak] {
             display: none !important;
+        }
+        @keyframes submit-progress-indeterminate {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(400%);
+            }
+        }
+        .submit-progress-indeterminate {
+            animation: submit-progress-indeterminate 1.15s ease-in-out infinite;
         }
     </style>
 </x-app-layout>
