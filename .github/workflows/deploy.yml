@@ -55,10 +55,18 @@ jobs:
             cd /var/www/variety-web-portal
             docker compose -f compose.prod.yaml pull
 
-            docker compose -f compose.prod.yaml up -d
+            docker compose -f compose.prod.yaml up -d --remove-orphans
+
+            until [ "$(docker inspect -f '{{.State.Health.Status}}' variety-app 2>/dev/null)" = "healthy" ]; do
+            echo "Waiting for variety-app to become healthy..."
+            sleep 3
+            done
+            
+            docker restart variety-web
+
 
             docker exec variety-app php artisan migrate --force
+            docker exec variety-app php artisan storage:link || true
+            docker exec variety-app php artisan optimize:clear
             docker exec variety-app php artisan optimize
-            docker exec variety-app php artisan view:clear
-
             docker image prune -f
