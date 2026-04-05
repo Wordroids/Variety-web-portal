@@ -220,8 +220,9 @@ class EventController extends Controller
                     'title' => $day->title,
                     'date' => $day->date,
                     'subtitle' => $day->subtitle,
+                    // Relative URL so images work regardless of APP_URL / domain (same as show page & cover preview)
                     'image_url' => $day->image_path
-                        ? Storage::disk('public')->url($day->image_path)
+                        ? '/storage/'.ltrim($day->image_path, '/')
                         : null,
                     'remove_image' => false,
                     'sort_order' => $day->sort_order ?? 0,
@@ -256,7 +257,7 @@ class EventController extends Controller
 
         return view('pages.events.edit', [
             'event' => $event,
-            'daysJson' => $days->toJson(),
+            'daysJson' => $days->values()->all(),
         ]);
     }
 
