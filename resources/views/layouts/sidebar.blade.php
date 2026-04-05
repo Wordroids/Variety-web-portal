@@ -20,10 +20,10 @@
         x-transition:leave="transition transform ease-in duration-200"
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="-translate-x-full"
-        class="fixed md:static top-0 left-0 h-screen w-64 flex flex-col justify-between border-r border-gray-200 bg-white p-4 z-50">
+        class="fixed md:static top-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-gray-200 bg-white">
 
-        <!-- Top Section -->
-        <div>
+        <!-- Top: logo + nav (scrolls if menu is tall) -->
+        <div class="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-2">
             <!-- Logo -->
             <div class="flex items-center space-x-3 mb-6">
                 <img src="{{ asset('images/variety-logo.png') }}" alt="Variety Logo" class="h-8 w-8 rounded">
@@ -143,8 +143,8 @@
             </nav>
         </div>
 
-        <!-- Bottom Section -->
-        <div class="border-t border-gray-200 pt-4 mt-4">
+        <!-- Bottom: user + logout (fixed to bottom of sidebar; does not scroll away) -->
+        <div class="shrink-0 border-t border-gray-200 bg-white p-4 pt-4">
             <div class="flex items-center space-x-3">
                 <div class="h-10 w-10 flex items-center justify-center rounded-full bg-red-600 text-white font-semibold">
                     SJ
