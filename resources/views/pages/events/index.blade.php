@@ -57,7 +57,7 @@
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fa-solid fa-users text-red-500"></i>
-                            <span>{{ $event->participants->count() }} participants</span>
+                            <span>{{ $event->participants_count }} participants</span>
                         </li>
                     </ul>
 
@@ -71,7 +71,10 @@
                     </div>
 
                     <!-- Organizer -->
-                    <p class="text-xs text-gray-500 mb-4">Organized by: <span class="font-medium">Sarah Mitchell</span></p>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Organized by:
+                        <span class="font-medium text-gray-700">{{ $event->organizerDisplayName() ?: '—' }}</span>
+                    </p>
 
                     <!-- Actions -->
                     <div class="flex justify-between items-center">

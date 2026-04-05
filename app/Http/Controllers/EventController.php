@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateEventRequest;
 use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\EventDay;
 use App\Models\EventDayLocation;
@@ -22,52 +22,64 @@ class EventController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasRole("Super Admin")) {
-            $events = Event::latest()->get();
+        $withOrganizer = ['creator'];
+
+        if ($user->hasRole('Super Admin')) {
+            $events = Event::query()
+                ->with($withOrganizer)
+                ->withCount('participants')
+                ->latest()
+                ->get();
         } else {
-            $events = $user->events()->latest()->get();
+            $events = $user
+                ->events()
+                ->with($withOrganizer)
+                ->withCount('participants')
+                ->latest()
+                ->get();
         }
 
-        return view("pages.events.index", compact("events"));
+        return view('pages.events.index', compact('events'));
     }
 
     public function create()
     {
-        if (Auth::user()->cannot("create", Event::class)) {
+        if (Auth::user()->cannot('create', Event::class)) {
             abort(403);
         }
 
-        return view("pages.events.create");
+        return view('pages.events.create');
     }
 
     public function store(StoreEventRequest $request)
     {
-        if (Auth::user()->cannot("create", Event::class)) {
+        if (Auth::user()->cannot('create', Event::class)) {
             abort(403);
         }
 
         $data = $request->validated();
 
         DB::transaction(function () use ($data, $request) {
-            $sponsor_image_path = $request->hasFile("sponsor_image")
+            $sponsor_image_path = $request->hasFile('sponsor_image')
                 ? $request
-                    ->file("sponsor_image")
-                    ->store("events/sponsors", "public")
+                    ->file('sponsor_image')
+                    ->store('events/sponsors', 'public')
                 : null;
 
-            $cover_image_path = $request->hasFile("cover_image")
+            $cover_image_path = $request->hasFile('cover_image')
                 ? $request
-                    ->file("cover_image")
-                    ->store("events/covers", "public")
+                    ->file('cover_image')
+                    ->store('events/covers', 'public')
                 : null;
 
             $event = Event::create([
-                "title" => $data["title"],
-                "description" => $data["description"],
-                "start_date" => $data["start_date"],
-                "end_date" => $data["end_date"],
-                "sponsor_image_path" => $sponsor_image_path,
-                "cover_image_path" => $cover_image_path,
+                'created_by' => $request->user()->id,
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'sponsor_image_path' => $sponsor_image_path,
+                'cover_image_path' => $cover_image_path,
             ]);
 
             // Add user as an admin of the event
@@ -77,49 +89,48 @@ class EventController extends Controller
             $user->assignedEvents()->sync($event->id ?? []);
 
             // Days
-            foreach ($data["days"] ?? [] as $i => $dayData) {
+            foreach ($data['days'] ?? [] as $i => $dayData) {
                 $imagePath = null;
 
                 // Handle file upload (if any) — note: input name is days[index][image]
                 if ($request->hasFile("days.$i.image")) {
                     $imagePath = $request
                         ->file("days.$i.image")
-                        ->store("events/days", "public"); // => storage/app/public/events/days
+                        ->store('events/days', 'public'); // => storage/app/public/events/days
                 }
 
                 $day = EventDay::create([
-                    "event_id" => $event->id,
-                    "title" => $dayData["title"],
-                    "date" => $dayData["date"],
-                    "subtitle" => $dayData["subtitle"] ?? null,
-                    "image_path" => $imagePath,
-                    "sort_order" => $i,
-                    "itinerary_title" => $dayData["itinerary_title"] ?? "",
-                    "itinerary_description" =>
-                        $dayData["itinerary_description"] ?? "",
+                    'event_id' => $event->id,
+                    'title' => $dayData['title'],
+                    'date' => $dayData['date'],
+                    'subtitle' => $dayData['subtitle'] ?? null,
+                    'image_path' => $imagePath,
+                    'sort_order' => $i,
+                    'itinerary_title' => $dayData['itinerary_title'] ?? '',
+                    'itinerary_description' => $dayData['itinerary_description'] ?? '',
                 ]);
 
                 // Locations
-                foreach ($dayData["locations"] ?? [] as $j => $loc) {
-                    if (!empty($loc["name"])) {
+                foreach ($dayData['locations'] ?? [] as $j => $loc) {
+                    if (! empty($loc['name'])) {
                         EventDayLocation::create([
-                            "event_day_id" => $day->id,
-                            "name" => $loc["name"],
-                            "link_title" => $loc["link_title"] ?? null,
-                            "link_url" => $loc["link_url"] ?? null,
-                            "sort_order" => $j,
+                            'event_day_id' => $day->id,
+                            'name' => $loc['name'],
+                            'link_title' => $loc['link_title'] ?? null,
+                            'link_url' => $loc['link_url'] ?? null,
+                            'sort_order' => $j,
                         ]);
                     }
                 }
 
                 // Resources
-                foreach ($dayData["resources"] ?? [] as $r => $res) {
-                    if (!empty($res["title"]) || !empty($res["url"])) {
+                foreach ($dayData['resources'] ?? [] as $r => $res) {
+                    if (! empty($res['title']) || ! empty($res['url'])) {
                         EventDayResource::create([
-                            "event_day_id" => $day->id,
-                            "title" => $res["title"] ?? "",
-                            "url" => $res["url"] ?? "",
-                            "sort_order" => $r,
+                            'event_day_id' => $day->id,
+                            'title' => $res['title'] ?? '',
+                            'url' => $res['url'] ?? '',
+                            'sort_order' => $r,
                         ]);
                     }
                 }
@@ -127,8 +138,8 @@ class EventController extends Controller
         });
 
         return redirect()
-            ->route("events.create")
-            ->with("success", "Event created successfully.");
+            ->route('events.create')
+            ->with('success', 'Event created successfully.');
     }
 
     /**
@@ -136,12 +147,12 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        if (Auth::user()->cannot("view", $event)) {
+        if (Auth::user()->cannot('view', $event)) {
             abort(403);
         }
 
         // Load all relationships in correct order
-        $event->load(["days.locations", "days.resources"]);
+        $event->load(['days.locations', 'days.resources', 'creator']);
 
         // Calculate duration
         $durationDays =
@@ -152,33 +163,33 @@ class EventController extends Controller
         // Prepare days data for Alpine.js
         $days = $event->days
             ->map(
-                fn($day) => [
-                    "id" => $day->id,
-                    "title" => $day->title,
-                    "date" => $day->date
-                        ? \Carbon\Carbon::parse($day->date)->format("l d F Y")
+                fn ($day) => [
+                    'id' => $day->id,
+                    'title' => $day->title,
+                    'date' => $day->date
+                        ? \Carbon\Carbon::parse($day->date)->format('l d F Y')
                         : null,
-                    "date_short" => $day->date
-                        ? \Carbon\Carbon::parse($day->date)->format("d/m/Y")
+                    'date_short' => $day->date
+                        ? \Carbon\Carbon::parse($day->date)->format('d/m/Y')
                         : null,
-                    "subtitle" => $day->subtitle,
-                    "itinerary_title" => $day->itinerary_title,
-                    "itinerary_description" => $day->itinerary_description->render(),
-                    "image" => $day->image_path,
-                    "locations" => $day->locations
+                    'subtitle' => $day->subtitle,
+                    'itinerary_title' => $day->itinerary_title,
+                    'itinerary_description' => $day->itinerary_description->render(),
+                    'image' => $day->image_path,
+                    'locations' => $day->locations
                         ->map(
-                            fn($l) => [
-                                "name" => $l->name,
-                                "link_title" => $l->link_title,
-                                "link_url" => $l->link_url,
+                            fn ($l) => [
+                                'name' => $l->name,
+                                'link_title' => $l->link_title,
+                                'link_url' => $l->link_url,
                             ],
                         )
                         ->values(),
-                    "resources" => $day->resources
+                    'resources' => $day->resources
                         ->map(
-                            fn($r) => [
-                                "title" => $r->title,
-                                "url" => $r->url,
+                            fn ($r) => [
+                                'title' => $r->title,
+                                'url' => $r->url,
                             ],
                         )
                         ->values(),
@@ -186,56 +197,56 @@ class EventController extends Controller
             )
             ->values();
 
-        return view("pages.events.show", [
-            "event" => $event,
-            "daysJson" => $days->toJson(), // for Alpine.js
-            "durationDays" => $durationDays,
+        return view('pages.events.show', [
+            'event' => $event,
+            'daysJson' => $days->toJson(), // for Alpine.js
+            'durationDays' => $durationDays,
         ]);
     }
 
     public function edit(Event $event)
     {
-        if (Auth::user()->cannot("update", $event)) {
+        if (Auth::user()->cannot('update', $event)) {
             abort(403);
         }
 
-        $event->load(["days.locations", "days.resources"]);
+        $event->load(['days.locations', 'days.resources']);
 
         // Pre-format days for Alpine (include IDs + existing image URL)
         $days = $event->days
             ->map(
-                fn($day) => [
-                    "id" => $day->id,
-                    "title" => $day->title,
-                    "date" => $day->date,
-                    "subtitle" => $day->subtitle,
-                    "image_url" => $day->image_path
-                        ? Storage::disk("public")->url($day->image_path)
+                fn ($day) => [
+                    'id' => $day->id,
+                    'title' => $day->title,
+                    'date' => $day->date,
+                    'subtitle' => $day->subtitle,
+                    'image_url' => $day->image_path
+                        ? Storage::disk('public')->url($day->image_path)
                         : null,
-                    "remove_image" => false,
-                    "sort_order" => $day->sort_order ?? 0,
-                    "itinerary_title" => $day->itinerary_title,
-                    "itinerary_description" => $day->itinerary_description->render(),
+                    'remove_image' => false,
+                    'sort_order' => $day->sort_order ?? 0,
+                    'itinerary_title' => $day->itinerary_title,
+                    'itinerary_description' => $day->itinerary_description->render(),
 
-                    "locations" => $day->locations
+                    'locations' => $day->locations
                         ->map(
-                            fn($l) => [
-                                "id" => $l->id,
-                                "name" => $l->name,
-                                "link_title" => $l->link_title,
-                                "link_url" => $l->link_url,
-                                "sort_order" => $l->sort_order ?? 0,
+                            fn ($l) => [
+                                'id' => $l->id,
+                                'name' => $l->name,
+                                'link_title' => $l->link_title,
+                                'link_url' => $l->link_url,
+                                'sort_order' => $l->sort_order ?? 0,
                             ],
                         )
                         ->values(),
 
-                    "resources" => $day->resources
+                    'resources' => $day->resources
                         ->map(
-                            fn($r) => [
-                                "id" => $r->id,
-                                "title" => $r->title,
-                                "url" => $r->url,
-                                "sort_order" => $r->sort_order ?? 0,
+                            fn ($r) => [
+                                'id' => $r->id,
+                                'title' => $r->title,
+                                'url' => $r->url,
+                                'sort_order' => $r->sort_order ?? 0,
                             ],
                         )
                         ->values(),
@@ -243,9 +254,9 @@ class EventController extends Controller
             )
             ->values();
 
-        return view("pages.events.edit", [
-            "event" => $event,
-            "daysJson" => $days->toJson(),
+        return view('pages.events.edit', [
+            'event' => $event,
+            'daysJson' => $days->toJson(),
         ]);
     }
 
@@ -254,34 +265,32 @@ class EventController extends Controller
         $data = $request->validated();
 
         DB::transaction(function () use ($data, $request, $event) {
-            if ($request->hasFile("sponsor_image")) {
+            if ($request->hasFile('sponsor_image')) {
                 $sponsor_image_path = $request
-                    ->file("sponsor_image")
-                    ->store("events/sponsors", "public");
+                    ->file('sponsor_image')
+                    ->store('events/sponsors', 'public');
                 if ($event->sponsor_image_path) {
-                    Storage::disk("public")->delete($event->sponsor_image_path);
+                    Storage::disk('public')->delete($event->sponsor_image_path);
                 }
             }
 
-            if ($request->hasFile("cover_image")) {
+            if ($request->hasFile('cover_image')) {
                 $cover_image_path = $request
-                    ->file("cover_image")
-                    ->store("events/covers", "public");
+                    ->file('cover_image')
+                    ->store('events/covers', 'public');
                 if ($event->cover_image_path) {
-                    Storage::disk("public")->delete($event->cover_image_path);
+                    Storage::disk('public')->delete($event->cover_image_path);
                 }
             }
 
             // 1) Update Event main fields
             $event->update([
-                "title" => $data["title"],
-                "description" => $data["description"],
-                "start_date" => $data["start_date"],
-                "end_date" => $data["end_date"],
-                "sponsor_image_path" =>
-                    $sponsor_image_path ?? ($event->sponsor_image_path ?? null),
-                "cover_image_path" =>
-                    $cover_image_path ?? ($event->cover_image_path ?? null),
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'sponsor_image_path' => $sponsor_image_path ?? ($event->sponsor_image_path ?? null),
+                'cover_image_path' => $cover_image_path ?? ($event->cover_image_path ?? null),
             ]);
 
             // Track IDs to keep (for diff-delete)
@@ -290,49 +299,48 @@ class EventController extends Controller
             $keepResourceIds = [];
 
             // 2) Upsert Days + nested children
-            foreach ($data["days"] ?? [] as $i => $dayData) {
+            foreach ($data['days'] ?? [] as $i => $dayData) {
                 $dayAttrs = [
-                    "event_id" => $event->id,
-                    "title" => $dayData["title"] ?? "",
-                    "date" => $dayData["date"] ?? null,
-                    "subtitle" => $dayData["subtitle"] ?? null,
-                    "sort_order" => $dayData["sort_order"] ?? $i,
-                    "itinerary_title" => $dayData["itinerary_title"] ?? "",
-                    "itinerary_description" =>
-                        $dayData["itinerary_description"] ?? "",
+                    'event_id' => $event->id,
+                    'title' => $dayData['title'] ?? '',
+                    'date' => $dayData['date'] ?? null,
+                    'subtitle' => $dayData['subtitle'] ?? null,
+                    'sort_order' => $dayData['sort_order'] ?? $i,
+                    'itinerary_title' => $dayData['itinerary_title'] ?? '',
+                    'itinerary_description' => $dayData['itinerary_description'] ?? '',
                 ];
 
-                if (!empty($dayData["id"])) {
+                if (! empty($dayData['id'])) {
                     // Update existing Day
                     /** @var \App\Models\EventDay $day */
-                    $day = EventDay::where("event_id", $event->id)
-                        ->where("id", $dayData["id"])
+                    $day = EventDay::where('event_id', $event->id)
+                        ->where('id', $dayData['id'])
                         ->firstOrFail();
 
                     // Handle image delete/replace
-                    if (!empty($dayData["remove_image"])) {
+                    if (! empty($dayData['remove_image'])) {
                         if ($day->image_path) {
-                            Storage::disk("public")->delete($day->image_path);
+                            Storage::disk('public')->delete($day->image_path);
                         }
-                        $dayAttrs["image_path"] = null;
+                        $dayAttrs['image_path'] = null;
                     }
 
                     if ($request->hasFile("days.$i.image")) {
                         if ($day->image_path) {
-                            Storage::disk("public")->delete($day->image_path);
+                            Storage::disk('public')->delete($day->image_path);
                         }
-                        $dayAttrs["image_path"] = $request
+                        $dayAttrs['image_path'] = $request
                             ->file("days.$i.image")
-                            ->store("events/days", "public");
+                            ->store('events/days', 'public');
                     }
 
                     $day->update($dayAttrs);
                 } else {
                     // Create new Day
                     if ($request->hasFile("days.$i.image")) {
-                        $dayAttrs["image_path"] = $request
+                        $dayAttrs['image_path'] = $request
                             ->file("days.$i.image")
-                            ->store("events/days", "public");
+                            ->store('events/days', 'public');
                     }
                     $day = EventDay::create($dayAttrs);
                 }
@@ -340,29 +348,29 @@ class EventController extends Controller
                 $keepDayIds[] = $day->id;
 
                 // Locations
-                foreach ($dayData["locations"] ?? [] as $j => $loc) {
+                foreach ($dayData['locations'] ?? [] as $j => $loc) {
                     if (
-                        empty($loc["name"]) &&
-                        empty($loc["link_title"]) &&
-                        empty($loc["link_url"])
+                        empty($loc['name']) &&
+                        empty($loc['link_title']) &&
+                        empty($loc['link_url'])
                     ) {
                         continue;
                     }
 
                     $locAttrs = [
-                        "event_day_id" => $day->id,
-                        "name" => $loc["name"] ?? "",
-                        "link_title" => $loc["link_title"] ?? null,
-                        "link_url" => $loc["link_url"] ?? null,
-                        "sort_order" => $loc["sort_order"] ?? $j,
+                        'event_day_id' => $day->id,
+                        'name' => $loc['name'] ?? '',
+                        'link_title' => $loc['link_title'] ?? null,
+                        'link_url' => $loc['link_url'] ?? null,
+                        'sort_order' => $loc['sort_order'] ?? $j,
                     ];
 
-                    if (!empty($loc["id"])) {
+                    if (! empty($loc['id'])) {
                         $location = EventDayLocation::where(
-                            "event_day_id",
+                            'event_day_id',
                             $day->id,
                         )
-                            ->where("id", $loc["id"])
+                            ->where('id', $loc['id'])
                             ->firstOrFail();
                         $location->update($locAttrs);
                     } else {
@@ -373,24 +381,24 @@ class EventController extends Controller
                 }
 
                 // Resources
-                foreach ($dayData["resources"] ?? [] as $r => $res) {
-                    if (empty($res["title"]) && empty($res["url"])) {
+                foreach ($dayData['resources'] ?? [] as $r => $res) {
+                    if (empty($res['title']) && empty($res['url'])) {
                         continue;
                     }
 
                     $resAttrs = [
-                        "event_day_id" => $day->id,
-                        "title" => $res["title"] ?? "",
-                        "url" => $res["url"] ?? null,
-                        "sort_order" => $res["sort_order"] ?? $r,
+                        'event_day_id' => $day->id,
+                        'title' => $res['title'] ?? '',
+                        'url' => $res['url'] ?? null,
+                        'sort_order' => $res['sort_order'] ?? $r,
                     ];
 
-                    if (!empty($res["id"])) {
+                    if (! empty($res['id'])) {
                         $resource = EventDayResource::where(
-                            "event_day_id",
+                            'event_day_id',
                             $day->id,
                         )
-                            ->where("id", $res["id"])
+                            ->where('id', $res['id'])
                             ->firstOrFail();
                         $resource->update($resAttrs);
                     } else {
@@ -403,8 +411,8 @@ class EventController extends Controller
 
             // 4) Diff-delete removed items
             // Days not in $keepDayIds
-            EventDay::where("event_id", $event->id)
-                ->whereNotIn("id", $keepDayIds ?: [0])
+            EventDay::where('event_id', $event->id)
+                ->whereNotIn('id', $keepDayIds ?: [0])
                 ->get()
                 ->each(function ($day) {
                     // deleting a Day cascades delete its children via model boot() if you added that,
@@ -412,25 +420,25 @@ class EventController extends Controller
                     $day->locations()->delete();
                     $day->resources()->delete();
                     if ($day->image_path) {
-                        Storage::disk("public")->delete($day->image_path);
+                        Storage::disk('public')->delete($day->image_path);
                     }
                     $day->delete();
                 });
 
             // Children not in keep arrays
-            if (!empty($keepDayIds)) {
-                EventDayLocation::whereIn("event_day_id", $keepDayIds)
-                    ->whereNotIn("id", $keepLocationIds ?: [0])
+            if (! empty($keepDayIds)) {
+                EventDayLocation::whereIn('event_day_id', $keepDayIds)
+                    ->whereNotIn('id', $keepLocationIds ?: [0])
                     ->delete();
-                EventDayResource::whereIn("event_day_id", $keepDayIds)
-                    ->whereNotIn("id", $keepResourceIds ?: [0])
+                EventDayResource::whereIn('event_day_id', $keepDayIds)
+                    ->whereNotIn('id', $keepResourceIds ?: [0])
                     ->delete();
             }
         });
 
         return redirect()
-            ->route("events.show", $event)
-            ->with("success", "Event updated successfully.");
+            ->route('events.show', $event)
+            ->with('success', 'Event updated successfully.');
     }
 
     /**
@@ -438,23 +446,24 @@ class EventController extends Controller
      */
     public function destroy(Event $event, EventDeletionService $deleter)
     {
-        if (Auth::user()->cannot("delete", $event)) {
+        if (Auth::user()->cannot('delete', $event)) {
             abort(403);
         }
 
         try {
-            DB::transaction(fn() => $deleter->delete($event));
+            DB::transaction(fn () => $deleter->delete($event));
 
             return redirect()
-                ->route("events.index")
+                ->route('events.index')
                 ->with(
-                    "success",
-                    "Event and all related data deleted successfully.",
+                    'success',
+                    'Event and all related data deleted successfully.',
                 );
         } catch (\Throwable $e) {
             report($e);
+
             return back()->withErrors([
-                "delete" => "Failed to delete event. Please try again.",
+                'delete' => 'Failed to delete event. Please try again.',
             ]);
         }
     }
@@ -466,7 +475,7 @@ class EventController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasRole("Super Admin")) {
+        if ($user->hasRole('Super Admin')) {
             $events = Event::latest()->get(['id', 'name']);
         } else {
             $events = $user->events()->latest()->get(['id', 'name']);
