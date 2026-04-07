@@ -53,11 +53,6 @@
                                         <i class="fa-regular fa-eye"></i>
                                         View Jobs
                                     </a>
-                                    <a href="{{ route('jobs.view', $event) }}"
-                                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Edit Jobs
-                                    </a>
                                     <button type="button"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
                                         <i class="fa-regular fa-trash-can"></i>
