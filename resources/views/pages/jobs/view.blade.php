@@ -73,6 +73,7 @@
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Comment</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Image</th>
+                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +106,12 @@
                                     @else
                                         <span class="text-gray-400 italic text-xs">No image</span>
                                     @endif
+                                </td>
+                                <td class="border border-gray-200 px-3 py-2">
+                                    <a href="{{ route('jobs.edit', $job) }}"
+                                        class="text-blue-600 hover:underline text-xs font-medium">
+                                        Edit
+                                    </a>
                                 </td>
                             </tr>
                         @empty

@@ -47,6 +47,8 @@ Route::middleware("auth")->group(function () {
         "destroy",
     ])->name("jobs.destroy");
 
+    Route::get('/job/{job}/edit', [EventJobController::class, 'edit'])->name('jobs.edit');
+    Route::put('/job/{job}', [EventJobController::class, 'update'])->name('jobs.update');
     //Events
     Route::resource("events", EventController::class);
     Route::resource("events.admins", EventAdminController::class)->only(
