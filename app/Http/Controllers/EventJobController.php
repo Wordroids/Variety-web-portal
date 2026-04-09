@@ -138,4 +138,40 @@ class EventJobController extends Controller
             ->route("jobs.view", $event)
             ->with("success", "Jobs deleted successfully.");
     }
+
+    //to download the csv template
+    public function downloadTemplate()
+    {
+        $fileName = "ov_jobs_template.csv";
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $columns = [
+            "event_day",
+            "vehicle",
+            "duty_code",
+            "duty_description",
+            "location",
+            "period",
+            "km",
+            "ov_arrive",
+            "field_arrive",
+            "ov_departure",
+            "comment"
+        ];
+
+        $callback = function () use ($columns) {
+
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, $columns);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

@@ -47,9 +47,10 @@
                         </div>
 
                         <div class="mt-2">
-                            <button type="button" class="text-xs text-red-600 hover:text-red-700 font-medium underline">
+                            <a href="{{ route('jobs.template') }}"
+                                class="text-xs text-red-600 hover:text-red-700 font-medium underline">
                                 Download template
-                            </button>
+                            </a>
                         </div>
                     </div>
 

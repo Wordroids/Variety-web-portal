@@ -37,6 +37,9 @@ Route::middleware("auth")->group(function () {
     Route::post("/jobs/", [EventJobController::class, "store"])->name(
         "jobs.store",
     );
+      //to download template
+    Route::get('/jobs/template', [EventJobController::class, 'downloadTemplate'])
+    ->name('jobs.template');
 
     Route::get("/jobs/{event}", [EventJobController::class, "show"])->name(
         "jobs.view",
