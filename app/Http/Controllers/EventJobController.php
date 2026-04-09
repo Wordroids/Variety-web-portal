@@ -79,6 +79,44 @@ class EventJobController extends Controller
 
         return view("pages.jobs.view", compact("events", "event", "jobs"));
     }
+    
+    //edit function
+    public function edit(EventJob $job)
+    {
+        return view("pages.jobs.edit", compact("job"));
+    }
+
+    // update function
+    public function update(Request $request, EventJob $job)
+    {
+        $request->validate([
+            "event_day" => "required|integer",
+            "vehicle" => "required",
+            "duty_code" => "required",
+            "duty_description" => "required",
+            "location" => "required",
+            "period" => "required",
+            "km" => "required|numeric",
+        ]);
+
+        $job->update([
+            "event_day" => $request->event_day,
+            "vehicle" => $request->vehicle,
+            "duty_code" => $request->duty_code,
+            "duty_description" => $request->duty_description,
+            "location" => $request->location,
+            "period" => $request->period,
+            "km" => $request->km,
+            "ov_arrive" => $request->ov_arrive,
+            "field_arrive" => $request->field_arrive,
+            "ov_departure" => $request->ov_departure,
+            "comment" => $request->comment,
+        ]);
+
+        return redirect()
+            ->route("jobs.view", $job->event_id)
+            ->with("success", "Job updated successfully");
+    }
 
     /**
      * Remove the specified resource from storage.
