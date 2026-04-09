@@ -21,52 +21,61 @@ class EventJobController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "event_id" => "required|exists:events,id",
-            "file" => "required|file|mimes:csv,txt", // Added mime validation for safety
+            'event_id' => 'required|exists:events,id',
+            'csv_file' => 'required|file|mimes:csv,txt'
         ]);
 
-        $file = $request->file("file");
+        $event = Event::findOrFail($request->event_id);
 
         // Delete existing jobs
-        $event = Event::find($request->event_id);
-        $event->jobs()->delete();
+        EventJob::where('event_id', $event->id)->delete();
 
-        // Open the file for reading
-        if (($handle = fopen($file->getRealPath(), "r")) !== false) {
-            // Extract the header row
-            $header = fgetcsv($handle, 1000, ",");
+        $file = $request->file('csv_file');
 
-            while (($row = fgetcsv($handle, 1000, ",")) !== false) {
-                // Combine header with row data to create an associative array
-                $jobRow = array_combine($header, $row);
+        $handle = fopen($file->getPathname(), 'r');
 
-                // Create job
-                EventJob::create([
-                    "event_id" => $request->event_id,
-                    "event_day" => $jobRow["Event Day"],
-                    "vehicle" => $jobRow["Vehicle"],
-                    "duty_code" => $jobRow["Duty Code"],
-                    "duty_description" => $jobRow["Duty Description"],
-                    "location" => $jobRow["Location"],
-                    "period" => $jobRow["AM/PM"],
-                    "km" => $jobRow["KM"],
-                    "ov_arrive" => !empty($jobRow["OV Arrive"])
-                        ? $jobRow["OV Arrive"]
-                        : null,
-                    "field_arrive" => !empty($jobRow["Field Arrive"])
-                        ? $jobRow["Field Arrive"]
-                        : null,
-                    "ov_departure" => !empty($jobRow["OV Departure"])
-                        ? $jobRow["OV Departure"]
-                        : null,
-                    "comment" => $jobRow["Comment"] ?? null,
-                    "image_path" => $jobRow["Image"] ?? null,
-                ]);
-            }
-            fclose($handle);
+
+
+        fgetcsv($handle);
+
+        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+
+            // convert encoding
+            $row = array_map(function ($value) {
+
+                if ($value === null) return null;
+
+                // convert Windows-1252 to UTF-8
+                $value = mb_convert_encoding($value, 'UTF-8', 'Windows-1252');
+
+               
+                $value = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+
+                return trim($value);
+            }, $row);
+
+            EventJob::create([
+                'event_id' => $event->id,
+                'event_day' => $row[0] ?? null,
+                'vehicle' => $row[1] ?? null,
+                'duty_code' => $row[2] ?? null,
+                'duty_description' => $row[3] ?? null,
+                'location' => $row[4] ?? null,
+                'period' => $row[5] ?? null,
+                'km' => $row[6] ?? 0,
+                'ov_arrive' => $row[7] ?? null,
+                'field_arrive' => $row[8] ?? null,
+                'ov_departure' => $row[9] ?? null,
+                'comment' => $row[10] ?? null,
+                'image_path' => null,
+            ]);
         }
 
-        return back()->with("success", "CSV imported successfully");
+        fclose($handle);
+
+        return redirect()
+            ->route('jobs.index')
+            ->with('success', 'CSV imported successfully');
     }
 
     /**
@@ -79,7 +88,7 @@ class EventJobController extends Controller
 
         return view("pages.jobs.view", compact("events", "event", "jobs"));
     }
-    
+
     //edit function
     public function edit(EventJob $job)
     {
