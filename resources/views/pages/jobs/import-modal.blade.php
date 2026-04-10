@@ -1,12 +1,12 @@
 <div x-show="importModalOpen"
      class="fixed inset-0 z-50 overflow-y-auto"
+     x-data="{jobFileName: '', jobAcknowledge: false}"
      x-cloak>
 
     <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" @click="closeImportModal()"></div>
 
     <div class="flex min-h-full items-center justify-center p-4">
-        <div x-show="importModalOpen"
-             class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
+        <div class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
 
             <div class="p-6">
                 <div class="mb-6">
