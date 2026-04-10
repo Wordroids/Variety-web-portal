@@ -1,12 +1,12 @@
 <div x-show="importModalOpen"
      class="fixed inset-0 z-50 overflow-y-auto"
+     x-data="{jobFileName: '', jobAcknowledge: false}"
      x-cloak>
 
     <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" @click="closeImportModal()"></div>
 
     <div class="flex min-h-full items-center justify-center p-4">
-        <div x-show="importModalOpen"
-             class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
+        <div class="relative w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
 
             <div class="p-6">
                 <div class="mb-6">
@@ -34,7 +34,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">CSV File</label>
                         <div class="rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
-                            <input id="jobsFile" name="file" type="file" accept=".csv,.txt" required
+                            <input id="jobsFile" name="csv_file" type="file" accept=".csv,.txt" required
                                    class="hidden" x-ref="jobFileInput"
                                    @change="jobFileName = $event.target.files[0] ? $event.target.files[0].name : ''">
 
@@ -47,9 +47,10 @@
                         </div>
 
                         <div class="mt-2">
-                            <button type="button" class="text-xs text-red-600 hover:text-red-700 font-medium underline">
+                            <a href="{{ route('jobs.template') }}"
+                                class="text-xs text-red-600 hover:text-red-700 font-medium underline">
                                 Download template
-                            </button>
+                            </a>
                         </div>
                     </div>
 
