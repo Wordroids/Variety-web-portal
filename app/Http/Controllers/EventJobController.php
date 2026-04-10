@@ -63,9 +63,9 @@ class EventJobController extends Controller
                 'location' => $row[4] ?? null,
                 'period' => $row[5] ?? null,
                 'km' => $row[6] ?? 0,
-                'ov_arrive' => $row[7] ?? null,
-                'field_arrive' => $row[8] ?? null,
-                'ov_departure' => $row[9] ?? null,
+                'ov_arrive' => !empty($row[7]) ? $row[7] : null,
+                'field_arrive' => !empty($row[8]) ? $row[8] : null,
+                'ov_departure' => !empty($row[9]) ? $row[9] : null,
                 'comment' => $row[10] ?? null,
                 'image_path' => null,
             ]);

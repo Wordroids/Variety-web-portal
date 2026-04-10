@@ -34,7 +34,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">CSV File</label>
                         <div class="rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
-                            <input id="jobsFile" name="file" type="file" accept=".csv,.txt" required
+                            <input id="jobsFile" name="csv_file" type="file" accept=".csv,.txt" required
                                    class="hidden" x-ref="jobFileInput"
                                    @change="jobFileName = $event.target.files[0] ? $event.target.files[0].name : ''">
 
