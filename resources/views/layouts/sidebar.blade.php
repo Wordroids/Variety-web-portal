@@ -39,14 +39,14 @@
                 <div>
                     <h3 class="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">Main</h3>
                     <ul class="space-y-1">
-                        <li>
+                       <!-- <li>
                             <a href="{{ route('dashboard') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
                                    {{ request()->routeIs('dashboard') ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                                 <i class="fa-solid fa-chart-line w-5 text-center"></i>
                                 <span>Dashboard</span>
                             </a>
-                        </li>
+                        </li>-->
                         @can('view events')
                         <li>
                             <a href="{{ route('events.index') }}"

@@ -53,6 +53,67 @@
                         Delete jobs
                     </button>
                 </form>
+                <!-- Filters -->
+                <form method="GET" class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
+
+                    <!-- Vehicle -->
+                    <div>
+                        <label class="text-xs text-gray-500">Vehicle</label>
+                        <select name="vehicle" class="w-full rounded-lg border-gray-300 text-sm">
+                            <option value="">All Vehicles</option>
+
+                            @foreach ($vehicles as $vehicle)
+                                <option value="{{ $vehicle }}"
+                                    {{ request('vehicle') == $vehicle ? 'selected' : '' }}>
+                                    {{ $vehicle }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Event Day -->
+                    <div>
+                        <label class="text-xs text-gray-500">Event Day</label>
+                        <select name="event_day" class="w-full rounded-lg border-gray-300 text-sm">
+                            <option value="">All Days</option>
+
+                            @foreach ($eventDays as $day)
+                                <option value="{{ $day }}"
+                                    {{ request('event_day') == $day ? 'selected' : '' }}>
+                                    {{ $day }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Period -->
+                    <div>
+                        <label class="text-xs text-gray-500">Period</label>
+                        <select name="period" class="w-full rounded-lg border-gray-300 text-sm">
+                            <option value="">All</option>
+
+                            @foreach ($periods as $period)
+                                <option value="{{ $period }}"
+                                    {{ request('period') == $period ? 'selected' : '' }}>
+                                    {{ $period }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex items-end gap-2">
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700">
+                            Filter
+                        </button>
+
+                        <a href="{{ route('jobs.view', $event) }}"
+                            class="px-4 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50">
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
 
             <div class="overflow-x-auto rounded-lg border border-gray-200">
