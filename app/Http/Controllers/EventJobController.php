@@ -131,28 +131,49 @@ class EventJobController extends Controller
     // update function
     public function update(Request $request, EventJob $job)
     {
-        $request->validate([
+        // Empty HTML time inputs submit ""; normalize so nullable|date_format passes.
+        $request->merge([
+            "ov_arrive" => $request->filled("ov_arrive")
+                ? $request->input("ov_arrive")
+                : null,
+            "field_arrive" => $request->filled("field_arrive")
+                ? $request->input("field_arrive")
+                : null,
+            "ov_departure" => $request->filled("ov_departure")
+                ? $request->input("ov_departure")
+                : null,
+            "comment" => $request->input("comment") !== null &&
+            $request->input("comment") !== ""
+                ? $request->input("comment")
+                : null,
+        ]);
+
+        $validated = $request->validate([
             "event_day" => "required|integer",
-            "vehicle" => "required",
-            "duty_code" => "required",
-            "duty_description" => "required",
-            "location" => "required",
-            "period" => "required",
+            "vehicle" => "required|string",
+            "duty_code" => "required|string",
+            "duty_description" => "required|string",
+            "location" => "required|string",
+            "period" => "required|in:AM,PM",
             "km" => "required|numeric",
+            "ov_arrive" => "nullable|date_format:H:i",
+            "field_arrive" => "nullable|date_format:H:i",
+            "ov_departure" => "nullable|date_format:H:i",
+            "comment" => "nullable|string",
         ]);
 
         $job->update([
-            "event_day" => $request->event_day,
-            "vehicle" => $request->vehicle,
-            "duty_code" => $request->duty_code,
-            "duty_description" => $request->duty_description,
-            "location" => $request->location,
-            "period" => $request->period,
-            "km" => $request->km,
-            "ov_arrive" => $request->ov_arrive,
-            "field_arrive" => $request->field_arrive,
-            "ov_departure" => $request->ov_departure,
-            "comment" => $request->comment,
+            "event_day" => $validated["event_day"],
+            "vehicle" => $validated["vehicle"],
+            "duty_code" => $validated["duty_code"],
+            "duty_description" => $validated["duty_description"],
+            "location" => $validated["location"],
+            "period" => $validated["period"],
+            "km" => $validated["km"],
+            "ov_arrive" => $validated["ov_arrive"],
+            "field_arrive" => $validated["field_arrive"],
+            "ov_departure" => $validated["ov_departure"],
+            "comment" => $validated["comment"],
         ]);
 
         return redirect()
