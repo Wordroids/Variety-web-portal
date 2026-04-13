@@ -37,6 +37,9 @@ Route::middleware("auth")->group(function () {
     Route::post("/jobs/", [EventJobController::class, "store"])->name(
         "jobs.store",
     );
+      //to download template
+    Route::get('/jobs/template', [EventJobController::class, 'downloadTemplate'])
+    ->name('jobs.template');
 
     Route::get("/jobs/{event}", [EventJobController::class, "show"])->name(
         "jobs.view",
@@ -47,6 +50,8 @@ Route::middleware("auth")->group(function () {
         "destroy",
     ])->name("jobs.destroy");
 
+    Route::get('/job/{job}/edit', [EventJobController::class, 'edit'])->name('jobs.edit');
+    Route::put('/job/{job}', [EventJobController::class, 'update'])->name('jobs.update');
     //Events
     Route::resource("events", EventController::class);
     Route::resource("events.admins", EventAdminController::class)->only(

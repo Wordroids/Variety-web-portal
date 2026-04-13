@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\OptionalImageUpload;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEventRequest extends FormRequest
