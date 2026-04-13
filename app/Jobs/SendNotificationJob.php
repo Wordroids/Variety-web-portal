@@ -40,7 +40,7 @@ class SendNotificationJob implements ShouldQueue
         // Get all expo push tokens
         $tokens = $participants->pluck("push_token");
 
-        if ($tokens->empty()) {
+        if ($tokens->isEmpty()) {
             logger("No tokens found");
         } else {
             // Send notification to all participants
