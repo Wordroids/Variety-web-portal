@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,5 +48,27 @@ class EventJob extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    /**
+     * Value for HTML time inputs (H:i). Handles Carbon casts and raw DB time strings.
+     */
+    public function timeForInput(string $attribute): string
+    {
+        $value = $this->getAttribute($attribute);
+
+        if ($value === null) {
+            return "";
+        }
+
+        if ($value instanceof CarbonInterface) {
+            return $value->format("H:i");
+        }
+
+        if (is_string($value) && preg_match("/^\d{1,2}:\d{2}/", $value)) {
+            return substr($value, 0, 5);
+        }
+
+        return "";
     }
 }

@@ -4,6 +4,16 @@
 
         <h1 class="text-2xl font-bold mb-6">Edit Job</h1>
 
+        @if ($errors->any())
+            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                <ul class="list-inside list-disc space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('jobs.update', $job) }}" method="POST">
 
             @csrf
@@ -11,71 +21,77 @@
 
             <div class="grid grid-cols-2 gap-4">
 
-                <div>
-                    <label>Event Day</label>
-                    <input type="number" name="event_day" value="{{ $job->event_day }}" class="w-full border rounded p-2">
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">OV REGISTRATION <span class="font-normal text-gray-500">(Job name)</span></label>
+                    <input type="text" name="duty_code" value="{{ old('duty_code', $job->duty_code) }}"
+                        class="mt-1 w-full border rounded p-2">
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Location</label>
+                    <input type="text" name="location" value="{{ old('location', $job->location) }}"
+                        class="mt-1 w-full border rounded p-2">
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Vehicle</label>
+                    <input type="text" name="vehicle" value="{{ old('vehicle', $job->vehicle) }}"
+                        class="mt-1 w-full border rounded p-2">
                 </div>
 
                 <div>
-                    <label>Vehicle</label>
-                    <input type="text" name="vehicle" value="{{ $job->vehicle }}" class="w-full border rounded p-2">
+                    <label class="block text-sm font-medium text-gray-700">OV Departure</label>
+                    <input type="time" name="ov_departure" step="60"
+                        value="{{ old('ov_departure', $job->timeForInput('ov_departure')) }}"
+                        class="mt-1 w-full border rounded p-2">
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Duty Description</label>
+                    <input type="text" name="duty_description" value="{{ old('duty_description', $job->duty_description) }}"
+                        class="mt-1 w-full border rounded p-2">
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Notes</label>
+                    <textarea name="comment" class="mt-1 w-full border rounded p-2" rows="3">{{ old('comment', $job->comment) }}</textarea>
                 </div>
 
                 <div>
-                    <label>Duty Code</label>
-                    <input type="text" name="duty_code" value="{{ $job->duty_code }}"
-                        class="w-full border rounded p-2">
+                    <label class="block text-sm font-medium text-gray-700">OV Arrive</label>
+                    <input type="time" name="ov_arrive" step="60"
+                        value="{{ old('ov_arrive', $job->timeForInput('ov_arrive')) }}"
+                        class="mt-1 w-full border rounded p-2">
                 </div>
 
                 <div>
-                    <label>Duty Description</label>
-                    <input type="text" name="duty_description" value="{{ $job->duty_description }}"
-                        class="w-full border rounded p-2">
+                    <label class="block text-sm font-medium text-gray-700">Field Arrive</label>
+                    <input type="time" name="field_arrive" step="60"
+                        value="{{ old('field_arrive', $job->timeForInput('field_arrive')) }}"
+                        class="mt-1 w-full border rounded p-2">
                 </div>
 
                 <div>
-                    <label>Location</label>
-                    <input type="text" name="location" value="{{ $job->location }}"
-                        class="w-full border rounded p-2">
+                    <label class="block text-sm font-medium text-gray-700">Distance</label>
+                    <input type="number" step="0.01" name="km"
+                        value="{{ old('km', $job->km) }}"
+                        class="mt-1 w-full border rounded p-2">
                 </div>
 
                 <div>
-                    <label>Period</label>
-                    <select name="period" class="w-full border rounded p-2">
-                        <option value="AM" {{ $job->period == 'AM' ? 'selected' : '' }}>AM</option>
-                        <option value="PM" {{ $job->period == 'PM' ? 'selected' : '' }}>PM</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>KM</label>
-                    <input type="number" step="0.01" name="km" value="{{ $job->km }}"
-                        class="w-full border rounded p-2">
-                </div>
-
-                <div>
-                    <label>OV Arrive</label>
-                    <input type="time" name="ov_arrive" value="{{ $job->ov_arrive }}"
-                        class="w-full border rounded p-2">
-                </div>
-
-                <div>
-                    <label>Field Arrive</label>
-                    <input type="time" name="field_arrive" value="{{ $job->field_arrive }}"
-                        class="w-full border rounded p-2">
-                </div>
-
-                <div>
-                    <label>OV Departure</label>
-                    <input type="time" name="ov_departure" value="{{ $job->ov_departure }}"
-                        class="w-full border rounded p-2">
+                    <label class="block text-sm font-medium text-gray-700">Event Day</label>
+                    <input type="number" name="event_day" value="{{ old('event_day', $job->event_day) }}"
+                        class="mt-1 w-full border rounded p-2">
                 </div>
 
             </div>
 
-            <div class="mt-4">
-                <label>Comment</label>
-                <textarea name="comment" class="w-full border rounded p-2">{{ $job->comment }}</textarea>
+            {{-- Stored for search / filters; not shown (redundant with times in the table view) --}}
+            <div class="hidden" aria-hidden="true">
+                <select name="period" tabindex="-1">
+                    <option value="AM" {{ old('period', $job->period) == 'AM' ? 'selected' : '' }}>AM</option>
+                    <option value="PM" {{ old('period', $job->period) == 'PM' ? 'selected' : '' }}>PM</option>
+                </select>
             </div>
 
             <div class="mt-6 flex gap-3">
