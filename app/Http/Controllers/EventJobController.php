@@ -81,12 +81,45 @@ class EventJobController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Event $event)
+    public function show(Request $request, Event $event)
     {
-        $jobs = $event->jobs()->latest()->paginate(10);
-        $events = Event::query()->withCount("jobs")->orderByDesc("id")->get();
+        $query = $event->jobs()->latest();
 
-        return view("pages.jobs.view", compact("events", "event", "jobs"));
+        // Filter by Vehicle
+        if ($request->vehicle) {
+            $query->where('vehicle', $request->vehicle);
+        }
+
+        // Filter by Event Day
+        if ($request->event_day) {
+            $query->where('event_day', $request->event_day);
+        }
+
+        // Filter by Period
+        if ($request->period) {
+            $query->where('period', $request->period);
+        }
+
+        $jobs = $query->paginate(10)->withQueryString();
+
+        // dropdown values
+        $vehicles = $event->jobs()->select('vehicle')->distinct()->pluck('vehicle');
+        $eventDays = $event->jobs()->select('event_day')->distinct()->pluck('event_day');
+        $periods = ['AM', 'PM'];
+
+        $events = Event::query()
+            ->withCount("jobs")
+            ->orderByDesc("id")
+            ->get();
+
+        return view("pages.jobs.view", compact(
+            "events",
+            "event",
+            "jobs",
+            "vehicles",
+            "eventDays",
+            "periods"
+        ));
     }
 
     //edit function
