@@ -161,7 +161,69 @@
 
         <!-- Participants Management -->
         <section id="participants-section" x-show="showParticipants" x-transition class="mt-6 space-y-6">
-            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm" x-data="{ selectedParticipantIds: [], toggleAllParticipants(e) { const checked = e.target.checked; this.selectedParticipantIds = checked ? Array.from(this.$root.querySelectorAll('input[data-participant-checkbox]')).map(i => Number(i.value)) : []; } }">
+            @php
+                $participantTableColspan = auth()->user()->can('manage participants') ? 8 : 7;
+            @endphp
+            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm" x-data="{
+                selectedParticipantIds: [],
+                participantSearch: '',
+                participantVisibleCount: {{ $event->participants->count() }},
+                participantSearchNorm() {
+                    return (this.participantSearch || '').trim().toLowerCase();
+                },
+                participantHaystackFromTr(tr) {
+                    return (tr && tr.dataset && tr.dataset.search) ? String(tr.dataset.search) : '';
+                },
+                participantRowVisible(tr) {
+                    const q = this.participantSearchNorm();
+                    if (!q) return true;
+                    return this.participantHaystackFromTr(tr).includes(q);
+                },
+                visibleParticipantCheckboxEls() {
+                    return Array.from(this.$root.querySelectorAll('tr[data-participant-row] input[data-participant-checkbox]')).filter((cb) => {
+                        const tr = cb.closest('tr[data-participant-row]');
+                        return tr && this.participantRowVisible(tr);
+                    });
+                },
+                updateParticipantFilterState() {
+                    const rows = Array.from(this.$root.querySelectorAll('tr[data-participant-row]'));
+                    this.participantVisibleCount = rows.filter((tr) => this.participantRowVisible(tr)).length;
+                },
+                toggleAllParticipants(e) {
+                    const checked = Boolean(e.target.checked);
+                    const visibleBoxes = this.visibleParticipantCheckboxEls();
+                    const visibleIds = visibleBoxes.map((cb) => Number(cb.value));
+
+                    if (checked) {
+                        this.selectedParticipantIds = Array.from(new Set([...this.selectedParticipantIds, ...visibleIds]));
+                        return;
+                    }
+
+                    const visibleIdSet = new Set(visibleIds);
+                    this.selectedParticipantIds = this.selectedParticipantIds.filter((id) => !visibleIdSet.has(Number(id)));
+                },
+                onParticipantSearchInput() {
+                    this.$nextTick(() => this.updateParticipantFilterState());
+
+                    const q = this.participantSearchNorm();
+                    if (!q) {
+                        return;
+                    }
+
+                    this.selectedParticipantIds = this.selectedParticipantIds.filter((id) => {
+                        const cb = this.$root.querySelector(`input[data-participant-checkbox][value='${id}']`);
+                        if (!cb) return false;
+                        const tr = cb.closest('tr[data-participant-row]');
+                        return tr && this.participantRowVisible(tr);
+                    });
+                },
+                allVisibleParticipantsSelected() {
+                    const visibleBoxes = this.visibleParticipantCheckboxEls();
+                    if (visibleBoxes.length === 0) return false;
+                    const selected = new Set(this.selectedParticipantIds.map(Number));
+                    return visibleBoxes.every((cb) => selected.has(Number(cb.value)));
+                }
+            }" x-init="updateParticipantFilterState()">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-semibold flex items-center gap-2 text-gray-900">
                         <i class="fa-solid fa-user-group text-red-600"></i>
@@ -205,6 +267,19 @@
                     @endcan
                 </div>
 
+                <div class="mb-4">
+                    <label for="participant-search" class="block text-xs font-semibold text-gray-600 mb-1">Search participants</label>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </span>
+                        <input id="participant-search" type="search" placeholder="Name, email, phone, vehicle, roles…"
+                            x-model="participantSearch"
+                            @input="onParticipantSearchInput()"
+                            class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm border-t">
                         <thead class="bg-gray-50">
@@ -213,8 +288,8 @@
                                 <th class="px-4 py-2 font-medium w-10">
                                     <input type="checkbox"
                                         class="rounded border-gray-300 text-red-600 focus:ring-red-500"
-                                        @click="toggleAllParticipants($event)"
-                                        :checked="selectedParticipantIds.length > 0 && selectedParticipantIds.length === {{ $event->participants->count() }}">
+                                        @change="toggleAllParticipants($event)"
+                                        :checked="allVisibleParticipantsSelected()">
                                 </th>
                                 @endcan
                                 <th class="px-4 py-2 font-medium">Name</th>
@@ -228,7 +303,24 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($event->participants as $p)
-                                <tr>
+                                @php
+                                    $participantSearchHaystack = \Illuminate\Support\Str::lower(implode(' ', array_filter([
+                                        $p->full_name,
+                                        $p->email,
+                                        $p->phone,
+                                        $p->vehicle,
+                                        $p->emergency_contact_name,
+                                        $p->emergency_contact_relationship,
+                                        $p->emergency_contact_phone,
+                                        $p->role_names,
+                                        $p->status,
+                                    ], fn ($v) => filled($v))));
+                                @endphp
+                                <tr
+                                    data-participant-row
+                                    data-search="{{ e($participantSearchHaystack) }}"
+                                    x-show="participantRowVisible($el)"
+                                    x-cloak>
                                     @can('manage participants')
                                     <td class="px-4 py-2">
                                         <input type="checkbox"
@@ -291,9 +383,17 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
+                                    <td colspan="{{ $participantTableColspan }}" class="px-4 py-6 text-center text-gray-500">No participants yet.</td>
                                 </tr>
                             @endforelse
+
+                            @if ($event->participants->isNotEmpty())
+                                <tr x-show="participantSearchNorm() && participantVisibleCount === 0" x-cloak>
+                                    <td colspan="{{ $participantTableColspan }}" class="px-4 py-6 text-center text-gray-500">
+                                        No participants match your search.
+                                    </td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>
