@@ -92,7 +92,7 @@ class NotificationController extends Controller
         });
 
         if ($validated["status"] == "sent") {
-            SendNotificationJob::dispatch($notification);
+            SendNotificationJob::dispatchSync($notification);
         }
 
         return redirect()
