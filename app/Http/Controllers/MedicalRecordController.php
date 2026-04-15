@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Models\MedicalRecord;
-use App\Models\MedicalRecordCollection;
-use App\Models\MedicalRecordItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -63,10 +61,9 @@ class MedicalRecordController extends Controller
             // Start a transaction
             DB::beginTransaction();
 
-            // Delete existing medical records (cascades to all related resources)
-            if ($event->medicalRecordCollection) {
-                $event->medicalRecords()->delete();
-            }
+            // Replace import: remove existing records for this event first so
+            // participant_id unique constraint is not violated on re-import.
+            $event->medicalRecords()->delete();
 
             $participants = EventParticipant::where("event_id", $eventId)
                 ->select(["id", "phone"])
@@ -103,6 +100,7 @@ class MedicalRecordController extends Controller
             fgetcsv($handle, 10000, $delimiter);
 
             $created = 0;
+            $updated = 0;
             $skippedEmpty = 0;
             $skippedNoMobile = 0;
             $unlinked = 0;
@@ -178,15 +176,33 @@ class MedicalRecordController extends Controller
                     }
                 }
 
-                // Create record
-                MedicalRecord::create([
-                    "event_id" => $eventId,
-                    "participant_id" => $participantId,
-                    "content" => json_encode($content),
-                    "imported_at" => now(),
-                    "expires_at" => $destroyDate,
-                ]);
-                $created++;
+                // Linked participants are unique by participant_id (DB unique index).
+                // The same phone can appear on multiple CSV rows — upsert instead of insert.
+                if ($participantId !== null) {
+                    $record = MedicalRecord::updateOrCreate(
+                        ["participant_id" => $participantId],
+                        [
+                            "event_id" => $eventId,
+                            "content" => json_encode($content),
+                            "imported_at" => now(),
+                            "expires_at" => $destroyDate,
+                        ],
+                    );
+                    if ($record->wasRecentlyCreated) {
+                        $created++;
+                    } else {
+                        $updated++;
+                    }
+                } else {
+                    MedicalRecord::create([
+                        "event_id" => $eventId,
+                        "participant_id" => null,
+                        "content" => json_encode($content),
+                        "imported_at" => now(),
+                        "expires_at" => $destroyDate,
+                    ]);
+                    $created++;
+                }
             }
 
             fclose($handle);
@@ -194,6 +210,7 @@ class MedicalRecordController extends Controller
 
             $message =
                 "Import completed: {$created} created" .
+                ($updated ? ", {$updated} updated (duplicate rows for same participant)" : "") .
                 ($skippedEmpty ? ", {$skippedEmpty} empty rows skipped" : "") .
                 ($skippedNoMobile
                     ? ", {$skippedNoMobile} rows missing mobile (imported but unlinked)"
