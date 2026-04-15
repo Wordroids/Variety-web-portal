@@ -11,9 +11,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MedicalRecordController extends Controller
 {
+    private function normalizePhone(?string $phone): ?string
+    {
+        if ($phone === null) {
+            return null;
+        }
+
+        $digits = preg_replace("/\D+/", "", $phone);
+        $digits = $digits !== null ? trim($digits) : "";
+
+        return $digits !== "" ? $digits : null;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,7 +50,7 @@ class MedicalRecordController extends Controller
             "event_id" => "required|exists:events,id",
             "csv_file" => "required|file|mimes:csv,txt",
             "destroy_date" => "required|date",
-            "acknowledge" => "required|string",
+            "acknowledge" => "required",
         ]);
 
         try {
@@ -53,6 +66,18 @@ class MedicalRecordController extends Controller
             // Delete existing medical records (cascades to all related resources)
             if ($event->medicalRecordCollection) {
                 $event->medicalRecords()->delete();
+            }
+
+            $participants = EventParticipant::where("event_id", $eventId)
+                ->select(["id", "phone"])
+                ->get();
+
+            $participantPhoneToId = [];
+            foreach ($participants as $p) {
+                $normalized = $this->normalizePhone($p->phone);
+                if ($normalized) {
+                    $participantPhoneToId[$normalized] = $p->id;
+                }
             }
 
             // Parse CSV content
@@ -77,8 +102,14 @@ class MedicalRecordController extends Controller
             // Skip header
             fgetcsv($handle, 10000, $delimiter);
 
+            $created = 0;
+            $skippedEmpty = 0;
+            $skippedNoMobile = 0;
+            $unlinked = 0;
+
             while (($row = fgetcsv($handle, 10000, $delimiter)) !== false) {
                 if (empty(array_filter($row))) {
+                    $skippedEmpty++;
                     continue;
                 }
 
@@ -132,45 +163,59 @@ class MedicalRecordController extends Controller
                     "current_medications" => $row[19] ?? null,
                 ];
 
-                $participant = EventParticipant::where(
-                    "phone",
-                    $content["mobile"],
-                )
-                    ->where("event_id", $eventId)
-                    ->first();
+                $normalizedMobile = $this->normalizePhone(
+                    is_string($content["mobile"]) ? $content["mobile"] : null,
+                );
 
-                if (!$participant) {
-                    continue;
+                if (!$normalizedMobile) {
+                    $skippedNoMobile++;
+                    $participantId = null;
+                    $unlinked++;
+                } else {
+                    $participantId = $participantPhoneToId[$normalizedMobile] ?? null;
+                    if (!$participantId) {
+                        $unlinked++;
+                    }
                 }
 
                 // Create record
                 MedicalRecord::create([
                     "event_id" => $eventId,
-                    "participant_id" => $participant->id,
+                    "participant_id" => $participantId,
                     "content" => json_encode($content),
                     "imported_at" => now(),
                     "expires_at" => $destroyDate,
                 ]);
+                $created++;
             }
 
             fclose($handle);
             DB::commit();
 
-            return back()->with("success", "CSV imported successfully");
+            $message =
+                "Import completed: {$created} created" .
+                ($skippedEmpty ? ", {$skippedEmpty} empty rows skipped" : "") .
+                ($skippedNoMobile
+                    ? ", {$skippedNoMobile} rows missing mobile (imported but unlinked)"
+                    : "") .
+                ($unlinked ? ", {$unlinked} records not linked to a participant" : "") .
+                ".";
+
+            return back()->with("success", $message);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(
-                [
-                    "success" => false,
-                    "message" =>
-                        "An error occurred during import: " .
-                        $e->getMessage() .
-                        " at line " .
-                        $e->getLine(),
-                ],
-                500,
-            );
+            Log::error("Medical record import failed", [
+                "event_id" => $request->input("event_id"),
+                "error" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "file" => $e->getFile(),
+            ]);
+
+            return back()->withErrors([
+                "import" =>
+                    "Medical record import failed: " . $e->getMessage(),
+            ]);
         }
     }
 
