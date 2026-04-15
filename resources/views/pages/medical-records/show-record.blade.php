@@ -1,6 +1,14 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-4">
 
+        @php
+            $content = json_decode($record->content);
+            $participant = $record->participant;
+            $firstName = $participant?->first_name ?? ($content->first_name ?? '');
+            $lastName = $participant?->last_name ?? ($content->last_name ?? '');
+            $displayName = trim(($firstName . ' ' . $lastName)) !== '' ? trim($firstName . ' ' . $lastName) : 'Participant';
+        @endphp
+
         @if (session('success'))
         <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
             {{ session('success') }}
@@ -34,7 +42,7 @@
             </div>
             <div class="mt-2">
                 <h1 class="text-xl md:text-2xl font-bold text-gray-900">Medical Record</h1>
-                <p class="text-gray-500 text-sm">Viewing {{ $record->participant->first_name }} {{ $record->participant->last_name }}'s Medical Record</p>
+                <p class="text-gray-500 text-sm">Viewing {{ $displayName }}'s Medical Record</p>
             </div>
 
         </div>
@@ -49,10 +57,6 @@
                 <span>{{ $record->expires_at->format('d/m/Y') }}</span>
             </div>
         </div>
-
-        @php
-            $content = json_decode($record->content);
-        @endphp
 
         <div class="flex gap-4">
             <div class="w-1/2">
