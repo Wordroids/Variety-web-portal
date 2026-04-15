@@ -63,6 +63,37 @@ final class EventParticipantController extends Controller
         return back()->with("success", "Participant deleted.");
     }
 
+    public function bulkDestroy(Request $request, Event $event): RedirectResponse
+    {
+        if (Auth::user()->cannot("deleteParticipants", Event::class)) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            "participant_ids" => ["required", "array", "min:1"],
+            "participant_ids.*" => ["integer"],
+        ]);
+
+        $ids = array_values(array_unique($validated["participant_ids"]));
+
+        $countInEvent = $event
+            ->participants()
+            ->whereIn("id", $ids)
+            ->count();
+
+        abort_unless($countInEvent === count($ids), 403);
+
+        $deleted = $event
+            ->participants()
+            ->whereIn("id", $ids)
+            ->delete();
+
+        return back()->with(
+            "success",
+            "{$deleted} participant(s) deleted.",
+        );
+    }
+
     public function downloadTemplate()
     {
         // Create new spreadsheet

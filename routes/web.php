@@ -70,6 +70,10 @@ Route::middleware("auth")->group(function () {
             EventParticipantController::class,
             "store",
         ])->name("participants.store");
+        Route::delete("participants", [
+            EventParticipantController::class,
+            "bulkDestroy",
+        ])->name("participants.bulkDestroy");
         Route::put("participants/{participant}", [
             EventParticipantController::class,
             "update",

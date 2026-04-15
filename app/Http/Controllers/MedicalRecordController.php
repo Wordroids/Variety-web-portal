@@ -234,6 +234,8 @@ class MedicalRecordController extends Controller
      */
     public function showRecord(Event $event, MedicalRecord $record)
     {
+        $record->loadMissing(["participant", "comments", "images"]);
+
         return view(
             "pages.medical-records.show-record",
             compact("event", "record"),

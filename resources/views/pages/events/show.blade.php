@@ -161,7 +161,7 @@
 
         <!-- Participants Management -->
         <section id="participants-section" x-show="showParticipants" x-transition class="mt-6 space-y-6">
-            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm" x-data="{ selectedParticipantIds: [], toggleAllParticipants(e) { const checked = e.target.checked; this.selectedParticipantIds = checked ? Array.from(this.$root.querySelectorAll('input[data-participant-checkbox]')).map(i => Number(i.value)) : []; } }">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-semibold flex items-center gap-2 text-gray-900">
                         <i class="fa-solid fa-user-group text-red-600"></i>
@@ -170,6 +170,22 @@
 
                     @can('manage participants')
                     <div class="flex gap-3">
+                        <form method="POST" action="{{ route('participants.bulkDestroy', $event) }}" class="flex items-center gap-2"
+                            x-show="selectedParticipantIds.length > 0"
+                            x-cloak
+                            onsubmit="return confirm('Delete selected participants?')">
+                            @csrf
+                            @method('DELETE')
+                            <template x-for="id in selectedParticipantIds" :key="id">
+                                <input type="hidden" name="participant_ids[]" :value="id">
+                            </template>
+                            <button type="submit"
+                                class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete selected (<span x-text="selectedParticipantIds.length"></span>)
+                            </button>
+                        </form>
+
                         <form method="POST" action="{{ route('participants.import', $event) }}" enctype="multipart/form-data" class="flex items-center gap-2">
                             @csrf
                             <input type="file" name="file" accept=".xlsx,.xls" id="excelImport" class="hidden" onchange="this.form.submit()">
@@ -193,6 +209,14 @@
                     <table class="min-w-full text-sm border-t">
                         <thead class="bg-gray-50">
                             <tr class="text-left text-gray-600">
+                                @can('manage participants')
+                                <th class="px-4 py-2 font-medium w-10">
+                                    <input type="checkbox"
+                                        class="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                        @click="toggleAllParticipants($event)"
+                                        :checked="selectedParticipantIds.length > 0 && selectedParticipantIds.length === {{ $event->participants->count() }}">
+                                </th>
+                                @endcan
                                 <th class="px-4 py-2 font-medium">Name</th>
                                 <th class="px-4 py-2 font-medium">Vehicle</th>
                                 <th class="px-4 py-2 font-medium">Contact</th>
@@ -205,6 +229,15 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($event->participants as $p)
                                 <tr>
+                                    @can('manage participants')
+                                    <td class="px-4 py-2">
+                                        <input type="checkbox"
+                                            data-participant-checkbox
+                                            value="{{ $p->id }}"
+                                            class="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                            x-model="selectedParticipantIds">
+                                    </td>
+                                    @endcan
                                     <td class="px-4 py-2 font-semibold text-gray-900">
                                         {{ $p->full_name }}
                                         <div class="text-xs text-gray-500">{{ $p->email }}</div>
