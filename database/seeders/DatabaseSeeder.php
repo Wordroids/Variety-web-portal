@@ -19,12 +19,16 @@ class DatabaseSeeder extends Seeder
         $this->call([RolesAndPermissionsSeeder::class]);
 
         // Create super admin user using standard Eloquent create
-        $superAdmin = User::create([
-            "username" => "admin",
-            "name" => "Super Admin",
-            "email" => "admin@example.com",
-            "password" => Hash::make("password"),
-        ]);
+        $superAdmin = User::firstOrCreate(
+            [
+                "email" => "admin@example.com",
+            ],
+            [
+                "username" => "admin",
+                "name" => "Super Admin",
+                "password" => Hash::make("password"),
+            ],
+        );
 
         $superAdmin->assignRole("Super Admin");
     }
