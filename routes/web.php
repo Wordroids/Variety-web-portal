@@ -125,6 +125,16 @@ Route::middleware("auth")->group(function () {
         "showRecord",
     ])->name("medical-records.show-record");
 
+    Route::get("medical-records/{event}/{record}/edit", [
+        MedicalRecordController::class,
+        "editRecord",
+    ])->name("medical-records.edit-record");
+
+    Route::put("medical-records/{event}/{record}", [
+        MedicalRecordController::class,
+        "updateRecord",
+    ])->name("medical-records.update-record");
+
     Route::resource(
         "medical-record-comments",
         MedicalRecordCommentController::class,

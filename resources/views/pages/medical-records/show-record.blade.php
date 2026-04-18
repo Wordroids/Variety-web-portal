@@ -2,7 +2,13 @@
     <div class="max-w-7xl mx-auto p-4">
 
         @php
-            $content = json_decode($record->content);
+            $rawContent = $record->content;
+            $content = is_array($rawContent)
+                ? (object) $rawContent
+                : json_decode($rawContent ?? '{}');
+            if (! is_object($content)) {
+                $content = (object) [];
+            }
             $participant = $record->participant;
             $firstName = $participant?->first_name ?? ($content->first_name ?? '');
             $lastName = $participant?->last_name ?? ($content->last_name ?? '');
@@ -34,6 +40,10 @@
                 </a>
 
                 <div class="flex gap-2">
+                    <a href="{{ route('medical-records.edit-record', [$event, $record]) }}"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit record
+                    </a>
                     <a href="{{ route('events.show', $event) }}"
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         <i class="fa-solid fa-eye"></i> View Event
