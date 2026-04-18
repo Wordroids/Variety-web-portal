@@ -3,14 +3,14 @@
 
         @php
             $participant = $record->participant;
-            $firstName = $participant?->first_name ?? ($content['first_name'] ?? '');
-            $lastName = $participant?->last_name ?? ($content['last_name'] ?? '');
+            $firstName = $participant?->first_name ?? ($recordContent['first_name'] ?? '');
+            $lastName = $participant?->last_name ?? ($recordContent['last_name'] ?? '');
             $displayName = trim(($firstName . ' ' . $lastName)) !== '' ? trim($firstName . ' ' . $lastName) : 'Participant';
 
             $dobInput = old('dob');
-            if ($dobInput === null && ! empty($content['dob'])) {
+            if (($dobInput === null || $dobInput === '') && ! empty($recordContent['dob'])) {
                 try {
-                    $dobInput = \Carbon\Carbon::parse($content['dob'])->format('Y-m-d');
+                    $dobInput = \Carbon\Carbon::parse($recordContent['dob'])->format('Y-m-d');
                 } catch (\Exception $e) {
                     $dobInput = '';
                 }
@@ -70,40 +70,40 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">First name</label>
                                 <input type="text" name="first_name"
-                                    value="{{ old('first_name', $content['first_name'] ?? '') }}"
+                                    value="{{ old('first_name', $recordContent['first_name'] ?? '') }}"
                                     class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
                                 <input type="text" name="last_name"
-                                    value="{{ old('last_name', $content['last_name'] ?? '') }}"
+                                    value="{{ old('last_name', $recordContent['last_name'] ?? '') }}"
                                     class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nickname</label>
                             <input type="text" name="nickname"
-                                value="{{ old('nickname', $content['nickname'] ?? '') }}"
+                                value="{{ old('nickname', $recordContent['nickname'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
                             <input type="text" name="vehicle"
-                                value="{{ old('vehicle', $content['vehicle'] ?? '') }}"
+                                value="{{ old('vehicle', $recordContent['vehicle'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                         @foreach (['address1', 'address2', 'address3', 'address4', 'address5', 'address6'] as $line)
                             <div class="mb-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Address {{ substr($line, -1) }}</label>
                                 <input type="text" name="{{ $line }}"
-                                    value="{{ old($line, $content[$line] ?? '') }}"
+                                    value="{{ old($line, $recordContent[$line] ?? '') }}"
                                     class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                             </div>
                         @endforeach
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Mobile</label>
                             <input type="text" name="mobile"
-                                value="{{ old('mobile', $content['mobile'] ?? '') }}"
+                                value="{{ old('mobile', $recordContent['mobile'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                     </div>
@@ -113,19 +113,19 @@
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                             <input type="text" name="next_of_kin"
-                                value="{{ old('next_of_kin', $content['next_of_kin'] ?? '') }}"
+                                value="{{ old('next_of_kin', $recordContent['next_of_kin'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Contact phone</label>
                             <input type="text" name="nok_phone"
-                                value="{{ old('nok_phone', $content['nok_phone'] ?? '') }}"
+                                value="{{ old('nok_phone', $recordContent['nok_phone'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Alternate contact phone</label>
                             <input type="text" name="nok_alt_phone"
-                                value="{{ old('nok_alt_phone', $content['nok_alt_phone'] ?? '') }}"
+                                value="{{ old('nok_alt_phone', $recordContent['nok_alt_phone'] ?? '') }}"
                                 class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                         </div>
                     </div>
@@ -140,27 +140,27 @@
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
                             <textarea name="allergies" rows="3"
-                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('allergies', $content['allergies'] ?? '') }}</textarea>
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('allergies', $recordContent['allergies'] ?? '') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Dietary requirements</label>
                             <textarea name="dietary_requirement" rows="3"
-                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('dietary_requirement', $content['dietary_requirement'] ?? '') }}</textarea>
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('dietary_requirement', $recordContent['dietary_requirement'] ?? '') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Past medical history</label>
                             <textarea name="past_medical_history" rows="3"
-                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('past_medical_history', $content['past_medical_history'] ?? '') }}</textarea>
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('past_medical_history', $recordContent['past_medical_history'] ?? '') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Current medical history</label>
                             <textarea name="current_medical_history" rows="3"
-                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('current_medical_history', $content['current_medical_history'] ?? '') }}</textarea>
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('current_medical_history', $recordContent['current_medical_history'] ?? '') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Current medications</label>
                             <textarea name="current_medications" rows="3"
-                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('current_medications', $content['current_medications'] ?? '') }}</textarea>
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{{ old('current_medications', $recordContent['current_medications'] ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>

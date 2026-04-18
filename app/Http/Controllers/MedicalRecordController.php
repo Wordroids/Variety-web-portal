@@ -44,6 +44,74 @@ class MedicalRecordController extends Controller
         return $trimmed === "" ? null : $trimmed;
     }
 
+    /**
+     * Decode stored medical record JSON/blob into a plain array (handles cast quirks).
+     */
+    private function decodeRecordContentArray(MedicalRecord $record): array
+    {
+        $content = $record->content;
+
+        if ($content instanceof \Illuminate\Support\Collection) {
+            return $content->all();
+        }
+
+        if (\is_array($content)) {
+            return $content;
+        }
+
+        if ($content instanceof \ArrayObject) {
+            return $content->getArrayCopy();
+        }
+
+        if (\is_string($content)) {
+            $decoded = json_decode($content, true);
+
+            return \is_array($decoded) ? $decoded : [];
+        }
+
+        if (\is_object($content)) {
+            return json_decode(json_encode($content), true) ?: [];
+        }
+
+        return [];
+    }
+
+    /**
+     * Values for the edit form: decoded content plus participant fields when blob omits them
+     * (same sources as the detail page).
+     */
+    private function recordContentForEditForm(Event $event, MedicalRecord $record): array
+    {
+        $record->loadMissing(["participant"]);
+
+        $array = $this->decodeRecordContentArray($record);
+
+        $participant = $record->participant;
+
+        if ($participant !== null) {
+            $fallbacks = [
+                "first_name" => $participant->first_name,
+                "last_name" => $participant->last_name,
+                "mobile" => $participant->phone,
+                "vehicle" => $participant->vehicle,
+                "next_of_kin" => $participant->emergency_contact_name,
+                "nok_phone" => $participant->emergency_contact_phone,
+            ];
+
+            foreach ($fallbacks as $key => $value) {
+                $current = $array[$key] ?? null;
+
+                if (($current === null || $current === "") && $value !== null && $value !== "") {
+                    $array[$key] = $value;
+                }
+            }
+        }
+
+        $array["event_id"] = (string) $event->id;
+
+        return $array;
+    }
+
     private function normalizePhone(?string $phone): ?string
     {
         if ($phone === null) {
@@ -299,16 +367,11 @@ class MedicalRecordController extends Controller
     {
         $this->authorizeMedicalRecord($event, $record);
 
-        $record->loadMissing(["participant"]);
-
-        $content = $record->content;
-        if (! is_array($content)) {
-            $content = [];
-        }
+        $recordContent = $this->recordContentForEditForm($event, $record);
 
         return view(
             "pages.medical-records.edit-record",
-            compact("event", "record", "content"),
+            compact("event", "record", "recordContent"),
         );
     }
 
@@ -343,7 +406,7 @@ class MedicalRecordController extends Controller
             "expires_at" => "required|date",
         ]);
 
-        $base = is_array($record->content) ? $record->content : [];
+        $base = $this->decodeRecordContentArray($record);
 
         $dob = null;
         if (! empty($validated["dob"])) {
