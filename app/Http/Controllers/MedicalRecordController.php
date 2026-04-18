@@ -13,6 +13,37 @@ use Illuminate\Support\Facades\Log;
 
 class MedicalRecordController extends Controller
 {
+    private function authorizeEventAccess(Event $event): void
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole("Super Admin")) {
+            return;
+        }
+
+        abort_unless(
+            $user->events()->where("events.id", $event->id)->exists(),
+            403,
+        );
+    }
+
+    private function authorizeMedicalRecord(Event $event, MedicalRecord $record): void
+    {
+        abort_unless((int) $record->event_id === (int) $event->id, 404);
+        $this->authorizeEventAccess($event);
+    }
+
+    private function blankToNull(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $trimmed = trim($value);
+
+        return $trimmed === "" ? null : $trimmed;
+    }
+
     private function normalizePhone(?string $phone): ?string
     {
         if ($phone === null) {
@@ -251,12 +282,117 @@ class MedicalRecordController extends Controller
      */
     public function showRecord(Event $event, MedicalRecord $record)
     {
+        $this->authorizeMedicalRecord($event, $record);
+
         $record->loadMissing(["participant", "comments", "images"]);
 
         return view(
             "pages.medical-records.show-record",
             compact("event", "record"),
         );
+    }
+
+    /**
+     * Show the form for editing an individual medical record.
+     */
+    public function editRecord(Event $event, MedicalRecord $record)
+    {
+        $this->authorizeMedicalRecord($event, $record);
+
+        $record->loadMissing(["participant"]);
+
+        $content = $record->content;
+        if (! is_array($content)) {
+            $content = [];
+        }
+
+        return view(
+            "pages.medical-records.edit-record",
+            compact("event", "record", "content"),
+        );
+    }
+
+    /**
+     * Update an individual medical record (portal edit; preserves extra content keys).
+     */
+    public function updateRecord(Request $request, Event $event, MedicalRecord $record)
+    {
+        $this->authorizeMedicalRecord($event, $record);
+
+        $validated = $request->validate([
+            "vehicle" => "nullable|string|max:500",
+            "first_name" => "nullable|string|max:255",
+            "last_name" => "nullable|string|max:255",
+            "nickname" => "nullable|string|max:255",
+            "address1" => "nullable|string|max:255",
+            "address2" => "nullable|string|max:255",
+            "address3" => "nullable|string|max:255",
+            "address4" => "nullable|string|max:255",
+            "address5" => "nullable|string|max:255",
+            "address6" => "nullable|string|max:255",
+            "mobile" => "nullable|string|max:50",
+            "next_of_kin" => "nullable|string|max:255",
+            "nok_phone" => "nullable|string|max:50",
+            "nok_alt_phone" => "nullable|string|max:50",
+            "dob" => "nullable|date",
+            "allergies" => "nullable|string|max:10000",
+            "dietary_requirement" => "nullable|string|max:10000",
+            "past_medical_history" => "nullable|string|max:10000",
+            "current_medical_history" => "nullable|string|max:10000",
+            "current_medications" => "nullable|string|max:10000",
+            "expires_at" => "required|date",
+        ]);
+
+        $base = is_array($record->content) ? $record->content : [];
+
+        $dob = null;
+        if (! empty($validated["dob"])) {
+            try {
+                $dob = Carbon::parse($validated["dob"])->format("Y-m-d");
+            } catch (\Exception $e) {
+                $dob = $base["dob"] ?? null;
+            }
+        }
+
+        $merged = array_merge($base, [
+            "event_id" => (string) $event->id,
+            "vehicle" => $this->blankToNull($validated["vehicle"] ?? null),
+            "first_name" => $this->blankToNull($validated["first_name"] ?? null),
+            "last_name" => $this->blankToNull($validated["last_name"] ?? null),
+            "nickname" => $this->blankToNull($validated["nickname"] ?? null),
+            "address1" => $this->blankToNull($validated["address1"] ?? null),
+            "address2" => $this->blankToNull($validated["address2"] ?? null),
+            "address3" => $this->blankToNull($validated["address3"] ?? null),
+            "address4" => $this->blankToNull($validated["address4"] ?? null),
+            "address5" => $this->blankToNull($validated["address5"] ?? null),
+            "address6" => $this->blankToNull($validated["address6"] ?? null),
+            "mobile" => $this->blankToNull($validated["mobile"] ?? null),
+            "next_of_kin" => $this->blankToNull($validated["next_of_kin"] ?? null),
+            "nok_phone" => $this->blankToNull($validated["nok_phone"] ?? null),
+            "nok_alt_phone" => $this->blankToNull($validated["nok_alt_phone"] ?? null),
+            "dob" => $dob,
+            "allergies" => $this->blankToNull($validated["allergies"] ?? null),
+            "dietary_requirement" => $this->blankToNull(
+                $validated["dietary_requirement"] ?? null,
+            ),
+            "past_medical_history" => $this->blankToNull(
+                $validated["past_medical_history"] ?? null,
+            ),
+            "current_medical_history" => $this->blankToNull(
+                $validated["current_medical_history"] ?? null,
+            ),
+            "current_medications" => $this->blankToNull(
+                $validated["current_medications"] ?? null,
+            ),
+        ]);
+
+        $record->content = $merged;
+        $record->expires_at = $validated["expires_at"];
+        $record->save();
+
+        return redirect()
+            ->route("medical-records.show-record", [$event, $record])
+            ->with("success", "Medical record updated.");
     }
 
     /**
