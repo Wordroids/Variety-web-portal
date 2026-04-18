@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Participant;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -15,6 +16,10 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+
+        if ($user->cannot("view events")) {
+            abort(403, "Forbidden");
+        }
 
         // Check if the user is a participant
         if (!$user instanceof Participant) {

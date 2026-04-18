@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordComment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MedicalRecordCommentController extends Controller
 {
@@ -15,6 +16,10 @@ class MedicalRecordCommentController extends Controller
      */
     public function index(Event $event, MedicalRecord $record)
     {
+        if (Auth::user()->cannot("view medical comments")) {
+            abort(403, "Forbidden");
+        }
+
         return response()->json([
             "success" => true,
             "message" => "Comments listed.",
@@ -27,6 +32,10 @@ class MedicalRecordCommentController extends Controller
      */
     public function store(Request $request, Event $event, MedicalRecord $record)
     {
+        if (Auth::user()->cannot("manage medical comments")) {
+            abort(403, "Forbidden");
+        }
+
         $request->validate([
             "comment" => "required",
         ]);
@@ -52,8 +61,11 @@ class MedicalRecordCommentController extends Controller
         MedicalRecord $record,
         MedicalRecordComment $comment,
     ) {
-        $comment->delete();
+        if (Auth::user()->cannot("manage medical comments")) {
+            abort(403, "Forbidden");
+        }
 
+        $comment->delete();
         return response()->json([
             "success" => true,
             "message" => "Comment deleted.",

@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,6 +19,10 @@ class MedicalRecordImageController extends Controller
      */
     public function index(Event $event, MedicalRecord $record)
     {
+        if (Auth::user()->cannot("view medical images")) {
+            abort(403, "Forbidden");
+        }
+
         return response()->json([
             "success" => true,
             "message" => "Images listed.",
@@ -30,7 +35,10 @@ class MedicalRecordImageController extends Controller
      */
     public function store(Request $request, Event $event, MedicalRecord $record)
     {
-        // 1. Precise Validation
+        if (Auth::user()->cannot("manage medical images")) {
+            abort(403, "Forbidden");
+        }
+
         $request->validate([
             "image" => "required|image|mimes:jpeg,png,jpg|max:10240", // Limit to images, max 10MB
         ]);
@@ -69,8 +77,11 @@ class MedicalRecordImageController extends Controller
         MedicalRecord $record,
         MedicalRecordImage $image,
     ) {
-        $image->delete();
+        if (Auth::user()->cannot("manage medical images")) {
+            abort(403, "Forbidden");
+        }
 
+        $image->delete();
         return response()->json([
             "success" => true,
             "message" => "Image deleted.",

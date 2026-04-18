@@ -49,6 +49,10 @@ class RolesAndPermissionsSeeder extends Seeder
             "view forms",
             "manage forms",
 
+            // Forms
+            "view notifications",
+            "manage notifications",
+
             // Users
             "edit users",
             "update users",
@@ -85,6 +89,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 "manage permits",
                 "view forms",
                 "manage forms",
+                "view notifications",
+                "manage notifications",
                 "edit users",
                 "update users",
                 "update profile",
@@ -98,11 +104,14 @@ class RolesAndPermissionsSeeder extends Seeder
                 "update events",
                 "view participants",
                 "manage participants",
+                "view notifications",
+                "manage notifications",
                 "update profile",
             ],
             "Viewer" => [
                 "view events",
                 "view participants limited",
+                "view notifications",
                 "update profile",
             ],
             "Administrator" => [
@@ -126,6 +135,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 "manage permits",
                 "view forms",
                 "manage forms",
+                "view notifications",
+                "manage notifications",
                 "update profile",
             ],
             "Official" => [
@@ -141,6 +152,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 "manage permits",
                 "view forms",
                 "update profile",
+                "view notifications",
             ],
             "Medic" => [
                 "view events",
@@ -151,6 +163,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 "manage medical images",
                 "view medical comments",
                 "manage medical comments",
+                "view notifications",
                 "update profile",
             ],
         ];
