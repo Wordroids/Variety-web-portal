@@ -92,7 +92,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($records as $record)
                         @php
-                            $content = json_decode($record->content);
+                            $content = is_string($record->content)
+                                    ? json_decode($record->content)
+                                    : $record->content;
                         @endphp
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 whitespace-nowrap">{{ $content->first_name ?? '—' }}</td>
