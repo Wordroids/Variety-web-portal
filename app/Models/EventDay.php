@@ -5,11 +5,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Tonysm\RichTextLaravel\Models\Traits\HasRichText;
+// use Tonysm\RichTextLaravel\Models\Traits\HasRichText;
 
 class EventDay extends Model
 {
-    use HasFactory, HasRichText;
+    // use HasFactory, HasRichText;
+    use HasFactory;
 
     protected $fillable = [
         "event_id",
@@ -46,8 +47,9 @@ class EventDay extends Model
      */
     public function getItineraryDescriptionHtmlAttribute()
     {
-        return $this->itinerary_description
-            ? $this->itinerary_description->render()
-            : null;
+        return "";
+        // return $this->itinerary_description
+        //     ? $this->itinerary_description->render()
+        //     : null;
     }
 }
