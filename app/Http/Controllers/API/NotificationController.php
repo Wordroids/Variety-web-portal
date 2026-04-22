@@ -32,4 +32,18 @@ class NotificationController extends Controller
             "message" => "Token saved successfully",
         ]);
     }
+
+    public function deleteToken(Request $request)
+    {
+        auth()
+            ->user()
+            ->update([
+                "push_token" => "",
+            ]);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Token deleted successfully",
+        ]);
+    }
 }

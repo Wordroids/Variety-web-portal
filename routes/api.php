@@ -134,4 +134,9 @@ Route::middleware("auth:sanctum")->group(function () {
         NotificationController::class,
         "token",
     ])->name("api.notifications.set_token");
+
+    Route::delete("/notifications/token", [
+        NotificationController::class,
+        "deleteToken",
+    ])->name("api.notifications.delete_token");
 });
