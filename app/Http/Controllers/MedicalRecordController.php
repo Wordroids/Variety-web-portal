@@ -27,8 +27,10 @@ class MedicalRecordController extends Controller
         );
     }
 
-    private function authorizeMedicalRecord(Event $event, MedicalRecord $record): void
-    {
+    private function authorizeMedicalRecord(
+        Event $event,
+        MedicalRecord $record,
+    ): void {
         abort_unless((int) $record->event_id === (int) $event->id, 404);
         $this->authorizeEventAccess($event);
     }
@@ -80,8 +82,10 @@ class MedicalRecordController extends Controller
      * Values for the edit form: decoded content plus participant fields when blob omits them
      * (same sources as the detail page).
      */
-    private function recordContentForEditForm(Event $event, MedicalRecord $record): array
-    {
+    private function recordContentForEditForm(
+        Event $event,
+        MedicalRecord $record,
+    ): array {
         $record->loadMissing(["participant"]);
 
         $array = $this->decodeRecordContentArray($record);
@@ -101,7 +105,11 @@ class MedicalRecordController extends Controller
             foreach ($fallbacks as $key => $value) {
                 $current = $array[$key] ?? null;
 
-                if (($current === null || $current === "") && $value !== null && $value !== "") {
+                if (
+                    ($current === null || $current === "") &&
+                    $value !== null &&
+                    $value !== ""
+                ) {
                     $array[$key] = $value;
                 }
             }
@@ -269,7 +277,8 @@ class MedicalRecordController extends Controller
                     $participantId = null;
                     $unlinked++;
                 } else {
-                    $participantId = $participantPhoneToId[$normalizedMobile] ?? null;
+                    $participantId =
+                        $participantPhoneToId[$normalizedMobile] ?? null;
                     if (!$participantId) {
                         $unlinked++;
                     }
@@ -309,12 +318,16 @@ class MedicalRecordController extends Controller
 
             $message =
                 "Import completed: {$created} created" .
-                ($updated ? ", {$updated} updated (duplicate rows for same participant)" : "") .
+                ($updated
+                    ? ", {$updated} updated (duplicate rows for same participant)"
+                    : "") .
                 ($skippedEmpty ? ", {$skippedEmpty} empty rows skipped" : "") .
                 ($skippedNoMobile
                     ? ", {$skippedNoMobile} rows missing mobile (imported but unlinked)"
                     : "") .
-                ($unlinked ? ", {$unlinked} records not linked to a participant" : "") .
+                ($unlinked
+                    ? ", {$unlinked} records not linked to a participant"
+                    : "") .
                 ".";
 
             return back()->with("success", $message);
@@ -329,8 +342,7 @@ class MedicalRecordController extends Controller
             ]);
 
             return back()->withErrors([
-                "import" =>
-                    "Medical record import failed: " . $e->getMessage(),
+                "import" => "Medical record import failed: " . $e->getMessage(),
             ]);
         }
     }
@@ -378,8 +390,11 @@ class MedicalRecordController extends Controller
     /**
      * Update an individual medical record (portal edit; preserves extra content keys).
      */
-    public function updateRecord(Request $request, Event $event, MedicalRecord $record)
-    {
+    public function updateRecord(
+        Request $request,
+        Event $event,
+        MedicalRecord $record,
+    ) {
         $this->authorizeMedicalRecord($event, $record);
 
         $validated = $request->validate([
@@ -409,7 +424,7 @@ class MedicalRecordController extends Controller
         $base = $this->decodeRecordContentArray($record);
 
         $dob = null;
-        if (! empty($validated["dob"])) {
+        if (!empty($validated["dob"])) {
             try {
                 $dob = Carbon::parse($validated["dob"])->format("Y-m-d");
             } catch (\Exception $e) {
@@ -420,7 +435,9 @@ class MedicalRecordController extends Controller
         $merged = array_merge($base, [
             "event_id" => (string) $event->id,
             "vehicle" => $this->blankToNull($validated["vehicle"] ?? null),
-            "first_name" => $this->blankToNull($validated["first_name"] ?? null),
+            "first_name" => $this->blankToNull(
+                $validated["first_name"] ?? null,
+            ),
             "last_name" => $this->blankToNull($validated["last_name"] ?? null),
             "nickname" => $this->blankToNull($validated["nickname"] ?? null),
             "address1" => $this->blankToNull($validated["address1"] ?? null),
@@ -430,9 +447,13 @@ class MedicalRecordController extends Controller
             "address5" => $this->blankToNull($validated["address5"] ?? null),
             "address6" => $this->blankToNull($validated["address6"] ?? null),
             "mobile" => $this->blankToNull($validated["mobile"] ?? null),
-            "next_of_kin" => $this->blankToNull($validated["next_of_kin"] ?? null),
+            "next_of_kin" => $this->blankToNull(
+                $validated["next_of_kin"] ?? null,
+            ),
             "nok_phone" => $this->blankToNull($validated["nok_phone"] ?? null),
-            "nok_alt_phone" => $this->blankToNull($validated["nok_alt_phone"] ?? null),
+            "nok_alt_phone" => $this->blankToNull(
+                $validated["nok_alt_phone"] ?? null,
+            ),
             "dob" => $dob,
             "allergies" => $this->blankToNull($validated["allergies"] ?? null),
             "dietary_requirement" => $this->blankToNull(
@@ -449,7 +470,7 @@ class MedicalRecordController extends Controller
             ),
         ]);
 
-        $record->content = $merged;
+        $record->content = json_encode($merged);
         $record->expires_at = $validated["expires_at"];
         $record->save();
 
