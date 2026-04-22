@@ -127,23 +127,24 @@
 
                     {{-- Allergies --}}
                     <h4 class="font-bold">Allergies</h4>
-                    <p class="mb-4">{{$content->allergies ?? 'None'}}</p>
+                    <p class="mb-4">{{$content->allergies ? $content->allergies : 'None'}}</p>
 
                     {{-- Dietary Requirements --}}
                     <h4 class="font-bold">Dietary Requirements</h4>
-                    <p class="mb-4">{{$content->dietary_requirement ?? 'None'}}</p>
-
-                    {{-- Past Medical History --}}
-                    <h4 class="font-bold">Past Medical History</h4>
-                    <p class="mb-4">{{$content->past_medical_history ?? 'None'}}</p>
-
-                    {{-- Current Medical History --}}
-                    <h4 class="font-bold">Current Medical History</h4>
-                    <p class="mb-4">{{$content->current_medical_history ?? 'None'}}</p>
+                    <p class="mb-4">{{$content->dietary_requirement ? $content->dietary_requirement : 'None'}}</p>
 
                     {{-- Current Medications --}}
                     <h4 class="font-bold">Current Medications</h4>
-                    <p class="mb-4">{{$content->current_medications ?? 'None'}}</p>
+                    <p class="mb-4">{{$content->current_medications ? $content->current_medications : 'None'}}</p>
+
+                    {{-- Current Medical Conditions --}}
+                    <h4 class="font-bold">Current Medical Conditions</h4>
+                    <p class="mb-4">{{$content->current_medical_history ? $content->current_medical_history : 'None'}}</p>
+
+                    {{-- Past Medical History --}}
+                    <h4 class="font-bold">Past Medical History</h4>
+                    <p class="mb-4">{{$content->past_medical_history ? $content->past_medical_history : 'None'}}</p>
+
                 </div>
 
             </div>
