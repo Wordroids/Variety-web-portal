@@ -350,10 +350,28 @@ class MedicalRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(int $id, Request $request)
     {
         $event = Event::findOrFail($id);
-        $records = $event->medicalRecords;
+
+        if ($request->q) {
+            $q = $request->q;
+            $participant_ids = $event
+                ->participants()
+                ->where("first_name", "like", "%{$q}%")
+                ->orWhere("last_name", "like", "%{$q}%")
+                ->orWhere("phone", "like", "%{$q}%")
+                ->get()
+                ->pluck("id");
+
+            $records = $event
+                ->medicalRecords()
+                ->whereIn("participant_id", $participant_ids)
+                ->get();
+        } else {
+            $records = $event->medicalRecords;
+        }
+
         return view("pages.medical-records.show", compact("records", "event"));
     }
 

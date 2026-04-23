@@ -71,13 +71,22 @@
         <div class="mb-4 text-sm text-black flex gap-4">
             <div class="mb-1">
                 <span class="font-semibold">Import Date:</span>
-                <span>{{ $records->first()->imported_at->format('d/m/Y') }}</span>
+                <span>{{ $records->first()?->imported_at->format('d/m/Y') }}</span>
             </div>
             <div>
                 <span class="font-semibold">Destroy Date:</span>
-                <span>{{ $records->first()->expires_at->format('d/m/Y') }}</span>
+                <span>{{ $records->first()?->expires_at->format('d/m/Y') }}</span>
             </div>
         </div>
+
+        <form class="mb-4 flex items-center gap-3">
+            <div class="flex-1 relative">
+                <input type="text" placeholder="Search records ..." name="q" value="{{ request('q', '') }}"
+                       class="w-full rounded-lg border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-red-500 focus:ring-red-500" />
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+            </div>
+            <button type="submit" class="rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm hover:border-red-500">Search</button>
+        </form>
 
         <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
             <table class="w-full table-fixed text-sm">
