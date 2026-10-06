@@ -39,12 +39,12 @@
                         class="mt-1 w-full border rounded p-2">
                 </div>
 
-                <div>
+                <!--<div>
                     <label class="block text-sm font-medium text-gray-700">OV Departure</label>
                     <input type="time" name="ov_departure" step="60"
                         value="{{ old('ov_departure', $job->timeForInput('ov_departure')) }}"
                         class="mt-1 w-full border rounded p-2">
-                </div>
+                </div>-->
 
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Duty Description</label>

@@ -128,7 +128,7 @@
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Location</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Vehicle</th>
                             <th class="hidden border border-gray-200 px-3 py-2 text-left font-semibold" scope="col">AM/PM</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>
+                            <!--<th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>-->
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Duty Description</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Notes</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Arrive</th>
@@ -152,7 +152,7 @@
                                         {{ $job->period }}
                                     </span>
                                 </td>
-                                <td class="border border-gray-200 px-3 py-2">{{ $job->ov_departure ?? '-' }}</td>
+                                <!--<td class="border border-gray-200 px-3 py-2">{{ $job->ov_departure ?? '-' }}</td>-->
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->duty_description }}</td>
                                 <td class="border border-gray-200 px-3 py-2 text-xs text-gray-600">
                                     {{ $job->comment }}

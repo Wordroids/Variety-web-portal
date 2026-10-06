@@ -27,7 +27,7 @@ class EventJob extends Model
         "km",
         "ov_arrive",
         "field_arrive",
-        "ov_departure",
+        // "ov_departure",
         "comment",
         "image_path",
     ];
@@ -42,7 +42,7 @@ class EventJob extends Model
         "km" => "decimal:2",
         "ov_arrive" => "datetime:H:i",
         "field_arrive" => "datetime:H:i",
-        "ov_departure" => "datetime:H:i",
+        // "ov_departure" => "datetime:H:i",
     ];
 
     public function event(): BelongsTo

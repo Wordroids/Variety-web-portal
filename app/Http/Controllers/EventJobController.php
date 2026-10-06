@@ -62,9 +62,9 @@ class EventJobController extends Controller
                 "km" => $row[6] ?? 0,
                 "ov_arrive" => !empty($row[7]) ? $row[7] : null,
                 "field_arrive" => !empty($row[8]) ? $row[8] : null,
-                "ov_departure" => !empty($row[9]) ? $row[9] : null,
-                "comment" => $row[10] ?? null,
-                "image_path" => "jobs/$event->id/$row[11]",
+                // "ov_departure" => !empty($row[9]) ? $row[9] : null,
+                "comment" => $row[9] ?? null,
+                "image_path" => "jobs/$event->id/$row[10]",
             ]);
         }
 
@@ -144,9 +144,9 @@ class EventJobController extends Controller
             "field_arrive" => $request->filled("field_arrive")
                 ? $request->input("field_arrive")
                 : null,
-            "ov_departure" => $request->filled("ov_departure")
-                ? $request->input("ov_departure")
-                : null,
+            // "ov_departure" => $request->filled("ov_departure")
+            //     ? $request->input("ov_departure")
+            //     : null,
             "comment" =>
                 $request->input("comment") !== null &&
                 $request->input("comment") !== ""
@@ -164,7 +164,7 @@ class EventJobController extends Controller
             "km" => "required|numeric",
             "ov_arrive" => "nullable|date_format:H:i",
             "field_arrive" => "nullable|date_format:H:i",
-            "ov_departure" => "nullable|date_format:H:i",
+            // "ov_departure" => "nullable|date_format:H:i",
             "comment" => "nullable|string",
             "image" => "nullable|string",
         ]);
@@ -179,7 +179,7 @@ class EventJobController extends Controller
             "km" => $validated["km"],
             "ov_arrive" => $validated["ov_arrive"],
             "field_arrive" => $validated["field_arrive"],
-            "ov_departure" => $validated["ov_departure"],
+            // "ov_departure" => $validated["ov_departure"],
             "comment" => $validated["comment"],
             "image_path" => $request->has("image")
                 ? "jobs/$job->event_id/$request->image"
@@ -241,7 +241,7 @@ class EventJobController extends Controller
             "km",
             "ov_arrive",
             "field_arrive",
-            "ov_departure",
+            // "ov_departure",
             "comment",
             "image",
         ];
