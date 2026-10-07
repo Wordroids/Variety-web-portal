@@ -61,6 +61,11 @@ Route::middleware("auth")->group(function () {
         "uploadImage",
     ])->name("jobs.upload-image");
 
+    Route::delete("/job/{job}/remove-image", [
+        EventJobController::class,
+        "removeImage",
+    ])->name("jobs.remove-image");
+
     // Job Images
     Route::get("/job-images/{event}", [
         JobImageController::class,

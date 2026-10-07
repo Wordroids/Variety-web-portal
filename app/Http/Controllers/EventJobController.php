@@ -182,7 +182,9 @@ class EventJobController extends Controller
             // "ov_departure" => $validated["ov_departure"],
             "comment" => $validated["comment"],
             "image_path" => $request->has("image")
-                ? "jobs/$job->event_id/$request->image"
+                ? ($request->image
+                    ? "jobs/$job->event_id/$request->image"
+                    : "")
                 : $job->image || "",
         ]);
 
@@ -237,6 +239,18 @@ class EventJobController extends Controller
         return redirect()
             ->route("jobs.view", $job->event_id)
             ->with("success", "Image uploaded successfully.");
+    }
+
+    /**
+     * Remove job image
+     */
+    public function removeImage(Request $request, EventJob $job)
+    {
+        $job->update(["image_path" => ""]);
+
+        return redirect()
+            ->route("jobs.view", $job->event_id)
+            ->with("success", "Image removed successfully.");
     }
 
     //to download the csv template

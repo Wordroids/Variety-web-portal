@@ -170,23 +170,40 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
                                     <div class="flex flex-col gap-2">
+                                        {{-- Upload / Replace Image --}}
                                         <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
                                             @csrf
                                             <label
                                                 ondragover="event.preventDefault()"
                                                 ondrop="event.preventDefault(); const input = this.querySelector('input'); input.files = event.dataTransfer.files; input.form.submit();"
                                                 class="flex flex-col items-center justify-center p-3 gap-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-sky-500 hover:bg-sky-50 transition text-center text-xs text-gray-500">
-                                                @if($job->image_path)
-                                                    <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium text-xs">
-                                                        View Image
-                                                    </a>
-                                                @else
-                                                    <span class="text-gray-400 font-medium text-xs">No Image</span>
-                                                @endif
-                                                <span class="font-medium text-gray-600">Upload / Drop</span>
+
+                                                <span class="font-medium text-gray-600">Select / Drop</span>
                                                 <input name="image" type="file" class="hidden" onchange="this.form.submit()"/>
                                             </label>
                                         </form>
+
+                                        {{-- View / Remove Image --}}
+                                        @if($job->image_path)
+                                            <div class="flex w-full justify-between items-center gap-1 px-1 text-xs">
+                                                <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
+                                                    View Image
+                                                </a>
+
+                                                /
+
+                                                {{-- Placed OUTSIDE the upload form --}}
+                                                <form action="{{ route('jobs.remove-image', $job) }}" method="post" class="inline">
+                                                    @csrf
+                                                    @method('DELETE') {{-- Recommended if your route uses DELETE --}}
+                                                    <button type="submit" class="text-red-600 hover:underline font-medium px-1">
+                                                        X
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-gray-400 font-medium text-center text-xs px-1">No Image</span>
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
