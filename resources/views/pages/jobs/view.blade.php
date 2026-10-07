@@ -169,20 +169,24 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ number_format($job->km, 2) }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
-                                    <div class="flex flex-col">
-                                    @if($job->image_path)
-                                        <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
-                                            View Image
-                                        </a>
-                                    @else
-                                        <a class="text-gray-300 hover:underline font-medium">
-                                            No Image
-                                        </a>
-                                    @endif
-                                    <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
-                                        @csrf
-                                        <input name="image" type="file" onchange="this.form.submit()"/>
-                                    </form>
+                                    <div class="flex flex-col gap-2">
+                                        <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
+                                            @csrf
+                                            <label
+                                                ondragover="event.preventDefault()"
+                                                ondrop="event.preventDefault(); const input = this.querySelector('input'); input.files = event.dataTransfer.files; input.form.submit();"
+                                                class="flex flex-col items-center justify-center p-3 gap-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-sky-500 hover:bg-sky-50 transition text-center text-xs text-gray-500">
+                                                @if($job->image_path)
+                                                    <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium text-xs">
+                                                        View Image
+                                                    </a>
+                                                @else
+                                                    <span class="text-gray-400 font-medium text-xs">No Image</span>
+                                                @endif
+                                                <span class="font-medium text-gray-600">Upload / Drop</span>
+                                                <input name="image" type="file" class="hidden" onchange="this.form.submit()"/>
+                                            </label>
+                                        </form>
                                     </div>
                                 </td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
