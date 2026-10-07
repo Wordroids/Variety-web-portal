@@ -212,9 +212,27 @@ class EventJobController extends Controller
             "image" => "required|file",
         ]);
 
-        $path = $request->file("image")->store("jobs", "public");
+        $originalName = $request->file("image")->getClientOriginalName();
 
-        $job->update(["image_path" => $path]);
+        $conflicts = $job->event
+            ->jobImages()
+            ->where("name", $originalName)
+            ->exists();
+
+        if ($conflicts) {
+            return back()->with("error", "Duplicate file name");
+        }
+
+        $path = $request
+            ->file("image")
+            ->storeAs("/jobs/{$job->event->id}", $originalName, "public");
+
+        $job->event->jobImages()->create([
+            "name" => $originalName,
+            "path" => $path,
+        ]);
+
+        $job->update(["image_path" => "jobs/$job->event_id/$originalName"]);
 
         return redirect()
             ->route("jobs.view", $job->event_id)

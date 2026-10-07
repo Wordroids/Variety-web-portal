@@ -23,6 +23,13 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Jobs for {{ $event->title }}</h1>
             <p class="mt-1 text-sm text-gray-500">Displaying all jobs.</p>
@@ -162,6 +169,7 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ number_format($job->km, 2) }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
+                                    <div class="flex flex-col">
                                     @if($job->image_path)
                                         <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
                                             View Image
@@ -171,6 +179,11 @@
                                             No Image
                                         </a>
                                     @endif
+                                    <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
+                                        @csrf
+                                        <input name="image" type="file" onchange="this.form.submit()"/>
+                                    </form>
+                                    </div>
                                 </td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->created_at->format('Y-m-d H:i') }}</td>
