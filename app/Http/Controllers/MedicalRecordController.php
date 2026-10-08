@@ -240,7 +240,7 @@ class MedicalRecordController extends Controller
                         $dob = Carbon::createFromFormat(
                             "d/m/Y",
                             $rawDate,
-                        )->format("Y/m/d");
+                        )->format("d/m/Y");
                     } catch (\Exception $e) {
                         $dob = null;
                     }
