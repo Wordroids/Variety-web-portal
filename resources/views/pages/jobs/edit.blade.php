@@ -39,12 +39,12 @@
                         class="mt-1 w-full border rounded p-2">
                 </div>
 
-                <div>
+                <!--<div>
                     <label class="block text-sm font-medium text-gray-700">OV Departure</label>
                     <input type="time" name="ov_departure" step="60"
                         value="{{ old('ov_departure', $job->timeForInput('ov_departure')) }}"
                         class="mt-1 w-full border rounded p-2">
-                </div>
+                </div>-->
 
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Duty Description</label>
@@ -86,7 +86,10 @@
 
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Image (File Name)</label>
-                    <input type="text" name="image" value="{{ old('image', basename($job->image_path)) }}" class="mt-1 w-full border rounded p-2">
+                    <div class="flex gap-4">
+                        <input type="text" name="image" value="{{ old('image', basename($job->image_path)) }}" class="mt-1 w-full border rounded p-2"/>
+                        <button type="button" class="mt-1 px-3 py-2 border border-red-700 rounded text-red-700" onclick="document.querySelector('input[name=\'image\']').value = ''">X</button>
+                    </div>
                 </div>
 
             </div>

@@ -23,6 +23,13 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Jobs for {{ $event->title }}</h1>
             <p class="mt-1 text-sm text-gray-500">Displaying all jobs.</p>
@@ -128,7 +135,7 @@
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Location</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Vehicle</th>
                             <th class="hidden border border-gray-200 px-3 py-2 text-left font-semibold" scope="col">AM/PM</th>
-                            <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>
+                            <!--<th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Departure</th>-->
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Duty Description</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">Notes</th>
                             <th class="border border-gray-200 px-3 py-2 text-left font-semibold">OV Arrive</th>
@@ -152,7 +159,7 @@
                                         {{ $job->period }}
                                     </span>
                                 </td>
-                                <td class="border border-gray-200 px-3 py-2">{{ $job->ov_departure ?? '-' }}</td>
+                                <!--<td class="border border-gray-200 px-3 py-2">{{ $job->ov_departure ?? '-' }}</td>-->
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->duty_description }}</td>
                                 <td class="border border-gray-200 px-3 py-2 text-xs text-gray-600">
                                     {{ $job->comment }}
@@ -162,15 +169,42 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ number_format($job->km, 2) }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
-                                    @if($job->image_path)
-                                        <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
-                                            View Image
-                                        </a>
-                                    @else
-                                        <a class="text-gray-300 hover:underline font-medium">
-                                            No Image
-                                        </a>
-                                    @endif
+                                    <div class="flex flex-col gap-2">
+                                        {{-- Upload / Replace Image --}}
+                                        <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
+                                            @csrf
+                                            <label
+                                                ondragover="event.preventDefault()"
+                                                ondrop="event.preventDefault(); const input = this.querySelector('input'); input.files = event.dataTransfer.files; input.form.submit();"
+                                                class="flex flex-col items-center justify-center p-3 gap-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-sky-500 hover:bg-sky-50 transition text-center text-xs text-gray-500">
+
+                                                <span class="font-medium text-gray-600">Select / Drop</span>
+                                                <input name="image" type="file" class="hidden" onchange="this.form.submit()"/>
+                                            </label>
+                                        </form>
+
+                                        {{-- View / Remove Image --}}
+                                        @if($job->image_path)
+                                            <div class="flex w-full justify-between items-center gap-1 px-1 text-xs">
+                                                <a href="/storage/{{ $job->image_path }}" target="_blank" class="text-sky-600 hover:underline font-medium">
+                                                    View Image
+                                                </a>
+
+                                                /
+
+                                                {{-- Placed OUTSIDE the upload form --}}
+                                                <form action="{{ route('jobs.remove-image', $job) }}" method="post" class="inline">
+                                                    @csrf
+                                                    @method('DELETE') {{-- Recommended if your route uses DELETE --}}
+                                                    <button type="submit" class="text-red-600 hover:underline font-medium px-1">
+                                                        X
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-gray-400 font-medium text-center text-xs px-1">No Image</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->created_at->format('Y-m-d H:i') }}</td>
