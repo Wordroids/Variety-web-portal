@@ -116,7 +116,7 @@
                             Filter
                         </button>
 
-                        <a href="{{ route('jobs.view', $event) }}"
+                        <a href="{{ route('jobs.view', [$event, 'reset' => 1])}}"
                             class="px-4 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50">
                             Reset
                         </a>
