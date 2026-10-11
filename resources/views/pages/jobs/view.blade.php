@@ -68,11 +68,11 @@
                     <div>
                         <label class="text-xs text-gray-500">Event Day</label>
                         <select name="event_day" class="w-full rounded-lg border-gray-300 text-sm">
-                            <option value="">All Days</option>
+                            <option value="" {{ request('event_day') === null || request('event_day') === '' ? 'selected' : '' }}>All Days</option>
 
                             @foreach ($eventDays as $day)
                                 <option value="{{ $day }}"
-                                    {{ request('event_day') == $day ? 'selected' : '' }}>
+                                    {{ request('event_day') !== null && request('event_day') !== '' && request('event_day') == $day ? 'selected' : '' }}>
                                     {{ $day }}
                                 </option>
                             @endforeach

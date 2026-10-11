@@ -88,7 +88,7 @@ class EventJobController extends Controller
         }
 
         // Filter by Event Day
-        if ($request->event_day) {
+        if ($request->event_day != null) {
             $query->where("event_day", $request->event_day);
         }
 
