@@ -19,6 +19,7 @@ class Event extends Model
         "end_date",
         "sponsor_image_path",
         "cover_image_path",
+        "location_banner",
     ];
 
     protected $casts = [

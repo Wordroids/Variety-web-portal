@@ -126,6 +126,20 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="w-full">
+                        <label class="block text-sm font-medium text-gray-700">Show location tracking banner on</label>
+                        <select
+                            name="location_banner"
+                            value="{{ old('location_banner') }}"
+                            class="mt-1 w-full rounded-lg border {{ $errors->has('location_banner') ? 'border-red-500' : 'border-gray-300' }} focus:border-red-500 focus:ring-red-500"
+                        >
+                            <option value="all">All Screens</option>
+                            <option value="settings">Settings Screen Only</option>
+                        </select>
+                        @error('location_banner')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </section>
 
