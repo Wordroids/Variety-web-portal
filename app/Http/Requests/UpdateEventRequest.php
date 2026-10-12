@@ -73,6 +73,7 @@ class UpdateEventRequest extends FormRequest
             // Sponsors
             "sponsor_image" => ["nullable", "image", "max:4096"],
             "cover_image" => ["nullable", "image", "max:4096"],
+            "location_banner" => ["nullable", "in:all,settings"],
         ];
     }
 }

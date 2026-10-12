@@ -108,7 +108,20 @@
                     }
 
                     if (data.success) {
-                        window.location.href = data.redirect || '{{ url()->current() }}';
+                        if (isEdit) {
+                            // Find and update the existing participant in the array
+                            const index = this.participants.findIndex(p => p.id === data.participant.id);
+                            if (index !== -1) {
+                                this.participants[index] = data.participant;
+                            }
+                        } else {
+                            // Append the new participant to the array
+                            this.participants.push(data.participant);
+                        }
+
+                        // Close the modal and reset state
+                        this.openModal = false;
+                        this.submitting = false;
                     }
                 } catch (err) {
                     console.error(err);

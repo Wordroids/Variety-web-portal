@@ -80,6 +80,7 @@ class EventController extends Controller
                 "end_date" => $data["end_date"],
                 "sponsor_image_path" => $sponsor_image_path,
                 "cover_image_path" => $cover_image_path,
+                "location_banner" => $data["location_banner"] ?? "all",
             ]);
 
             // Add user as an admin of the event
@@ -308,6 +309,7 @@ class EventController extends Controller
                     $sponsor_image_path ?? ($event->sponsor_image_path ?? null),
                 "cover_image_path" =>
                     $cover_image_path ?? ($event->cover_image_path ?? null),
+                "location_banner" => $data["location_banner"] ?? "all",
             ]);
 
             // Track IDs to keep (for diff-delete)

@@ -82,19 +82,43 @@ class EventJobController extends Controller
     {
         $query = $event->jobs()->latest();
 
+        // Get saved filters
+        $sessionKey = "job_filters_$event->id";
+        $filters = session($sessionKey, [
+            "vehicle" => null,
+            "event_day" => null,
+            "period" => null,
+            "page" => null,
+        ]);
+
+        // Update filters / query strings
+        foreach ($filters as $key => $value) {
+            if ($request->has("reset")) {
+                $filters[$key] = null;
+            } elseif ($request->has($key)) {
+                $new = $request->query($key);
+                $filters[$key] = $new;
+            } elseif ($value) {
+                $request->instance()->query->set($key, $value);
+            }
+        }
+
+        // Save updated filters to session
+        session([$sessionKey => $filters]);
+
         // Filter by Vehicle
-        if ($request->vehicle) {
-            $query->where("vehicle", $request->vehicle);
+        if ($filters["vehicle"]) {
+            $query->where("vehicle", $filters["vehicle"]);
         }
 
         // Filter by Event Day
-        if ($request->event_day) {
-            $query->where("event_day", $request->event_day);
+        if ($filters["event_day"] != null) {
+            $query->where("event_day", $filters["event_day"]);
         }
 
         // Filter by Period
-        if ($request->period) {
-            $query->where("period", $request->period);
+        if ($filters["period"]) {
+            $query->where("period", $filters["period"]);
         }
 
         $jobs = $query->paginate(10)->withQueryString();
