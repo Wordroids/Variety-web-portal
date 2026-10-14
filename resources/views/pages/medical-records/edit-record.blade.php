@@ -134,7 +134,7 @@
                         <h3 class="text-lg font-bold mb-4">Medical details</h3>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Date of birth</label>
-                            <input type="date" name="dob" value="{{ $dobInput ?? '' }}"
+                            <input type="date" name="dob" value="{{ !empty($recordContent['dob']) ? DateTime::createFromFormat('d/m/Y', $recordContent['dob'])?->format('Y-m-d') : '' }}"
                                 class="rounded-lg border border-gray-300 px-3 py-2 text-sm w-full max-w-xs" />
                         </div>
                         <div class="mb-3">

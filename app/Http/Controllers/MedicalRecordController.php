@@ -445,7 +445,7 @@ class MedicalRecordController extends Controller
         $dob = null;
         if (!empty($validated["dob"])) {
             try {
-                $dob = Carbon::parse($validated["dob"])->format("Y-m-d");
+                $dob = Carbon::parse($validated["dob"])->format("d/m/Y");
             } catch (\Exception $e) {
                 $dob = $base["dob"] ?? null;
             }
