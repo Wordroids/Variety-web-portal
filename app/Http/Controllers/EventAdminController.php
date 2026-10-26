@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class EventAdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use AuthorizesRequests;
     public function index(Event $event)
     {
+        $this->authorize("view", $event);
+
         $users = User::all();
         $admins = $event->admins()->paginate(10);
+
         return view(
             "pages.events.admins.index",
             compact("event", "admins", "users"),
@@ -26,17 +28,23 @@ class EventAdminController extends Controller
      */
     public function store(Request $request, Event $event)
     {
+        $this->authorize("create", $event);
+
         $validated = $request->validate([
             "user_id" => "required|exists:users,id",
         ]);
 
-        $event->admins()->syncWithoutDetaching($validated["user_id"]);
+        $event->admins()->syncWithoutDetaching([$validated["user_id"]]);
+
         return back()->with("success", "Admin added.");
     }
 
-    public function destroy(Request $request, Event $event, User $admin)
+    public function destroy(Event $event, User $admin)
     {
-        $event->admins()->detach($admin);
+        $this->authorize("delete", $event);
+
+        $event->admins()->detach($admin->id);
+
         return back()->with("success", "Admin removed.");
     }
 }
