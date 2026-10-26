@@ -13,50 +13,215 @@ class RolesAndPermissionsSeeder extends Seeder
         // Clear cache
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Define all permissions from the export
+        // Define all permissions
         $permissions = [
+            // Event permissions
             'view events',
             'create events',
             'edit events',
             'delete events',
-            'manage participants',
-            'edit users',
-            'update profile',
-            'create event participants',
-            'update users',
             'update events',
-            'manage settings'
+
+            // Event-related resources
+            'view event admins',
+            'create event admins',
+            'delete event admins',
+            'view event passwords',
+            'edit event passwords',
+            'view event forms',
+            'create event forms',
+            'delete event forms',
+            'view event permits',
+            'create event permits',
+            'delete event permits',
+
+            // Participant permissions
+            'manage participants',
+            'create event participants',
+            'export participant template',
+            'import participants',
+
+            // Job permissions
+            'view jobs',
+            'create jobs',
+            'edit jobs',
+            'delete jobs',
+            'export job template',
+
+            // Job image permissions
+            'view job images',
+            'create job images',
+            'delete job images',
+
+            // Medical record permissions
+            'view medical records',
+            'create medical records',
+            'edit medical records',
+            'delete medical records',
+            'export medical record template',
+            'import medical records',
+
+            // Medical record comment permissions
+            'create medical record comments',
+            'delete medical record comments',
+
+            // Medical record image permissions
+            'create medical record images',
+            'delete medical record images',
+
+            // User permissions
+            'view users',
+            'create users',
+            'edit users',
+            'update users',
+            'delete users',
+            'update profile',
+            'delete profile',
+
+            // Role permissions
+            'view roles',
+            'create roles',
+            'edit roles',
+            'delete roles',
+
+            // Permission permissions
+            'view permissions',
+            'create permissions',
+            'edit permissions',
+            'delete permissions',
+
+            // Notification permissions
+            'view notifications',
+            'create notifications',
+            'edit notifications',
+            'delete notifications',
+            'import notifications',
+
+            // Settings permissions
+            'view settings',
+            'edit settings',
+            'manage settings',
+
+            // Attachment permissions
+            'create attachments',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Define roles with their exact permissions from the export
+        // Define roles with their permissions
         $roles = [
             'Super Admin' => [
-                'view events', 'create events', 'edit events', 'delete events',
-                'manage participants', 'edit users', 'update profile',
-                'create event participants', 'update users', 'update events',
-                'manage settings'
+                // All permissions
+                'view events', 'create events', 'edit events', 'delete events', 'update events',
+                'view event admins', 'create event admins', 'delete event admins',
+                'view event passwords', 'edit event passwords',
+                'view event forms', 'create event forms', 'delete event forms',
+                'view event permits', 'create event permits', 'delete event permits',
+                'manage participants', 'create event participants', 'export participant template', 'import participants',
+                'view jobs', 'create jobs', 'edit jobs', 'delete jobs', 'export job template',
+                'view job images', 'create job images', 'delete job images',
+                'view medical records', 'create medical records', 'edit medical records', 'delete medical records',
+                'export medical record template', 'import medical records',
+                'create medical record comments', 'delete medical record comments',
+                'create medical record images', 'delete medical record images',
+                'view users', 'create users', 'edit users', 'update users', 'delete users',
+                'update profile', 'delete profile',
+                'view roles', 'create roles', 'edit roles', 'delete roles',
+                'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
+                'view notifications', 'create notifications', 'edit notifications', 'delete notifications', 'import notifications',
+                'view settings', 'edit settings', 'manage settings',
+                'create attachments',
             ],
             'Event Manager' => [
-                'view events', 'create events', 'edit events', 'manage participants'
+                'view events', 'create events', 'edit events', 'update events',
+                'view event admins', 'create event admins', 'delete event admins',
+                'view event passwords', 'edit event passwords',
+                'view event forms', 'create event forms', 'delete event forms',
+                'view event permits', 'create event permits', 'delete event permits',
+                'manage participants', 'create event participants', 'export participant template', 'import participants',
+                'view jobs', 'create jobs', 'edit jobs', 'delete jobs', 'export job template',
+                'view job images', 'create job images', 'delete job images',
+                'view medical records', 'create medical records', 'edit medical records', 'delete medical records',
+                'export medical record template', 'import medical records',
+                'create medical record comments', 'delete medical record comments',
+                'create medical record images', 'delete medical record images',
+                'view users', 'edit users', 'update users',
+                'view notifications', 'create notifications', 'edit notifications', 'delete notifications',
+                'view settings', 'edit settings',
+                'create attachments',
             ],
-            'Viewer' => ['view events'],
+            'Viewer' => [
+                'view events',
+                'view event admins',
+                'view event forms',
+                'view event permits',
+                'view jobs',
+                'view job images',
+                'view medical records',
+                'view users',
+                'view roles',
+                'view notifications',
+                'view settings',
+            ],
             'Administrator' => [
-                'view events', 'create events', 'edit events', 'update profile',
-                'create event participants', 'update users', 'update events'
+                'view events', 'create events', 'edit events', 'update events',
+                'view event admins', 'create event admins', 'delete event admins',
+                'view event passwords', 'edit event passwords',
+                'view event forms', 'create event forms', 'delete event forms',
+                'view event permits', 'create event permits', 'delete event permits',
+                'manage participants', 'create event participants', 'export participant template', 'import participants',
+                'view jobs', 'create jobs', 'edit jobs', 'delete jobs', 'export job template',
+                'view job images', 'create job images', 'delete job images',
+                'view medical records', 'create medical records', 'edit medical records', 'delete medical records',
+                'export medical record template', 'import medical records',
+                'create medical record comments', 'delete medical record comments',
+                'create medical record images', 'delete medical record images',
+                'view users', 'create users', 'edit users', 'update users', 'delete users',
+                'update profile', 'delete profile',
+                'view roles', 'create roles', 'edit roles', 'delete roles',
+                'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
+                'view notifications', 'create notifications', 'edit notifications', 'delete notifications', 'import notifications',
+                'view settings', 'edit settings', 'manage settings',
+                'create attachments',
             ],
             'Official' => [
-                'view events', 'create events', 'edit events', 'delete events',
-                'manage participants', 'edit users', 'update profile',
-                'update users', 'update events'
+                'view events', 'create events', 'edit events', 'delete events', 'update events',
+                'view event admins', 'create event admins', 'delete event admins',
+                'view event passwords', 'edit event passwords',
+                'view event forms', 'create event forms', 'delete event forms',
+                'view event permits', 'create event permits', 'delete event permits',
+                'manage participants', 'create event participants', 'export participant template', 'import participants',
+                'view jobs', 'create jobs', 'edit jobs', 'delete jobs', 'export job template',
+                'view job images', 'create job images', 'delete job images',
+                'view medical records', 'create medical records', 'edit medical records', 'delete medical records',
+                'export medical record template', 'import medical records',
+                'create medical record comments', 'delete medical record comments',
+                'create medical record images', 'delete medical record images',
+                'view users', 'edit users', 'update users',
+                'update profile',
+                'view notifications', 'create notifications',
+                'view settings',
+                'create attachments',
             ],
             'Medic' => [
-                'view events', 'create events', 'edit events', 'delete events',
-                'manage participants', 'edit users', 'update profile',
-                'create event participants', 'update users', 'update events'
+                'view events', 'create events', 'edit events', 'delete events', 'update events',
+                'view event admins',
+                'view event forms',
+                'view event permits',
+                'manage participants', 'create event participants', 'export participant template', 'import participants',
+                'view jobs', 'create jobs', 'edit jobs',
+                'view job images', 'create job images',
+                'view medical records', 'create medical records', 'edit medical records', 'delete medical records',
+                'export medical record template', 'import medical records',
+                'create medical record comments', 'delete medical record comments',
+                'create medical record images', 'delete medical record images',
+                'view users', 'edit users', 'update users',
+                'update profile',
+                'view notifications',
+                'view settings',
+                'create attachments',
             ]
         ];
 
