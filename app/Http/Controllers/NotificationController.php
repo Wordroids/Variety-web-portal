@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
@@ -15,11 +16,15 @@ use Illuminate\Validation\ValidationException;
 
 class NotificationController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize("viewAny", Notification::class);
+
         $notifications = Notification::with(
             "events",
             "roles",
@@ -43,6 +48,8 @@ class NotificationController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize("create", Notification::class);
+
         $validated = $request->validateWithBag("notification", [
             "title" => "nullable|string",
             "message" => "string",
@@ -105,6 +112,8 @@ class NotificationController extends Controller
      */
     public function update(Request $request, Notification $notification)
     {
+        $this->authorize("update", $notification);
+
         $validated = $request->validateWithBag("notification", [
             "title" => "nullable|string",
             "message" => "string",
@@ -167,12 +176,16 @@ class NotificationController extends Controller
      */
     public function destroy(Notification $notification)
     {
+        $this->authorize("delete", $notification);
+
         $notification->delete();
         return back()->with("success", "Notification deleted.");
     }
 
     public function import(Request $request)
     {
+        $this->authorize("import", Notification::class);
+
         $request->validateWithBag("import", [
             "file" => "required|file|mimes:csv,txt",
         ]);

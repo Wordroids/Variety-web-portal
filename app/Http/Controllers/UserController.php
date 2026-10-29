@@ -8,14 +8,19 @@ use App\Models\Event;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Request $request): View
     {
+        $this->authorize("viewAny", User::class);
+
         $q = trim((string) $request->get("q"));
 
         $users = User::query()
@@ -46,6 +51,8 @@ class UserController extends Controller
         StoreUserRequest $request,
         UserService $service,
     ): \Illuminate\Http\JsonResponse {
+        $this->authorize("create", User::class);
+
         $user = $service->create($request->validated());
 
         return response()->json([
@@ -60,6 +67,8 @@ class UserController extends Controller
         User $user,
         UserService $service,
     ): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse {
+        $this->authorize("update", $user);
+
         $service->update($user, $request->validated());
 
         if ($request->wantsJson()) {
@@ -75,6 +84,8 @@ class UserController extends Controller
 
     public function destroy(User $user, UserService $service): RedirectResponse
     {
+        $this->authorize("delete", $user);
+
         $service->delete($user);
 
         return back()->with("success", "User deleted.");

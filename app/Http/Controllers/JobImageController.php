@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\JobImage;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class JobImageController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request, Event $event)
     {
+        $this->authorize("viewAny", [JobImage::class, $event]);
+
         if ($request->search) {
             $jobImages = $event
                 ->jobImages()
@@ -33,6 +38,7 @@ class JobImageController extends Controller
      */
     public function store(Request $request, Event $event)
     {
+        $this->authorize("create", [JobImage::class, $event]);
         $validator = Validator::make($request->all(), [
             "images" => "required|array",
             "images.*" => "required|file|mimes:jpeg,jpg,png,webp|max:4096",
@@ -83,6 +89,8 @@ class JobImageController extends Controller
      */
     public function destroy(Event $event, JobImage $jobImage)
     {
+        $this->authorize("delete", $jobImage);
+
         if (!$event->jobImages()->where("id", $jobImage->id)->exists()) {
             return back()->with("error", "Image not found in event.");
         }

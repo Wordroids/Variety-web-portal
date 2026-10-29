@@ -9,10 +9,10 @@ use App\Http\Requests\UpdateEventParticipantRequest;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Services\EventParticipantService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -21,14 +21,14 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 final class EventParticipantController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Fetch participants as JSON.
      */
     public function indexAjax(Request $request, Event $event): JsonResponse
     {
-        if (Auth::user()->cannot("viewParticipants", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("viewParticipants", $event);
 
         return response()->json([
             "success" => true,
@@ -44,9 +44,7 @@ final class EventParticipantController extends Controller
         Event $event,
         EventParticipantService $service,
     ) {
-        if (Auth::user()->cannot("createParticipants", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("createParticipant", $event);
 
         $participant = $service->create($event, $request->validated());
         $participant->load("roles");
@@ -73,9 +71,7 @@ final class EventParticipantController extends Controller
         Event $event,
         EventParticipant $participant,
     ): JsonResponse {
-        if (Auth::user()->cannot("updateParticipants", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("updateParticipant", $event);
 
         $validated = $request->validated();
         $validated["phone"] = preg_replace(
@@ -113,9 +109,7 @@ final class EventParticipantController extends Controller
         Event $event,
         EventParticipant $participant,
     ) {
-        if (Auth::user()->cannot("deleteParticipant", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("deleteParticipant", $event);
 
         abort_unless($participant->event_id === $event->id, 403);
 
@@ -136,9 +130,7 @@ final class EventParticipantController extends Controller
      */
     public function bulkDestroy(Request $request, Event $event)
     {
-        if (Auth::user()->cannot("deleteParticipants", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("deleteParticipant", $event);
 
         $validated = $request->validate([
             "participant_ids" => ["required", "array", "min:1"],
@@ -208,9 +200,7 @@ final class EventParticipantController extends Controller
      */
     public function import(Request $request, Event $event): RedirectResponse
     {
-        if (Auth::user()->cannot("importParticipants", Event::class)) {
-            abort(403);
-        }
+        $this->authorize("importParticipant", $event);
 
         $request->validate([
             "file" => "required|mimes:xlsx,xls",

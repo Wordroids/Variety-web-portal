@@ -21,6 +21,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 Route::middleware("auth")->group(function () {
     // App Routes
@@ -199,6 +200,8 @@ Route::middleware("auth")->group(function () {
     ])->name("notifications.import");
 
     Route::post("attachments", function (Request $request) {
+        Gate::authorize("create", \App\Models\Attachment::class);
+
         $request->validate([
             "attachment" => ["required", "file"],
         ]);

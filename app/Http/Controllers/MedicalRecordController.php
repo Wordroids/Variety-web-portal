@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Models\MedicalRecord;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -13,27 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class MedicalRecordController extends Controller
 {
-    private function authorizeEventAccess(Event $event): void
-    {
-        $user = Auth::user();
-
-        if ($user->hasRole("Super Admin")) {
-            return;
-        }
-
-        abort_unless(
-            $user->events()->where("events.id", $event->id)->exists(),
-            403,
-        );
-    }
-
-    private function authorizeMedicalRecord(
-        Event $event,
-        MedicalRecord $record,
-    ): void {
-        abort_unless((int) $record->event_id === (int) $event->id, 404);
-        $this->authorizeEventAccess($event);
-    }
+    use AuthorizesRequests;
 
     private function blankToNull(?string $value): ?string
     {
@@ -137,6 +118,8 @@ class MedicalRecordController extends Controller
      */
     public function index()
     {
+        $this->authorize("viewAny", MedicalRecord::class);
+
         $user = Auth::user();
 
         $events = $user->hasRole("Super Admin")
@@ -161,7 +144,9 @@ class MedicalRecordController extends Controller
         try {
             $file = $request->file("csv_file");
             $eventId = $validated["event_id"];
-            $event = Event::find($eventId);
+            $event = Event::findOrFail($eventId);
+
+            $this->authorize("import", [MedicalRecord::class, $event]);
             $destroyDate = $validated["destroy_date"];
             $path = $file->getRealPath();
 
@@ -356,6 +341,8 @@ class MedicalRecordController extends Controller
     {
         $event = Event::findOrFail($id);
 
+        $this->authorize("viewAny", [MedicalRecord::class, $event]);
+
         if ($request->q) {
             $q = $request->q;
             $participant_ids = $event
@@ -382,7 +369,9 @@ class MedicalRecordController extends Controller
      */
     public function showRecord(Event $event, MedicalRecord $record)
     {
-        $this->authorizeMedicalRecord($event, $record);
+        abort_unless((int) $record->event_id === (int) $event->id, 404);
+
+        $this->authorize("view", $record);
 
         $record->loadMissing(["participant", "comments", "images"]);
 
@@ -397,7 +386,9 @@ class MedicalRecordController extends Controller
      */
     public function editRecord(Event $event, MedicalRecord $record)
     {
-        $this->authorizeMedicalRecord($event, $record);
+        abort_unless((int) $record->event_id === (int) $event->id, 404);
+
+        $this->authorize("update", $record);
 
         $recordContent = $this->recordContentForEditForm($event, $record);
 
@@ -415,7 +406,9 @@ class MedicalRecordController extends Controller
         Event $event,
         MedicalRecord $record,
     ) {
-        $this->authorizeMedicalRecord($event, $record);
+        abort_unless((int) $record->event_id === (int) $event->id, 404);
+
+        $this->authorize("update", $record);
 
         $validated = $request->validate([
             "vehicle" => "nullable|string|max:500",
@@ -501,6 +494,9 @@ class MedicalRecordController extends Controller
     public function destroy(int $id)
     {
         $event = Event::findOrFail($id);
+
+        $this->authorize("delete", [MedicalRecord::class, $event]);
+
         $event->medicalRecords()->delete();
 
         return redirect()
@@ -511,6 +507,8 @@ class MedicalRecordController extends Controller
     //to download the csv template
     public function downloadTemplate()
     {
+        $this->authorize("exportTemplate", MedicalRecord::class);
+
         $fileName = "medical_records_template.csv";
 
         $headers = [

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicalRecord;
 use App\Models\MedicalRecordComment;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class MedicalRecordCommentController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Store a newly created resource in storage.
      */
@@ -15,6 +19,13 @@ class MedicalRecordCommentController extends Controller
         $request->validate([
             "medical_record_id" => "required|exists:medical_records,id",
             "comment" => "required",
+        ]);
+
+        $medicalRecord = MedicalRecord::findOrFail($request->medical_record_id);
+
+        $this->authorize("create", [
+            MedicalRecordComment::class,
+            $medicalRecord,
         ]);
 
         MedicalRecordComment::create([
@@ -30,7 +41,11 @@ class MedicalRecordCommentController extends Controller
      */
     public function destroy(int $id)
     {
-        MedicalRecordComment::findOrFail($id)->delete();
+        $comment = MedicalRecordComment::findOrFail($id);
+
+        $this->authorize("delete", $comment);
+
+        $comment->delete();
         return back()->with("success", "Comment deleted");
     }
 }

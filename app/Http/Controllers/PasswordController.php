@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Password;
 use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class PasswordController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Event $event)
     {
+        $this->authorize("viewAny", [Password::class, $event]);
+
         $roles = Role::paginate(10);
         return view("pages.passwords.index", compact("roles", "event"));
     }
@@ -23,6 +28,8 @@ class PasswordController extends Controller
      */
     public function update(Request $request, Event $event, $role_id)
     {
+        $this->authorize("update", [Password::class, $event]);
+
         $validated = $request->validate([
             "password" => ["required", "string"],
         ]);

@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventJob;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class EventJobController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize("viewAny", EventJob::class);
+
         $events = Event::query()->withCount("jobs")->orderByDesc("id")->get();
 
         return view("pages.jobs.index", compact("events"));
@@ -26,6 +31,8 @@ class EventJobController extends Controller
         ]);
 
         $event = Event::findOrFail($request->event_id);
+
+        $this->authorize("create", [EventJob::class, $event]);
 
         // Delete existing jobs
         EventJob::where("event_id", $event->id)->delete();
@@ -80,6 +87,8 @@ class EventJobController extends Controller
      */
     public function show(Request $request, Event $event)
     {
+        $this->authorize("view", [EventJob::class, $event]);
+
         $query = $event->jobs()->latest();
 
         // Get saved filters
@@ -154,12 +163,16 @@ class EventJobController extends Controller
     //edit function
     public function edit(EventJob $job)
     {
+        $this->authorize("update", $job);
+
         return view("pages.jobs.edit", compact("job"));
     }
 
     // update function
     public function update(Request $request, EventJob $job)
     {
+        $this->authorize("update", $job);
+
         // Empty HTML time inputs submit ""; normalize so nullable|date_format passes.
         $request->merge([
             "ov_arrive" => $request->filled("ov_arrive")
@@ -222,6 +235,8 @@ class EventJobController extends Controller
      */
     public function destroy(Event $event)
     {
+        $this->authorize("delete", [EventJob::class, $event]);
+
         $event->jobs()->delete();
 
         return redirect()
@@ -234,6 +249,8 @@ class EventJobController extends Controller
      */
     public function uploadImage(Request $request, EventJob $job)
     {
+        $this->authorize("uploadImage", [EventJob::class, $job->event]);
+
         $request->validate([
             "image" => "required|file",
         ]);
@@ -270,6 +287,8 @@ class EventJobController extends Controller
      */
     public function removeImage(Request $request, EventJob $job)
     {
+        $this->authorize("removeImage", [EventJob::class, $job->event]);
+
         $job->update(["image_path" => ""]);
 
         return redirect()
@@ -280,6 +299,8 @@ class EventJobController extends Controller
     //to download the csv template
     public function downloadTemplate()
     {
+        $this->authorize("exportTemplate", EventJob::class);
+
         $fileName = "ov_jobs_template.csv";
 
         $headers = [
