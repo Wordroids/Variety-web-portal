@@ -61,12 +61,12 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can import participants to the event
-     * from excel file.
+     * Determine whether the user can view participants for the event.
      */
     public function viewParticipants(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can("manage participants");
+        return $event->isAdmin($user) &&
+            ($user->can("view participants") || $user->can("manage participants"));
     }
 
     /**
@@ -75,7 +75,8 @@ class EventPolicy
      */
     public function importParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can("manage participants");
+        return $event->isAdmin($user) &&
+            ($user->can("import participants") || $user->can("manage participants"));
     }
 
     /**
@@ -83,7 +84,9 @@ class EventPolicy
      */
     public function createParticipant(User $user, Event $event): bool
     {
-        return $event->isAdmin($user) && $user->can("manage participants");
+        return $event->isAdmin($user) &&
+            ($user->can("create event participants") ||
+                $user->can("manage participants"));
     }
 
     /**

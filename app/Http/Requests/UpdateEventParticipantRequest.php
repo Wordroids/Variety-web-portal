@@ -10,7 +10,11 @@ final class UpdateEventParticipantRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can("manage participants") ?? true;
+        $event = $this->route("event");
+
+        return $event
+            ? $this->user()?->can("updateParticipant", $event) ?? false
+            : false;
     }
 
     public function rules(): array
