@@ -14,10 +14,12 @@
                 <h1 class="text-2xl font-bold text-gray-900">Permits</h1>
                 <p class="text-gray-500 text-sm">Manage permits for {{ $event->title }}</p>
             </div>
+            @can('create', [\App\Models\EventPermit::class, $event])
             <button id="openUploadPermitModal"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition">
                 <i class="fa-solid fa-file-medical"></i> Upload Permit
             </button>
+            @endcan
         </div>
 
         <hr class="mb-6">
@@ -39,11 +41,13 @@
                         class="text-gray-400 hover:text-red-600 transition-colors" title="View PDF">
                             <i class="fa-solid fa-file-pdf fa-lg"></i>
                         </a>
+                        @can('delete', $permit)
                         <form action="{{ route("events.permits.destroy", [$event, $permit]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this permit? This action cannot be undone.');">
                             @method("DELETE")
                             @csrf
                             <button class="mt-auto text-red-600 hover:text-red-900 text-sm">Delete</button>
                         </form>
+                        @endcan
                     </div>
                 </div>
             @empty
@@ -54,6 +58,7 @@
             @endforelse
         </div>
 
+        @can('create', [\App\Models\EventPermit::class, $event])
         <div id="uploadPermitModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
             <div id="uploadPermitBackdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
@@ -97,37 +102,39 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            (function() {
+                const openBtn = document.getElementById('openUploadPermitModal');
+                const modal = document.getElementById('uploadPermitModal');
+                if (!openBtn || !modal) return;
+
+                const closeBtn = document.getElementById('closeUploadPermitModal');
+                const cancelBtn = document.getElementById('cancelUploadPermit');
+                const backdrop = document.getElementById('uploadPermitBackdrop');
+
+                const toggleModal = (show) => {
+                    if (show) {
+                        modal.classList.remove('hidden');
+                        document.body.classList.add('overflow-hidden');
+                    } else {
+                        modal.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                };
+
+                openBtn.addEventListener('click', () => toggleModal(true));
+                [closeBtn, cancelBtn, backdrop].forEach(el => {
+                    el?.addEventListener('click', () => toggleModal(false));
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                        toggleModal(false);
+                    }
+                });
+            })();
+        </script>
+        @endcan
     </div>
-
-    <script>
-        (function() {
-            const openBtn = document.getElementById('openUploadPermitModal');
-            const closeBtn = document.getElementById('closeUploadPermitModal');
-            const cancelBtn = document.getElementById('cancelUploadPermit');
-            const backdrop = document.getElementById('uploadPermitBackdrop');
-            const modal = document.getElementById('uploadPermitModal');
-
-            const toggleModal = (show) => {
-                if (show) {
-                    modal.classList.remove('hidden');
-                    document.body.classList.add('overflow-hidden');
-                } else {
-                    modal.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                }
-            };
-
-            openBtn.addEventListener('click', () => toggleModal(true));
-            [closeBtn, cancelBtn, backdrop].forEach(el => {
-                el.addEventListener('click', () => toggleModal(false));
-            });
-
-            // Close on ESC key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    toggleModal(false);
-                }
-            });
-        })();
-    </script>
 </x-app-layout>

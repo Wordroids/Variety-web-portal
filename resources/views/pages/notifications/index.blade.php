@@ -16,14 +16,18 @@
                 <p class="text-gray-500 text-sm">Send notifications to mobile app users</p>
             </div>
             <div class="space-x-2">
+                @can('import', App\Models\Notification::class)
                 <button @click="showImport()"
                    class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Import
                 </button>
+                @endcan
+                @can('create', App\Models\Notification::class)
                 <button @click="showForm()"
                         class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-plus"></i> Add Notification
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -103,9 +107,12 @@
                                 <!-- Actions -->
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex justify-end gap-2">
+                                        @can('edit notifications')
                                         <button type="button" @click="showForm(n)" class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
+                                        @endcan
+                                        @can('delete notifications')
                                         <form :action="`${baseUrl}/notifications/${n.id}`" method="POST"
                                               onsubmit="return confirm('Delete this notification?')">
                                             @csrf
@@ -115,6 +122,7 @@
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

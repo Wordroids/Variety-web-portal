@@ -2,9 +2,11 @@
     <div class="max-w-6xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold text-gray-900">Roles</h1>
+            @can('create', App\Models\Role::class)
             <a href="{{ route('roles.create') }}" class="rounded-lg bg-red-600 text-white px-4 py-2 font-semibold text-sm hover:bg-red-700">
                 <i class="fa-solid fa-plus"></i> New Role
             </a>
+            @endcan
         </div>
 
         @if(session('success'))
@@ -32,15 +34,19 @@
                                 </div>
                             </td>
                             <td class="p-3 text-right">
+                                @can('update', $role)
                                 <a href="{{ route('roles.edit', $role) }}" class="text-blue-600 hover:text-blue-800">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
+                                @endcan
+                                @can('delete', $role)
                                 <form method="POST" action="{{ route('roles.destroy', $role) }}" class="inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" onclick="return confirm('Delete this role?')" class="text-red-600 hover:text-red-800 ml-2">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

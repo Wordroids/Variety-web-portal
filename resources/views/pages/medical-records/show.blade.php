@@ -48,6 +48,7 @@
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         <i class="fa-solid fa-eye"></i> View Event
                     </a>
+                    @can('delete', [\App\Models\MedicalRecord::class, $event])
                     <form action="{{ route('medical-records.destroy', $event) }}"
                           method="POST"
                           onsubmit="return confirm('Are you sure you want to delete these records?');">
@@ -60,6 +61,7 @@
                             <i class="fa-solid fa-trash"></i> Delete Records
                         </button>
                     </form>
+                    @endcan
                 </div>
             </div>
             <div class="mt-2">

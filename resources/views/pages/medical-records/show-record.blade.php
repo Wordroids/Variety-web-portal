@@ -40,14 +40,18 @@
                 </a>
 
                 <div class="flex gap-2">
+                    @can('update', $record)
                     <a href="{{ route('medical-records.edit-record', [$event, $record]) }}"
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         <i class="fa-solid fa-pen-to-square"></i> Edit record
                     </a>
+                    @endcan
+                    @can('view', $event)
                     <a href="{{ route('events.show', $event) }}"
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         <i class="fa-solid fa-eye"></i> View Event
                     </a>
+                    @endcan
                 </div>
             </div>
             <div class="mt-2">
@@ -154,11 +158,13 @@
                             <p class="text-neutral-800 text-sm">
                                 {{ $comment->created_at->format('M j, Y h:i:s') }}
                             </p>
+                            @can('delete', $comment)
                             <form action="{{ route('medical-record-comments.destroy', $comment) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this comment?');">
                                 @method("DELETE")
                                 @csrf
                                 <button type="submit" class="text-red-600 text-sm">Remove</button>
                             </form>
+                            @endcan
                         </div>
                     </div>
                     @empty
@@ -167,6 +173,7 @@
                     </div>
                     @endforelse
 
+                    @can('create', [\App\Models\MedicalRecordComment::class, $record])
                     <form action="{{ route('medical-record-comments.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="medical_record_id" value="{{ $record->id }}">
@@ -175,6 +182,7 @@
                             <button class="bg-red-600 p-3 text-white rounded-lg" type="submit">Add Comment</button>
                         </div>
                     </form>
+                    @endcan
                 </div>
 
                 <div class="mb-4 rounded-xl bg-white p-4 shadow">
@@ -194,11 +202,13 @@
                                 <p class="text-neutral-800 text-sm">
                                     {{ $image->created_at->format('M j, Y h:i:s') }}
                                 </p>
+                                @can('delete', $image)
                                 <form action="{{ route('medical-record-images.destroy', $image) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this image?');">
                                     @method("DELETE")
                                     @csrf
                                     <button type="submit" class="text-red-600 text-sm">Remove</button>
                                 </form>
+                                @endcan
                             </div>
                         </div>
                     @empty
@@ -207,12 +217,14 @@
                     </div>
                     @endforelse
 
+                    @can('create', [\App\Models\MedicalRecordImage::class, $record])
                     <form action="{{ route('medical-record-images.store') }}" method="POST" enctype="multipart/form-data" class="flex justify-between items-center">
                         @csrf
                         <input type="hidden" name="medical_record_id" value="{{ $record->id }}">
                         <input type="file" name="image" />
                         <button class="bg-red-600 p-3 text-white rounded-lg">Add Image</button>
                     </form>
+                    @endcan
                 </div>
             </div>
         </div>

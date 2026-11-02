@@ -33,7 +33,8 @@
                         <input 
                             name="location_tracking_api" 
                             value="{{ old('location_tracking_api', $settings->location_tracking_api) }}" 
-                            placeholder="Enter location tracking API endpoint" 
+                            placeholder="Enter location tracking API endpoint"
+                            @cannot('update', $settings) disabled @endcannot
                             class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500" />
                         @error('location_tracking_api')
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
@@ -42,6 +43,7 @@
                     </div>
                 </div>
 
+                @can('update', $settings)
                 <div class="mt-8 border-t border-gray-200 pt-6">
                     <div class="flex justify-end">
                         <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
@@ -50,6 +52,7 @@
                         </button>
                     </div>
                 </div>
+                @endcan
             </form>
         </div>
     </div>

@@ -4,7 +4,8 @@
             days: {{ $daysJson }},
             participants: {{ $participantsJson }},
             selected: 0,
-            showParticipants: localStorage.getItem('showParticipants') === 'true',
+            canViewParticipants: @js(auth()->user()->can('viewParticipants', $event)),
+            showParticipants: @js(auth()->user()->can('viewParticipants', $event)) && localStorage.getItem('showParticipants') === 'true',
             openModal: false,
             modalType: null,
             modalData: {},
@@ -18,6 +19,7 @@
             },
 
             toggleParticipants() {
+                if (!this.canViewParticipants) return;
                 this.showParticipants = !this.showParticipants;
                 localStorage.setItem('showParticipants', this.showParticipants);
             },
@@ -170,32 +172,40 @@
             </a>
 
             <div class="flex items-center gap-2">
+                @can('viewAny', [\App\Models\EventForm::class, $event])
                 <a href="{{ route('events.forms.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-file-alt"></i>
                     <span>Forms</span>
                 </a>
+                @endcan
 
+                @can('viewAny', [\App\Models\EventPermit::class, $event])
                 <a href="{{ route('events.permits.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-id-card"></i>
                     <span>Permits</span>
                 </a>
+                @endcan
 
+                @can('viewParticipants', $event)
                 <a href="#"
                     @click.prevent="toggleParticipants()"
                     class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-users"></i>
                     <span x-text="showParticipants ? 'Hide Participants' : 'View Participants'"></span>
                 </a>
+                @endcan
 
+                @can('viewAny', [\App\Models\Password::class, $event])
                 <a href="{{ route('events.passwords.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-asterisk"></i>
                     <span>Passwords</span>
                 </a>
+                @endcan
 
-                @can('SUPERADMIN')
+                @can('viewAny', [\App\Models\EventAdmin::class, $event])
                 <a href="{{ route('events.admins.index', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-user-tie"></i>
@@ -203,10 +213,12 @@
                 </a>
                 @endcan
 
+                @can('update', $event)
                 <a href="{{ route('events.edit', $event) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-pen"></i> Edit Event
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -271,9 +283,10 @@
             </div>
         </div>
 
+        @can('viewParticipants', $event)
         <section id="participants-section" x-show="showParticipants" x-transition class="mt-6 space-y-6" x-cloak>
             @php
-                $participantTableColspan = auth()->user()->can('manage participants') ? 8 : 7;
+                $participantTableColspan = auth()->user()->can('deleteParticipant', $event) ? 8 : 7;
             @endphp
             <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-4">
@@ -282,13 +295,12 @@
                         Event Participants (<span x-text="participants.length"></span>)
                     </h2>
 
-                    @can('manage participants')
                     <div class="flex gap-3">
+                        @can('deleteParticipant', $event)
                         <form method="POST" action="{{ route('participants.bulkDestroy', $event) }}" class="flex items-center gap-2"
                             x-show="selectedParticipantIds.length > 0"
                             x-cloak
                             onsubmit="return confirm('Delete selected participants?')">
-                            @csrf
                             @csrf
                             @method('DELETE')
                             <template x-for="id in selectedParticipantIds" :key="id">
@@ -300,7 +312,9 @@
                                 Delete selected (<span x-text="selectedParticipantIds.length"></span>)
                             </button>
                         </form>
+                        @endcan
 
+                        @can('importParticipant', $event)
                         <form method="POST" action="{{ route('participants.import', $event) }}" enctype="multipart/form-data" class="flex items-center gap-2">
                             @csrf
                             <input type="file" name="file" accept=".xlsx,.xls" id="excelImport" class="hidden" onchange="this.form.submit()">
@@ -308,16 +322,20 @@
                                 <i class="fa-solid fa-upload"></i> Import Excel
                             </button>
                         </form>
+                        @endcan
 
+                        @can('export participant template')
                         <a href="{{ route('participants.template') }}" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
                             <i class="fa-solid fa-file-arrow-down"></i> Download Template
                         </a>
+                        @endcan
 
+                        @can('createParticipant', $event)
                         <button @click="openAddModal()" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                             <i class="fa-solid fa-user-plus"></i> Add Participant
                         </button>
+                        @endcan
                     </div>
-                    @endcan
                 </div>
 
                 <div class="mb-4">
@@ -333,7 +351,7 @@
                     <table class="min-w-full text-sm border-t">
                         <thead class="bg-gray-50">
                             <tr class="text-left text-gray-600">
-                                @can('manage participants')
+                                @can('deleteParticipant', $event)
                                 <th class="px-4 py-2 font-medium w-10">
                                     <input type="checkbox"
                                         class="rounded border-gray-300 text-red-600 focus:ring-red-500"
@@ -367,7 +385,7 @@
 
                             <template x-for="p in filteredParticipants" :key="p.id">
                                 <tr class="hover:bg-gray-50/50 transition duration-150">
-                                    @can('manage participants')
+                                    @can('deleteParticipant', $event)
                                     <td class="px-4 py-2">
                                         <input type="checkbox"
                                             :value="p.id"
@@ -399,23 +417,27 @@
                                     </td>
 
                                     <td class="px-4 py-2 text-right">
-                                        @can('manage participants')
+                                        @canany(['updateParticipant', 'deleteParticipant'], $event)
                                         <div class="flex justify-end gap-3">
+                                            @can('updateParticipant', $event)
                                             <button type="button"
                                                 @click="openEditModal(p)"
                                                 class="text-gray-500 hover:text-gray-800 transition">
                                                 <i class="fa-solid fa-pen text-sm"></i>
                                             </button>
+                                            @endcan
 
+                                            @can('deleteParticipant', $event)
                                             <button type="button"
                                                 @click="deleteParticipant(p.id)"
                                                 class="text-red-500 hover:text-red-700 transition">
                                                 <i class="fa-solid fa-trash text-sm"></i>
                                             </button>
+                                            @endcan
                                         </div>
                                         @else
                                         <span class="text-gray-400">—</span>
-                                        @endcan
+                                        @endcanany
                                     </td>
                                 </tr>
                             </template>
@@ -424,12 +446,15 @@
                 </div>
             </div>
 
+            @canany(['createParticipant', 'updateParticipant'], $event)
             <div x-show="openModal" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                 <div @click.outside="openModal = false" class="bg-white rounded-xl w-full max-w-2xl p-6">
                     @include('pages.events.participants.manage-form', ['event' => $event])
                 </div>
             </div>
+            @endcanany
         </section>
+        @endcan
 
         <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             <aside class="lg:col-span-4">

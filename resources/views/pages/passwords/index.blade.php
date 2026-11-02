@@ -34,10 +34,12 @@
                                 {{ $role->passwords()->where('event_id', $event->id)->first()?->password ?? 'No Password Set'}}
                             </td>
                             <td class="px-4 py-3 text-right flex justify-end gap-2">
+                                @can('update', [\App\Models\Password::class, $event])
                                 <button @click="open=true; edit=true; pass={role_id:'{{ $role->id }}', role_name:'{{ $role->name }}', password:'{{ $role->passwords()->where('event_id', $event->id)->first()?->password ?? '' }}'}"
                                     class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @endif
@@ -52,6 +54,7 @@
             {{ $roles->links() }}
         </div>
 
+        @can('update', [\App\Models\Password::class, $event])
         <!-- Modal -->
         <div x-show="open" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div @click.outside="open=false" class="bg-white rounded-2xl w-full max-w-md p-6">
@@ -73,5 +76,6 @@
                 </form>
             </div>
         </div>
+        @endcan
     </div>
 </x-app-layout>

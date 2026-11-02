@@ -22,10 +22,12 @@
                         <i class="fa-solid fa-search"></i>
                     </button>
                 </form>
+                @can('create', [\App\Models\JobImage::class, $event])
                 <button @click="open = true"
                     class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">
                     <i class="fa-solid fa-plus"></i> Add Images
                 </button>
+                @endcan
                 <a href="{{ route('events.show', $event) }}"
                     class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-chevron-left"></i> Back to Event
@@ -57,6 +59,7 @@
                                         class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
+                                    @can('delete', $image)
                                     <form method="post" action="/job-images/{{ $event->id }}/{{ $image->id }}">
                                         @method('delete')
                                         @csrf
@@ -66,6 +69,7 @@
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -80,6 +84,7 @@
             {{ $jobImages->links() }}
         </div>
 
+        @can('create', [\App\Models\JobImage::class, $event])
         <!-- Modal -->
         <div x-show="open" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div @click.outside="open=false" class="bg-white rounded-2xl w-full max-w-md p-6">
@@ -102,5 +107,6 @@
                 </form>
             </div>
         </div>
+        @endcan
     </div>
 </x-app-layout>

@@ -7,11 +7,13 @@
                 <p class="text-gray-500 text-sm">Manage and organize charity events for children</p>
             </div>
 
+            @can('create', App\Models\Event::class)
             <a href="{{ route('events.create') }}"
                class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                 <i class="fa-solid fa-plus"></i>
                 Create Event
             </a>
+            @endcan
         </div>
 
         <!-- Search -->
@@ -79,16 +81,21 @@
                     <!-- Actions -->
                     <div class="flex justify-between items-center">
                         <div class="flex gap-2">
+                            @can('view', $event)
                             <a href="{{ route('events.show', $event) }}"
                                class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">
                                 <i class="fa-regular fa-eye"></i> View
                             </a>
+                            @endcan
+                            @can('update', $event)
                             <a href="{{ route('events.edit', $event) }}"
                                class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </a>
+                            @endcan
                         </div>
 
+                        @can('delete', $event)
                         <form method="POST" action="{{ route('events.destroy', $event) }}" onsubmit="return confirm('Delete this event?')">
                             @csrf @method('DELETE')
                             <button type="submit"
@@ -96,6 +103,7 @@
                                 <i class="fa-regular fa-trash-can"></i> Delete
                             </button>
                         </form>
+                        @endcan
                     </div>
                 </div>
             @endforeach

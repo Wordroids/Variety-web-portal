@@ -8,10 +8,12 @@
 
         <div class="flex justify-between items-center mb-5">
             <h1 class="text-2xl font-bold text-gray-900">Permissions</h1>
+            @can('create', App\Models\Permission::class)
             <button @click="open=true; edit=false; perm={name:''}"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                 <i class="fa-solid fa-plus"></i> Add Permission
             </button>
+            @endcan
         </div>
 
         <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
@@ -27,16 +29,20 @@
                         <tr>
                             <td class="px-4 py-3 font-semibold text-gray-900">{{ $p->name }}</td>
                             <td class="px-4 py-3 text-right flex justify-end gap-2">
+                                @can('update', $p)
                                 <button @click="open=true; edit=true; perm={id:'{{ $p->id }}', name:'{{ $p->name }}'}"
                                     class="border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-xs">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
+                                @endcan
+                                @can('delete', $p)
                                 <form method="POST" action="{{ route('permissions.destroy', $p) }}" onsubmit="return confirm('Delete this permission?')">
                                     @csrf @method('DELETE')
                                     <button class="border border-gray-300 px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-gray-50">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                     @empty

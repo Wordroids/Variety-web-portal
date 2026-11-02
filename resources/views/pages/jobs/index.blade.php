@@ -40,18 +40,23 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $event->jobs->count() }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm">
                                 <div class="inline-flex items-center justify-center gap-2">
+                                    @can('viewAny', [\App\Models\JobImage::class, $event])
                                     <a
                                         href="{{ route('job-images.index', $event)}}"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-regular fa-image"></i>
                                         Images
                                     </a>
+                                    @endcan
+                                    @can('create', [\App\Models\EventJob::class, $event])
                                     <button type="button"
                                         @click="openImportModal({{ $event->id }}, @js($event->title))"
                                         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-gray-50">
                                         <i class="fa-solid fa-file-import"></i>
                                         Import Jobs
                                     </button>
+                                    @endcan
+                                    @can('view', [\App\Models\EventJob::class, $event])
                                     <a
                                         type="button"
                                         href="{{ route('jobs.view', $event)}}"
@@ -59,11 +64,19 @@
                                         <i class="fa-regular fa-eye"></i>
                                         View Jobs
                                     </a>
-                                    <button type="button"
-                                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
-                                        <i class="fa-regular fa-trash-can"></i>
-                                        Delete Jobs
-                                    </button>
+                                    @endcan
+                                    @can('delete', [\App\Models\EventJob::class, $event])
+                                    <form action="{{ route('jobs.destroy', $event) }}" method="POST"
+                                        onsubmit="return confirm('Delete all jobs for this event?');" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete Jobs
+                                        </button>
+                                    </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

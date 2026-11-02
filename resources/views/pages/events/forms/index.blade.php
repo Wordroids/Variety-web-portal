@@ -14,10 +14,12 @@
                 <h1 class="text-2xl font-bold text-gray-900">Forms</h1>
                 <p class="text-gray-500 text-sm">Manage external links and forms for {{ $event->title }}</p>
             </div>
+            @can('create', [\App\Models\EventForm::class, $event])
             <button id="openUploadFormModal"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition shadow-sm">
                 <i class="fa-solid fa-plus"></i> Add Form
             </button>
+            @endcan
         </div>
 
         <hr class="mb-6">
@@ -41,12 +43,14 @@
                             <i class="fa-solid fa-arrow-up-right-from-square fa-lg"></i>
                         </a>
 
+                        @can('delete', $form)
                         <form action="{{ route('events.forms.destroy', [$event, $form]) }}" method="POST"
                               onsubmit="return confirm('Remove this form link?');">
                             @method("DELETE")
                             @csrf
                             <button class="text-red-600 hover:text-red-900 text-xs font-medium">Delete</button>
                         </form>
+                        @endcan
                     </div>
                 </div>
             @empty
@@ -57,6 +61,7 @@
             @endforelse
         </div>
 
+        @can('create', [\App\Models\EventForm::class, $event])
         <div id="uploadFormModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
             <div id="uploadFormBackdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
@@ -112,33 +117,36 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            (function() {
+                const modal = document.getElementById('uploadFormModal');
+                const openBtn = document.getElementById('openUploadFormModal');
+                if (!modal || !openBtn) return;
+
+                const closeElements = [
+                    document.getElementById('closeUploadFormModal'),
+                    document.getElementById('cancelUploadForm'),
+                    document.getElementById('uploadFormBackdrop')
+                ];
+
+                const toggleModal = (show) => {
+                    modal.classList.toggle('hidden', !show);
+                    document.body.classList.toggle('overflow-hidden', show);
+                    if (show) modal.setAttribute('aria-hidden', 'false');
+                    else modal.setAttribute('aria-hidden', 'true');
+                };
+
+                openBtn.addEventListener('click', () => toggleModal(true));
+                closeElements.forEach(el => el?.addEventListener('click', () => toggleModal(false)));
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                        toggleModal(false);
+                    }
+                });
+            })();
+        </script>
+        @endcan
     </div>
-
-    <script>
-        (function() {
-            const modal = document.getElementById('uploadFormModal');
-            const openBtn = document.getElementById('openUploadFormModal');
-            const closeElements = [
-                document.getElementById('closeUploadFormModal'),
-                document.getElementById('cancelUploadForm'),
-                document.getElementById('uploadFormBackdrop')
-            ];
-
-            const toggleModal = (show) => {
-                modal.classList.toggle('hidden', !show);
-                document.body.classList.toggle('overflow-hidden', show);
-                if (show) modal.setAttribute('aria-hidden', 'false');
-                else modal.setAttribute('aria-hidden', 'true');
-            };
-
-            openBtn.addEventListener('click', () => toggleModal(true));
-            closeElements.forEach(el => el.addEventListener('click', () => toggleModal(false)));
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    toggleModal(false);
-                }
-            });
-        })();
-    </script>
 </x-app-layout>

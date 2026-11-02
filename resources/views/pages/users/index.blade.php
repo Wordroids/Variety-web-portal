@@ -22,10 +22,12 @@
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
 
+            @can('create', App\Models\User::class)
             <button @click="openCreate()"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                 <i class="fa-solid fa-user-plus"></i> Add User
             </button>
+            @endcan
         </div>
 
         <!-- Search -->
@@ -78,13 +80,17 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-2">
+                                    @can('update', $u)
                                     <button @click="openEdit(@js($u), @js($u->roles->pluck('name')), @js($u->assignedEvents->pluck('id')))">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
+                                    @endcan
+                                    @can('delete', $u)
                                     <form method="POST" action="{{ route('users.destroy', $u) }}" onsubmit="return confirm('Delete this user?')">
                                         @csrf @method('DELETE')
                                         <button class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

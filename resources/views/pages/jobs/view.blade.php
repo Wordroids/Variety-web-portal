@@ -38,19 +38,26 @@
         <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
 
             <div class="mb-3 flex flex-wrap items-center gap-2">
+                @can('view', $event)
                 <a href="{{ route('events.show', $event) }}"
                     class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-gray-50">
                     View event
                 </a>
+                @endcan
+                @can('viewAny', [\App\Models\JobImage::class, $event])
                 <a href="{{ route('job-images.index', $event) }}"
                     class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-gray-50">
                         View Images
                 </a>
+                @endcan
+                @can('create', [\App\Models\EventJob::class, $event])
                 <button type="button"
                     @click="openImportModal({{ $event->id }}, @js($event->title))"
                     class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-gray-50">
                     Import jobs
                 </button>
+                @endcan
+                @can('delete', [\App\Models\EventJob::class, $event])
                 <form action="{{ route('jobs.destroy', $event) }}" method="POST"
                     onsubmit="return confirm('Delete all jobs for this event?');">
                     @csrf
@@ -60,6 +67,7 @@
                         Delete jobs
                     </button>
                 </form>
+                @endcan
                 <!-- Filters -->
                 {{-- Filters: AM/PM kept for search (column hidden in table below) --}}
                 <form method="GET" class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -170,6 +178,7 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->event_day }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
                                     <div class="flex flex-col gap-2">
+                                        @can('uploadImage', [\App\Models\EventJob::class, $event])
                                         {{-- Upload / Replace Image --}}
                                         <form action="{{ route('jobs.upload-image', $job) }}" enctype="multipart/form-data" method="post">
                                             @csrf
@@ -182,6 +191,7 @@
                                                 <input name="image" type="file" class="hidden" onchange="this.form.submit()"/>
                                             </label>
                                         </form>
+                                        @endcan
 
                                         {{-- View / Remove Image --}}
                                         @if($job->image_path)
@@ -190,6 +200,7 @@
                                                     View Image
                                                 </a>
 
+                                                @can('removeImage', [\App\Models\EventJob::class, $event])
                                                 /
 
                                                 {{-- Placed OUTSIDE the upload form --}}
@@ -200,6 +211,7 @@
                                                         X
                                                     </button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         @else
                                             <span class="text-gray-400 font-medium text-center text-xs px-1">No Image</span>
@@ -209,10 +221,12 @@
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->id }}</td>
                                 <td class="border border-gray-200 px-3 py-2">{{ $job->created_at->format('Y-m-d H:i') }}</td>
                                 <td class="border border-gray-200 px-3 py-2">
+                                    @can('update', $job)
                                     <a href="{{ route('jobs.edit', $job) }}"
                                         class="text-blue-600 hover:underline text-xs font-medium">
                                         Edit
                                     </a>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty

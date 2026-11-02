@@ -57,6 +57,7 @@
                             </a>
                         </li>
                         @endcan
+                        @can('view notifications')
                         <li>
                             <a href="{{ route('notifications.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
@@ -65,6 +66,8 @@
                                 <span>Notifications</span>
                             </a>
                         </li>
+                        @endcan
+                        @can('view medical records')
                         <li>
                             <a href="{{ route('medical-records.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
@@ -73,6 +76,8 @@
                                 <span>Medical Records</span>
                             </a>
                         </li>
+                        @endcan
+                        @can('view jobs')
                         <li>
                             <a href="{{ route('jobs.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
@@ -81,14 +86,16 @@
                                 <span>OV Jobs</span>
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
 
-                @role("Super Admin")
+                @canany(['view users', 'view roles', 'view permissions', 'view settings'])
                 <!-- Management -->
                 <div>
                     <h3 class="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">Management</h3>
                     <ul class="space-y-1">
+                        @canany(['view users', 'view roles', 'view permissions'])
                         <!-- Access Control -->
                         <li class="mt-6">
                             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -96,7 +103,7 @@
                             </p>
 
                             <ul class="mt-2 space-y-1">
-                                <!-- Users -->
+                                @can('view users')
                                 <li>
                                     <a href="{{ route('users.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition
@@ -105,8 +112,9 @@
                                         <span>User Management</span>
                                     </a>
                                 </li>
+                                @endcan
 
-                                <!-- Roles -->
+                                @can('view roles')
                                 <li>
                                     <a href="{{ route('roles.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition
@@ -115,8 +123,9 @@
                                         <span>Roles</span>
                                     </a>
                                 </li>
+                                @endcan
 
-                                <!-- Permissions -->
+                                @can('view permissions')
                                 <li>
                                     <a href="{{ route('permissions.index') }}"
                                         class="flex items-center gap-3 px-3 py-2 rounded-lg transition
@@ -125,10 +134,12 @@
                                         <span>Permissions</span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
+                        @endcanany
 
-
+                        @can('view settings')
                         <li>
                             <a href="{{ route('settings.show') }}"
                                 class="flex items-center gap-3 rounded-lg px-3 py-2
@@ -137,9 +148,10 @@
                                 <span>Settings</span>
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
-                @endrole
+                @endcanany
             </nav>
         </div>
 

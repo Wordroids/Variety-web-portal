@@ -23,10 +23,12 @@
                 <p class="text-sm text-gray-500 mt-1">Displaying all medical records</p>
             </div>
 
+            @can('import medical records')
             <button @click="openModal()"
                 class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition">
                 <i class="fa-solid fa-file-medical"></i> Import Medical Records
             </button>
+            @endcan
         </div>
 
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -68,6 +70,7 @@
                         @else
                             <td colspan="3" class="px-6 py-4 text-sm text-center text-gray-400 italic">No Records Found</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                @can('import', [\App\Models\MedicalRecord::class, $event])
                                 <button
                                     type="button"
                                     @click="openModal({{ $event->id }})"
@@ -75,6 +78,7 @@
                                     <i class="fa-solid fa-file-import"></i>
                                     Import Records
                                 </button>
+                                @endcan
                             </td>
                         @endif
                     </tr>

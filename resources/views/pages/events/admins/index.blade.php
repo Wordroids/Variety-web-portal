@@ -13,10 +13,12 @@
                     class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-chevron-left"></i> Back to Event
                 </a>
+                @can('create', [\App\Models\EventAdmin::class, $event])
                 <button @click="open=true; edit=false; perm={name:''}"
                     class="ms-1 inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                     <i class="fa-solid fa-plus"></i> Add Admin
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -33,12 +35,14 @@
                         <tr>
                             <td class="px-4 py-3 font-semibold text-gray-900">{{ $admin->name }}</td>
                             <td class="px-4 py-3 text-right flex justify-end gap-2">
+                                @can('delete', [\App\Models\EventAdmin::class, $event])
                                 <form method="POST" action="{{ route('events.admins.destroy', compact('admin', 'event')) }}" onsubmit="return confirm('Remove this admin?')">
                                     @csrf @method('DELETE')
                                     <button class="border border-gray-300 px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-gray-50">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                     @empty
@@ -52,6 +56,7 @@
             {{ $admins->links() }}
         </div>
 
+        @can('create', [\App\Models\EventAdmin::class, $event])
         <!-- Modal -->
         <div x-show="open" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div @click.outside="open=false" class="bg-white rounded-2xl w-full max-w-md p-6">
@@ -80,5 +85,6 @@
                 </form>
             </div>
         </div>
+        @endcan
     </div>
 </x-app-layout>
